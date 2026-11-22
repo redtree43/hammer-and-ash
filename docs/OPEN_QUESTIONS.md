@@ -4,7 +4,7 @@
 
 | Decision | What is already agreed | What needs confirmation or testing |
 | --- | --- | --- |
-| First-down recovery | Automatic recovery at half HP, mission-long half-HP ceiling, and permanent loss on the second down. | Two or three turns, countdown clock/tick order, half-HP rounding, targetability, tile occupancy, medic intervention, status handling, and wipe behavior with recovery pending. |
+| First-down recovery | Miss the next two full player turns and stand at the start of the third at half HP rounded up. The half-HP ceiling persists for the mission. While down, the operative blocks their tile, clears temporary statuses, and cannot be targeted or treated. Second down is permanent. Zero standing operatives is a wipe. | Playtest timer pacing and attrition. Campaign medical and HQ rules are tracked below. |
 | Class-specific opportunity attacks | Eligibility can be innate, passive-enabled, or modified by a passive. | Which classes and enemies qualify, adjacency/reach, entry vs exit triggers, AP/reserve/cap, order relative to Overwatch, charge, displacement and teleport exceptions. |
 | Armour and damage | Deterministic ordinary attacks, armour before HP, phase and room refresh to current maximum, directional cover. | Cover formulas, order of damage/cover/piercing/status modifiers, rounding, damage types and resistances, armour-break rules, changes to maximum armour, and cap persistence. |
 | Movement and targeting | Standard move is four tiles for 1 AP, geometry blocks LOS, elevation is logical. | Diagonal costs, corner shots, LOS edge ties, climbing paths, height modifier, reach, deterministic extended-range behavior and preview semantics. |
@@ -14,7 +14,8 @@
 
 ## Classes, equipment and enemies
 
-- Lock costs, cooldowns, restrictions and advancement for the provisional kits. Resolve how draft Observer scouting and camouflage fit the exclusion of a general stealth system, and how older accuracy/suppression language maps to deterministic rules.
+- Playtest the provisional [Scythe tree](../references/design/SCYTHE_CLASS_DESIGN.md), including Charge range and reaction interactions, origin balance, Level 1–9 gates and unlock rules. Charge's design cost is 1 AP.
+- Develop the five remaining class trees using Scythe as the reference. Define each archetype's shared and exclusive powers, meaningful weaknesses, and any hybrid options.
 - Decide primary/secondary equipment and utility slots, overlap of equipment and powers, supply budget, whether an architecture can be respecialised, XP pacing, and how experienced recruits arrive.
 - Choose the first named opposition roster and encounter budget. Test role synergies and mixed vs homogeneous rosters against swarm, control, protected and support enemies. Establish how often special gates can occur and how intelligence telegraphs them.
 - Confirm enemy awareness, target scoring, role priorities, morale or escalation triggers, and how reaction and hazard previews expose enemy intent.

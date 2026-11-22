@@ -12,7 +12,7 @@
 | Cover | Protection uses shared directional edges with none, half and full tiers. Attacks from an unprotected angle bypass that edge. Solid geometry blocks LOS. The same rules apply to both sides. Melee gains no separate flank bonus. Cover can be selectively destroyed. | Cover reduction vs block, diagonals and edge priority, materials, structural HP, weapon eligibility, elevation interactions. |
 | Armour and HP | Eligible damage removes armour before HP. Each side refreshes its armour at the beginning of its phase to each unit's current maximum. Room entry also refills to the current maximum. HP persists and healing needs an item, ability, or explicit authored effect. | Armour cap loss and persistence, armour-piercing order, damage type resistances, and the final rules for armour destruction. |
 | Overwatch | Working baseline of 1 AP reserved for one valid basic-weapon reaction against eligible enemy movement. Normal range, LOS, armour, and cover apply. | Trigger geometry, resolution order, expiry and interaction with charges. |
-| Melee reactions | Opportunity attacks are class-specific. Eligibility can be innate, passive-enabled, or modified by a passive. Razor is an example candidate. A typical Marksman lacks the reaction. | Final class assignment, trigger geometry, timing, costs and trigger limits. |
+| Melee reactions | Opportunity attacks are class-specific. Eligibility can be innate, passive-enabled, or modified by a passive. | Scythe's Threatening Presence draft triggers once per round when an adjacent enemy moves away normally. Teleportation and forced movement are excluded from that trigger. Final class eligibility, timing, costs and trigger limits remain open. |
 | Powers and resources | Use readable ability-specific costs such as AP, cooldowns, charges or ammunition. The design has no global Willpower meter. | The combination of costs for each ability and whether heat, strain or exhaustion apply. |
 | Status and terrain | Valid effects apply deterministically subject to immunity. Reapplication may extend duration under the design baseline. Hazards and breakable terrain are in scope. | Status catalogue and caps, individual immunity and tick rules, hazard trigger order, and friendly-fire exceptions. The 21 November spec carries forward a displacement baseline without incidental collision or fall damage. Build 10 tests collision damage. |
 
@@ -27,7 +27,7 @@ Conversation evidence describes single shots as the default, class-specific burs
 3. If the room ends while the operative is down, the working transition rule brings them back at half HP in the between-room flow. A second down anywhere in the linked mission causes permanent loss.
 4. Returning to HQ resolves the mission tracking and removes the temporary ceiling. Campaign medical treatment and long-term injury rules remain open. Lasting wounds and a recovery debuff are part of earlier design discussion.
 
-The proposed timer is two to three turns. Exact timing, targetability, tile occupancy, medical intervention, and half-HP rounding remain open. Build 10 currently applies the room-transition recovery and second-down loss. It has no mid-room recovery timer or half-HP healing ceiling.
+The operative misses the next two full player turns after the round of their first down. A first down in Round 1 means missing Rounds 2 and 3 and standing at the start of player Round 4, before the normal armour and AP refresh. Half HP rounds up. A downed operative blocks their tile, cannot be targeted or treated, and loses temporary statuses. The mission fails if no operative is standing, even with recoveries scheduled.
 
 ### Feedback and accounting
 
@@ -38,7 +38,7 @@ Show legal destinations, AP, shot range and LOS, cover, expected damage and effe
 - **Confirmed direction.** Model C combines an authored narrative backbone and regional milestones with reactive events and a partly hidden Soviet programme simulation. The player receives broad explanations and increasingly precise forecasts with better intelligence.
 - **Confirmed direction.** Resistance capacity, Soviet suppression/technological capacity, and adaptive security doctrine drive change conceptually. Mission outcomes may change faction support, recruits, resources, research, or later threats and routes. Exact currencies, formulas, and which information is shown remain open.
 - **Confirmed direction.** The mobile HQ supports mission selection, roster/recovery, research, equipment, recruitment, and faction communication. Aim for a compact strategic layer and credible recovery from ordinary setbacks.
-- Six persistent class identities and genetic/technology build paths are described in [Classes and Enemies](CLASSES_AND_ENEMIES.md). Forward-only mission flow, extraction, and carry-over are in [Missions](MISSIONS.md).
+- The six class identities are defined by tactical role. Power archetypes vary playstyle within each class, and skill-tree abilities use no equipment slots. Current class names and provisional archetypes are in [Classes and Enemies](CLASSES_AND_ENEMIES.md). Forward-only mission flow, extraction, and carry-over are in [Missions](MISSIONS.md).
 
 ## Superseded or excluded
 

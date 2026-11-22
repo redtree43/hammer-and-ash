@@ -14,12 +14,12 @@
 | System | Build 10 |
 | --- | --- |
 | Combat | Fixed 2D board, five operatives, selectable units, AP economy, tile-by-tile movement, ranged attacks and special attacks, directional shared-edge cover, LOS, damage/armour previews, phase armour refresh, and reserved Overwatch. |
-| Environment | Destructible light (2 HP) and reinforced (5 HP) cover, plus impervious cover and opaque walls. Ordinary shots do not destroy cover. Area Shred can damage light cover, while Sentinel Breach and explosions can damage light and reinforced cover. Targetable fuel and waste barrels, chained explosions, friendly fire, weighted knockback/collision, fire/radiation/shock hazards and status ticks. Hazard durations are currently three rounds. |
+| Environment | Destructible light (2 HP) and reinforced (5 HP) cover, plus impervious cover and opaque walls. Ordinary shots do not destroy cover. Area Shred can damage light cover, while Anvil Breach and explosions can damage light and reinforced cover. Targetable fuel and waste barrels, chained explosions, friendly fire, weighted knockback/collision, fire/radiation/shock hazards and status ticks. Hazard durations are currently three rounds. |
 | Status samples | Burning and irradiated use two own-phase activations. Shocked lasts one and reduces the next AP refresh. Matching hazard entry is suppressed while its status remains active. These are build-specific rules. |
 | AI | Tactical and legacy comparison modes, role-aware movement/firing, hound pressure, support pursuit/healing/buffs, bolder or more defensive profiles, escape movement, and defence-objective targeting. |
-| Room carry-over | HP and downs persist. First down recovers at transition with half HP, rounded up in this build. Second down removes the operative permanently for the linked run. AP, armour and ability cooldowns reset. |
+| Recovery and room carry-over | A first down takes the operative out for the next two full player turns, then they stand at half HP rounded up. Clearing a room before that brings them back in the transition. The half-HP healing cap and down count carry forward. A second down is permanent. Room transitions reset AP, armour and ability cooldowns. |
 | Objectives | Five selectable fixtures, timed radio and conditional reinforcements, final-room escape, destructible or interactive machines, prisoner release, and safehouse waves. See [Missions](MISSIONS.md). |
-| Interface and reports | Squad tabs, unit and target inspectors, firing-range/LOS overlay, threat preview, ability text, damage ledger, per-room activity snapshots and final reports. Counters include attacks, movement/tiles, damage dealt and taken, ability use, Overwatch, healing/buffs and objective damage. |
+| Interface and reports | Static pixel-art silhouettes distinguish operatives and enemy types on their existing faction tokens. Squad tabs, unit and target inspectors, firing-range/LOS overlay, threat preview, ability text, damage ledger, per-room activity snapshots and final reports. Counters include attacks, movement/tiles, damage dealt and taken, ability use, Overwatch, healing/buffs and objective damage. |
 
 ## Preserved build history
 
@@ -37,8 +37,7 @@
 
 ## Gaps between design and code
 
-- The agreed first-down timer and mission-long half-HP healing ceiling are missing. Build 10's treatment uses normal max HP for healing. Its first-down recovery occurs during the room transition.
-- Final class-specific opportunity reactions and the Observer are missing from the active roster. There is no progression tree or general equipment system. The current charge and Overwatch interactions are prototype code.
+- Build 10 displays Scythe, Anvil, Needle, Iskra and Alkhimik with their existing prototype kits. [Glaz's control role](CLASSES_AND_ENEMIES.md#confirmed-class-identities) is confirmed design and has no playable slot yet. Scythe's detailed tree is provisional. Build 10 has no progression tree, general equipment system, or final class-specific opportunity reactions.
 - Ammunition, magazine capacity/reloading, consumable accounting, broad status and damage-type systems, and logical elevation remain planned. Build 10 has sample hazards and temporary combat effects.
 - Build 10 links rooms linearly. Branch selection, early extraction and secured-reward accounting, strategic PMO effects, and the first authored branching mission are still pending.
 - Campaign state, roster replacement and recovery, HQ, research, adaptive doctrine, final art and audio, and release scope remain future work.
@@ -47,10 +46,18 @@
 
 All preserved prototype archives passed ZIP integrity checks. Build 10 source files match their archive entries byte-for-byte. Godot 4.7.2 launched the original scene headlessly from a disposable copy. A separate one-off runtime harness passed **17 checks** covering initialisation of all five fixtures, a missed-radio clear, room transition and two downs, assassination escape/failure, sabotage activation, rescue interaction/completion, and defence wave scheduling/completion. The harness used direct scenario and state calls. Windows editor import, interactive end-to-end play, UI rendering, and balance remain to be verified. The original `VALIDATION_10.txt` and README accurately record the more limited validation done when Build 10 was originally packaged.
 
+## Windows Build 10 playtest
+
+The 22 November 2026 Windows run exercised all five fixtures through the normal input handlers in a rendered Godot 4.7.2 session. Both radio outcomes, squad carry-over and second-down loss were verified through normal room progression. A follow-up assassination retest confirmed 4/5 defeated on Orlov's escape and 5/5 when he and his guards were killed. [Run details and remaining checks](BUILD_10_PLAYTEST.md).
+
+The pixel-art pass was checked at 1460 × 900 in Godot 4.7.2 on Windows. All five fixtures opened, and all 13 active visual roles were sampled, including the activated sabotage robot. The retained legacy commander also has a distinct sprite. Replays of both radio outcomes and both assassination outcomes matched the recorded mission results and squad carry-over.
+
+A follow-up pass refreshed the cover, walls, barrels, hazards and mission props and added the confirmed first-down rules. Both radio branches were replayed through the original chain. The timed return, healing cap, transition recovery, permanent second down and wipe were verified. [Recovery run details](BUILD_10_PLAYTEST.md#first-down-recovery-and-battlefield-visuals).
+
 ## Next development priorities
 
-1. Establish Build 10 as the baseline and play all five fixtures through their normal controls. Exercise timely versus missed radio, assassin target killed versus escaped, sabotage before and after activation, rescue in both orders, and defence success, safehouse loss, and squad loss.
-2. Close confirmed combat gaps with tests for timed first-down recovery, half-HP ceiling, cross-room death and class-specific reactions. Reconcile collision damage in the prototype with the combat spec. Add the agreed ammunition/equipment behavior and extend statuses incrementally.
+1. Keep the recorded Windows fixture outcomes as the Build 10 regression baseline. Manual pacing and balance assessment remain open.
+2. Playtest recovery pacing and cover the remaining confirmed combat gaps, including class-specific reactions. Reconcile collision damage in the prototype with the combat spec. Add the agreed ammunition/equipment behavior and extend statuses incrementally.
 3. Use the objective fixtures to build the first forward-only branching mission with a distinct final PMO, optional gain, failed-SMO pressure, secured rewards, and between-room extraction. Test successful, partial, failed and extracted outcomes.
 4. Compare mixed and single-role squads against horde, ranged, protected and support compositions. Tune AI and UI using combat ledgers. Refactor combat and objective logic incrementally around shared rules and regression coverage.
 5. Once the tactical/mission loop is stable, build the proposed mini-campaign of three to five connected missions with compact HQ and campaign state. Lock large-scale content and production scope after that slice is proven.
