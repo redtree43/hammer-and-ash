@@ -1,0 +1,16 @@
+BUILD 09.1 — SENTINEL BREACH AND COVER SPECIALISATION
+Compared with 09:
+- Razor Area Shred destroys light cover only, leaving reinforced intact.
+- Sentinel Breach is a cardinal straight-line 1–4 tile charge (2 AP),
+  breaking authored destructible light and reinforced cover on traversed
+  edges and dealing 5 impact damage on enemy collision.
+- Added weight-checked, deterministic one-tile enemy displacement with
+  invalid heavy/blocked destinations shown before committing AP.
+- Added a shared Breach plan for accurate previews and execution, with
+  blue valid paths, orange destruction markers, green pushes and red X.
+- Breach resolves tile by tile with existing reactions and hazard rules.
+- Breach now contributes damage, distance and ability use to existing
+  hit ledger and per-room activity report.
+- Existing three-room mission, radio consequence, room-jump shortcuts,
+  health persistence, armour refresh, enemy AI and other environment
+  mechanics retained unchanged.

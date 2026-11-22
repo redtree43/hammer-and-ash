@@ -1,0 +1,69 @@
+HAMMER & ASH: UPRISING — BUILD 09.1 TEST PLAN
+
+HOW TO RUN
+1. Extract the ZIP to a fresh folder.
+2. Import its project.godot in Godot 4.x and press F5.
+3. In the game use F6/F7/F8 (or visible room buttons) to jump to rooms
+   for individual tests. Those developer jumps start with a fresh squad.
+
+WHAT CHANGED SINCE BUILD 09
+
+RAZOR AREA SHRED [Q]
+- Charge up to three pathfinding steps and sweep three connected adjacent cells.
+- Deals 2 damage to affected enemies as before.
+- Damages ONLY light (1-cover-level / 2-structural-HP) cover sections.
+- Does NOT damage reinforced (2-cover-level / 5-structural-HP) cover.
+- Fuel/waste explosions still affect BOTH light and reinforced cover.
+
+SENTINEL BREACH [B] — PROVISIONAL TEST ABILITY
+- Select Sentinel (key 2), then press B to enter Breach targeting.
+- Hover a destination 1-4 tiles away N/E/S/W. No diagonal paths or turns.
+- Blue outline: valid landing tile. Orange ring: cover section destroyed.
+- Red X: invalid target; read the ATTACK/AREA PREVIEW panel for why.
+- Green outlined tile/line: where a living lighter target will be pushed.
+- 5 DMG label: raw damage on collision, normally absorbed by armour first.
+- Click a valid destination. Costs 2 AP total and one use each player turn.
+- Move one tile at a time, breaking authored light/reinforced cover crossed.
+- An enemy on the chosen destination is struck for 5 raw damage. If it
+  survives and its weight is below Sentinel's, it is displaced ONE tile.
+- Displacement preference: straight ahead; then side; then other side.
+- Sentinel enters the enemy's former tile. If enemy dies, it no longer
+  occupies the tile and no displacement is needed.
+- If enemy weight >= Sentinel's, the landing tile is INVALID before AP cost.
+- If an enemy survives and no displacement tile is free, target INVALID.
+- An ally, another enemy along the intermediate route, a wall, barrel,
+  transmitter, or unbreakable fixed cover invalidates the attempted path.
+- Overwatch may interrupt the moving Sentinel. Hazards affect Sentinel
+  and any knocked-back victim under existing status and damage rules.
+- Fortify [Q] remains unchanged. Breach does NOT replace Fortify.
+- Breach movement/damage/cover broken are recorded in squad activity and
+  the hit ledger [L], where the effect is listed as Sentinel Breach.
+
+IMPORTANT DESIGN NOTE
+The prototype has authored destructible cover sections with small WHITE HP
+markers. These can be destroyed by Sentinel Breach and explosive attacks.
+Other cover sections are fixed, so Breach cannot pass through those edges.
+The mark is the distinction. Ordinary shots cannot damage cover.
+
+SUGGESTED CHECKS
+[ ] F6: Area Shred removes marked light cover, leaves marked reinforced.
+[ ] F6/F7: Sentinel charge moves 1,2,3,4 tiles, never diagonally.
+[ ] F7: A charge crossing light and reinforced marked edges removes both.
+[ ] F6: Charge into a lighter enemy, inspect 5-DMG hit and displacement.
+[ ] F8: Attempt to charge into WT3 elite: red X, NO AP spent.
+[ ] F6/F7: Blocked path / surrounded enemy: red X, NO AP spent.
+[ ] F6: Use B then cancel with Escape; verify no AP is lost.
+[ ] L: Damage from Sentinel Breach is attributed in the ledger; reconciled.
+[ ] One normal three-room chain: HP, transmitter consequence, activity
+    reports, environmental hazards and boss still work.
+
+CONTROLS
+B: Sentinel Breach test    Q: existing class signature ability
+1–5 / TAB: select operative   SPACE: end turn
+O: Overwatch    F: attack-range overlay    H: enemy threat
+L: attack ledger   F6/F7/F8: developer room jump
+R: restart entire chain
+
+LIMITATION
+The automated checks validate the source and archive, not live Godot
+execution. Your local F5 session remains the runtime/visual check.

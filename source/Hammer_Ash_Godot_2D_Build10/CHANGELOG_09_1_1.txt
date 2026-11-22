@@ -1,0 +1,12 @@
+BUILD 09.1.1 — GDSCRIPT PARSER HOTFIX
+
+Fixed a syntax error at scripts/combat.gd line 410 in
+arc_has_breakable_cover(): added the missing closing parenthesis
+after the light-cover Area Shred condition.
+
+All Build 09.1 rules, statistics, mission rooms and controls
+are otherwise unchanged.
+
+Validation: balanced punctuation scanner (GDScript source),
+archive integrity, and archive-versus-source comparison.
+Godot runtime compiler not available in this environment.

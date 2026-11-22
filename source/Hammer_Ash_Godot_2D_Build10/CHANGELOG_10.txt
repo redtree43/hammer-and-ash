@@ -1,0 +1,18 @@
+BUILD 10 — FOUR MODULAR MISSION OBJECTIVE TESTS
+- Added mission selector with five independent test scenarios (M to reopen).
+- Preserved existing Build 09.3 three-room chain as regression scenario.
+- Assassination: three rooms; protected final target attempts deterministic
+  escape from enemy phase 3; escape fails primary objective without requiring
+  player defeat; guards can still be cleared.
+- Sabotage: two machine objectives; basic weapon targeting and melee attacks;
+  terminal can disable prototype; a timed event can activate robot, whose
+  destruction substitutes for disabling its pod.
+- Rescue: two adjacent-interaction prisoner releases; no escort micromanagement;
+  room remains playable after guards are defeated until objective complete.
+- Defence: one map, 20-HP safehouse and four scheduled waves over eight
+  rounds; attacking AI targets HQ or operatives; wave entry warning.
+- Mission objectives, objects, timers/actions and persistent flags are
+  configured separately from generic combat controls and damage systems.
+- Generalized room count/labels, mission completion, hovering and on-map
+  objective markers, end-of-mission reporting, and room activity display.
+- Preserved class ability costs, cover/hazards, room attrition, legacy radio.

@@ -1,0 +1,12 @@
+HAMMER & ASH - BUILD 09.2
+
+- Replaces large right-side unit lists with selectable squad tabs, an operative inspector, a hovered enemy inspector and room objective status.
+- Selected operative: current HP/ARM/AP, unit weight, damage/range/move, statuses, active Q ability and Sentinel Breach.
+- Hover a living enemy for name, HP/ARM/AP, weight, statuses, attack profile and shot preview. Hover barrels or radio for object information.
+- Click squad tabs or press 1-5 / Tab to select.
+- Each of the three rooms now contains exactly one fuel barrel and one waste barrel, separated beyond their blast radius.
+- Light/reinforced destructible cover retains 2/5 HP internally; HP digits and structural HP combat log lines are hidden from the player.
+- Entering a fire/radiation/shock tile while the matching status remains active does not deal extra entry damage or refresh the duration. Existing status ticks still apply.
+- Preserves mission chain, radio consequences, environmental effects, heavy Sentinel Breach and Area Shred restrictions.
+
+Validation: static source and map tests; run with Godot F5 for actual engine verification.

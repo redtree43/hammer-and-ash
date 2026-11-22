@@ -1,0 +1,22 @@
+HAMMER & ASH — BUILD 09.3
+
+COVER
+- Every light/shared-edge cover piece now has 2 internal HP and is destructible.
+- Every reinforced/shared-edge cover piece now has 5 internal HP and is destructible.
+- Impervious (slate grey) cover has full-cover damage reduction and is indestructible. One sample exists per room.
+- Walls block movement/LOS and remain indestructible.
+- Ordinary gunfire still cannot directly target or destroy cover. Razor Shred damages light only; Sentinel Breach can destroy light and reinforced; explosions affect both.
+- Removed all circular markers drawn on pieces of breakable cover.
+
+RANGE & UI
+- F now toggles bright-green range/LOS links and green circles ONLY to enemies that can be hit by the selected operative's BASIC attack. No out-of-range red enemy circles.
+- Hovered enemy panel explicitly shows IN RANGE / OUT OF RANGE / LOS BLOCKED independently of shot-damage estimate.
+- Friendly unit tokens and squad tabs turn grey when AP reaches zero and restore blue when AP refreshes.
+
+TEMPORARY 1-AP TEST BALANCE
+- Area Shred, Fortify, Precision Shot, Arc Disruptor, Field Treatment, Sentinel Breach all cost 1 AP.
+- KGB Biotechnician healing/buff and Commander emergency command cost 1 AP.
+- Standard attacks, movement and Overwatch already cost 1 AP.
+- Existing once-per-turn limits/cooldowns unchanged.
+
+Other environmental and three-room-chain rules from 09.2 retained.

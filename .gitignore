@@ -1,0 +1,16 @@
+# Godot-generated project data
+.godot/
+
+# Editor and OS files
+.idea/
+.vscode/
+.vs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+export_credentials.cfg

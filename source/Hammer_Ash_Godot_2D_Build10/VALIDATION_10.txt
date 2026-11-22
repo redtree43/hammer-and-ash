@@ -1,0 +1,15 @@
+BUILD 10 STATIC VALIDATION RESULTS
+- GDScript lexical delimiter/quote balance: PASS
+- Unique function declarations: PASS
+- Indentation: PASS
+- Objective selector and branch wiring: PASS
+- Four objective types and mission event hooks: PASS
+- Existing radio transmitter and squad carryover preserved: PASS
+- Unit/object/barrel/wall collision checks on new authored rooms: PASS
+- Adjacent access to sabotage generators/terminal and rescue prisoners: PASS
+- DEFENCE wave schedule at rounds 1, 3, 5, 7: INSPECTED
+- Complete ZIP integrity: pending final package step
+
+LIMITATION: A Godot executable was not available to compile or run
+this game. Only static validation has been performed in the build
+container; local Godot F5 runtime testing remains required.

@@ -1,0 +1,14 @@
+BUILD 09.3 VALIDATION (STATIC / OFFLINE)
+
+Checked source and all three authored map cover dictionaries.
+- 21 automated source-level feature checks passed
+- Source delimiters balanced; all declared functions unique
+- Room 1: 60 authored physical cover edges, 59 ordinary breakable + 1 sample impervious
+- Room 2: 36 authored physical cover edges, 35 ordinary breakable + 1 sample impervious
+- Room 3: 38 authored physical cover edges, 37 ordinary breakable + 1 sample impervious
+- Range-link display calls the same base attack_preview used by combat, including LOS
+- Marker drawing and old green/yellow/red target range rings removed
+- All player signature actions and Sentinel Breach cost 1 AP; enemy biotechnician and commander special actions cost 1 AP
+- Room transitions, radio sub-objective and two-barrel-per-room setup are preserved
+
+LIMITATION: No Godot executable is available in this environment, so no actual Godot parser/load/F5 validation was possible. Please import project.godot into Godot 4.7 and test locally. Do not interpret these static checks as proof of runtime success.
