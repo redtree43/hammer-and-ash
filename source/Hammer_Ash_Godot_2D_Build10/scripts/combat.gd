@@ -7,6 +7,12 @@ extends Node2D
 ## Artwork is drawn in 2D with embedded pixel sprites; no external assets required.
 
 const UnitSprites = preload("res://scripts/unit_sprites.gd")
+const StarterLoadouts = preload("res://scripts/starter_loadouts.gd")
+const Headquarters = preload("res://scripts/hq_trial_screen.gd")
+const HQ_BUTTON: Rect2 = Rect2(950, 751, 235, 46)
+
+var headquarters: Headquarters = Headquarters.new()
+var hq_deployment: bool = false
 
 @onready var unit_sprites: Dictionary[String, Texture2D] = UnitSprites.create_textures()
 
@@ -16,6 +22,20 @@ const TILE: int = 36
 const ORIGIN: Vector2 = Vector2(32, 88)
 const DIRECTIONS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 const MOVE_DISTANCE: int = 4
+const SCYTHE_CHARGE_NAME: String = "Charge"
+const SCYTHE_CHARGE_DISTANCE: int = 2
+const SCYTHE_CHARGE_DAMAGE: int = 2
+const WOLVERINE_CLAWS: String = "Wolverine Claws"
+const SPIDER_AGILITY_BONUS: int = 1
+const SHORT_BLINK: String = "Short Blink"
+const SHORT_BLINK_RANGE: int = 4
+const SHORT_BLINK_AP: int = 1
+const DEFAULT_MAGAZINE_CAPACITY: int = 3
+const RELOAD_AP_COST: int = 1
+const EMPTY_MAGAZINE: String = "Magazine empty: reload [X]."
+const SHOOT_BUTTON: Rect2 = Rect2(1187, 274, 96, 28)
+const RELOAD_BUTTON: Rect2 = Rect2(1291, 274, 110, 28)
+const EMPTY_RELOAD_BUTTON: Rect2 = Rect2(1187, 274, 214, 28)
 const FIRST_DOWN_MISSED_TURNS: int = 2
 const HORDE_MOVE_DISTANCE: int = 5
 const SUPPORT_RANGE: int = 4
@@ -117,10 +137,26 @@ var ability_use_totals: Dictionary = {}
 var enemy_horde_start: int = 5
 
 # ===== Build 10: one mission controller, configurable objectives and events =====
-const TEST_MISSION_IDS: Array[String] = ["chain", "assassination", "sabotage", "rescue", "defence"]
-const TEST_MISSION_TITLES: Array[String] = ["Original three-room chain", "Assassination: fleeing officer", "Sabotage: prototype activation", "Rescue: two prisoners", "Defence: safehouse waves"]
-var test_mission_id: String = "chain"
+const TEST_MISSION_IDS: Array[String] = ["chain", "assassination", "sabotage", "rescue", "defence", "scythe"]
+const TEST_MISSION_TITLES: Array[String] = ["Original three-room chain", "Assassination: fleeing officer", "Sabotage: prototype activation", "Rescue: two prisoners", "Defence: safehouse waves", "Scythe: origin test range"]
+const SCYTHE_ORIGINS: Array[String] = ["Wolverine", "Arachnid", "Blink", "Standard"]
+const SCYTHE_ORIGIN_DETAILS: Array[String] = ["Innate claws", "Spider Agility", SHORT_BLINK, "Charge only"]
+var test_mission_id: String = "assassination"
 var mission_picker_open: bool = true
+var loadout_open: bool = false
+var pending_mission_id: String = ""
+var loadout_operative: int = 0
+var mission_loadouts: Array[Array] = StarterLoadouts.defaults()
+var draft_loadouts: Array[Array] = []
+var scythe_origin: String = "Wolverine"
+var draft_scythe_origin: String = "Wolverine"
+var scythe_portraits: Dictionary[String, Texture2D] = {}
+var loadout_action: String = ""
+const DEPLOY_BUTTON: Rect2 = Rect2(1015, 743, 216, 54)
+const LOADOUT_BACK_BUTTON: Rect2 = Rect2(229, 743, 157, 54)
+const SHORT_BLINK_BUTTON: Rect2 = Rect2(1187, 419, 214, 24)
+const MELEE_BUTTON: Rect2 = Rect2(1187, 246, 96, 24)
+const MEDKIT_BUTTON: Rect2 = Rect2(1291, 246, 110, 24)
 var mission_objects: Dictionary = {}       # Vector2i -> objective object data
 var mission_objectives: Array[Dictionary] = [] # reusable {id,type,label,required,complete}
 var mission_events: Array[Dictionary] = []  # configurable {id,round,phase,action,fired}
@@ -140,10 +176,11 @@ func mission_room_label(stage: int) -> String:
         return ["01 / OUTER PATROL", "02 / KGB SECURITY", "03 / OFFICER'S ESCAPE"][stage]
     if test_mission_id == "sabotage": return "01 / PROJECT IRON GIANT"
     if test_mission_id == "rescue": return "01 / DETENTION BLOCK"
+    if test_mission_id == "scythe": return "01 / SCYTHE TEST RANGE"
     return "01 / SAFEHOUSE DEFENCE"
 
 func mission_picker_rect(idx: int) -> Rect2:
-    return Rect2(265.0, 203.0 + float(idx) * 104.0, 920.0, 85.0)
+    return Rect2(265.0, 175.0 + float(idx) * 94.0, 920.0, 80.0)
 
 func draw_mission_picker() -> void:
     draw_rect(Rect2(0, 0, 1460, 900), Color("#111b2b"), true)
@@ -154,7 +191,8 @@ func draw_mission_picker() -> void:
         "Three linked rooms. Target in Room 3 attempts escape starting turn 3.",
         "Destroy two installations. At end of turn 3, an unfinished prototype activates.",
         "Unlock two cells (adjacent, 1 AP) and clear guards; no long escort walk.",
-        "Single map, 8 rounds, 4 scheduled waves. Protect the 20-HP safehouse."
+        "Single map, 8 rounds, 4 scheduled waves. Protect the 20-HP safehouse.",
+        "Compare Wolverine Claws, Spider Agility and Short Blink with Charge."
     ]
     for i in range(TEST_MISSION_IDS.size()):
         var r: Rect2 = mission_picker_rect(i)
@@ -163,8 +201,141 @@ func draw_mission_picker() -> void:
         draw_rect(r, Color("#87d4bc") if selected else Color("#667f91"), false, 2.0)
         draw_label("%d  /  %s" % [i + 1, TEST_MISSION_TITLES[i]], r.position + Vector2(20, 32), 21, Color("#e9f1f5"))
         draw_label(descriptions[i], r.position + Vector2(22, 61), 14, Color("#a9c1d1"))
-    draw_label("Click a scenario or press 1–5. All retain the five normal operatives and 1-AP abilities.", Vector2(265, 770), 14, Color("#e8d19a"))
+    draw_label("Click a scenario or press 1–6 to prepare the squad's loadout.", Vector2(265, 770), 14, Color("#e8d19a"))
     draw_label("Developer shortcuts: M menu  |  F6/F7/F8 original-room jump  |  L hit ledger", Vector2(265, 802), 13, Color("#9fb5c6"))
+    draw_action_button(HQ_BUTTON, "HEADQUARTERS TRIAL [F9]", true)
+
+func begin_loadout(id: String) -> void:
+    if not TEST_MISSION_IDS.has(id):
+        return
+    pending_mission_id = id
+    draft_loadouts = mission_loadouts.duplicate(true)
+    draft_scythe_origin = scythe_origin
+    loadout_operative = 0
+    mission_picker_open = false
+    loadout_open = true
+    queue_redraw()
+
+func deploy_loadout() -> void:
+    if not loadout_open:
+        return
+    mission_loadouts = draft_loadouts.duplicate(true)
+    if pending_mission_id == "scythe":
+        scythe_origin = draft_scythe_origin
+    loadout_open = false
+    choose_test_mission(pending_mission_id)
+
+func loadout_member_rect(idx: int) -> Rect2:
+    return Rect2(229 + idx * 203, 179, 190, 54)
+
+func loadout_item_rect(slot: int, option: int) -> Rect2:
+    if slot == 0:
+        return Rect2(423 + option * 268, 267, 256, 76)
+    return Rect2(423 + option * 405, 267 + slot * 105, 391, 76)
+
+func choosing_scythe_origin() -> bool:
+    return pending_mission_id == "scythe" and loadout_operative == 0
+
+func scythe_origin_rect(idx: int) -> Rect2:
+    return Rect2(423 + idx * 202, 674, 190, 54)
+
+func handle_loadout_input(event: InputEvent) -> void:
+    if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode in [KEY_ESCAPE, KEY_M]:
+            loadout_open = false
+            mission_picker_open = true
+        elif event.keycode in [KEY_ENTER, KEY_KP_ENTER]:
+            deploy_loadout()
+        elif event.keycode in [KEY_1, KEY_2, KEY_3, KEY_4, KEY_5]:
+            loadout_operative = event.keycode - KEY_1
+        elif event.keycode == KEY_W and choosing_scythe_origin():
+            draft_scythe_origin = SCYTHE_ORIGINS[(SCYTHE_ORIGINS.find(draft_scythe_origin) + 1) % SCYTHE_ORIGINS.size()]
+    elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+        if DEPLOY_BUTTON.has_point(event.position):
+            deploy_loadout()
+        elif LOADOUT_BACK_BUTTON.has_point(event.position):
+            loadout_open = false
+            mission_picker_open = true
+        else:
+            for idx in range(5):
+                if loadout_member_rect(idx).has_point(event.position):
+                    loadout_operative = idx
+                    break
+            if choosing_scythe_origin():
+                for idx in range(SCYTHE_ORIGINS.size()):
+                    if scythe_origin_rect(idx).has_point(event.position):
+                        draft_scythe_origin = SCYTHE_ORIGINS[idx]
+                        break
+            for slot in range(StarterLoadouts.SLOTS.size()):
+                if slot == 1 and choosing_scythe_origin() and draft_scythe_origin == "Wolverine":
+                    continue
+                for option in range(StarterLoadouts.ITEMS[slot].size()):
+                    if loadout_item_rect(slot, option).has_point(event.position):
+                        StarterLoadouts.select_item(loadout_operative, draft_loadouts[loadout_operative], slot, option)
+    queue_redraw()
+
+func draw_loadout() -> void:
+    draw_rect(Rect2(0, 0, 1460, 900), Color("#111b2b"))
+    draw_label("SQUAD LOADOUT", Vector2(229, 94), 33, Color("#edf2f8"))
+    var title: String = TEST_MISSION_TITLES[TEST_MISSION_IDS.find(pending_mission_id)]
+    draw_label(title + "  ·  Gear locks at deployment", Vector2(230, 133), 17, Color("#b5cdda"))
+    for idx in range(5):
+        var tab: Rect2 = loadout_member_rect(idx)
+        var current: bool = idx == loadout_operative
+        draw_rect(tab, Color("#315a6b") if current else Color("#223449"))
+        draw_rect(tab, Color("#8edac4") if current else Color("#435b72"), false, 1.0)
+        var role: String = str(units[idx]["name"])
+        if idx == 0 and pending_mission_id == "scythe":
+            role = UnitSprites.scythe_role(draft_scythe_origin)
+        draw_texture(unit_sprites[role], tab.position + Vector2(13, 15))
+        draw_label("%d  %s" % [idx + 1, str(units[idx]["name"])], tab.position + Vector2(48, 34), 16, Color("#edf2f8"))
+    var operative: Dictionary = units[loadout_operative]
+    var choices: Array = draft_loadouts[loadout_operative]
+    for slot in range(StarterLoadouts.SLOTS.size()):
+        draw_label(StarterLoadouts.SLOTS[slot].to_upper(), Vector2(230, 301 + slot * 105), 15, Color("#bbd4e1"))
+        if slot == 1 and choosing_scythe_origin() and draft_scythe_origin == "Wolverine":
+            var claw_card: Rect2 = loadout_item_rect(slot, 0)
+            draw_rect(claw_card, Color("#284b51"))
+            draw_rect(claw_card, Color("#8edac4"), false, 1.0)
+            draw_label(WOLVERINE_CLAWS, claw_card.position + Vector2(17, 29), 18, Color("#edf2f8"))
+            draw_label("Innate · 2 damage · removes 1 maximum armour", claw_card.position + Vector2(17, 52), 13, Color("#b5cdda"))
+            continue
+        for option in range(StarterLoadouts.ITEMS[slot].size()):
+            var item: Dictionary = StarterLoadouts.ITEMS[slot][option]
+            var card: Rect2 = loadout_item_rect(slot, option)
+            var equipped: bool = int(choices[slot]) == option
+            var allowed: bool = StarterLoadouts.can_equip(loadout_operative, choices, slot, option)
+            draw_rect(card, Color("#284b51") if equipped else (Color("#223449") if allowed else Color("#1a2737")))
+            draw_rect(card, Color("#8edac4") if equipped else Color("#435b72"), false, 1.0)
+            var item_name: String = str(item["name"])
+            var detail: String = str(item["detail"]) if allowed else "Unavailable with a two-handed rifle"
+            if slot == 0 and option == 0:
+                var issued: Dictionary = operative["issued_firearm"]
+                item_name = str(issued["name"])
+                detail = "%d damage · %d range · 3 rounds" % [int(issued["damage"]), int(issued["range"])]
+            elif slot == 2 and option == 0:
+                detail = "%d armour" % int(operative["issued_armour"])
+            draw_label(item_name, card.position + Vector2(17, 29), 18, Color("#edf2f8") if allowed else Color("#8497a4"))
+            draw_label(detail, card.position + Vector2(17, 52), 13, Color("#b5cdda"))
+            if slot == 0 and StarterLoadouts.blocks_melee(loadout_operative, option):
+                draw_label("Two-handed · clears melee slot", card.position + Vector2(17, 68), 11, Color("#e9bb83"))
+            if equipped:
+                draw_label("EQUIPPED", card.position + Vector2(card.size.x - 81, 29), 11, Color("#ace6cc"))
+    draw_rect(LOADOUT_BACK_BUTTON, Color("#293b50"))
+    draw_label("BACK [ESC]", LOADOUT_BACK_BUTTON.position + Vector2(25, 34), 16, Color("#edf2f8"))
+    if choosing_scythe_origin():
+        draw_label("ORIGIN [W]", Vector2(230, 707), 15, Color("#bbd4e1"))
+        for idx in range(SCYTHE_ORIGINS.size()):
+            var origin: String = SCYTHE_ORIGINS[idx]
+            var rect: Rect2 = scythe_origin_rect(idx)
+            var selected: bool = origin == draft_scythe_origin
+            draw_rect(rect, Color("#315a6b") if selected else Color("#223449"))
+            draw_rect(rect, Color("#8edac4") if selected else Color("#435b72"), false, 1.0)
+            draw_texture(scythe_portraits[origin], rect.position + Vector2(6, 3))
+            draw_label(origin, rect.position + Vector2(66, 23), 15, Color("#edf2f8"))
+            draw_label(SCYTHE_ORIGIN_DETAILS[idx], rect.position + Vector2(66, 42), 12, Color("#b5cdda"))
+    draw_rect(DEPLOY_BUTTON, Color("#377760"))
+    draw_label("DEPLOY [ENTER]", DEPLOY_BUTTON.position + Vector2(26, 34), 17, Color("#f3fff9"))
 
 func choose_test_mission(id: String) -> void:
     if not TEST_MISSION_IDS.has(id):
@@ -187,6 +358,9 @@ func mission_object_at(tile: Vector2i) -> bool:
     var obj: Dictionary = mission_objects[tile]
     if str(obj.get("kind", "")) == "prisoner":
         return not bool(obj.get("released", false))
+    if obj["kind"] == "terminal":
+        var target: Vector2i = mission_object_named(str(obj["target_id"]))
+        return int(obj["hp"]) > 0 and target.x >= 0 and int(mission_objects[target]["hp"]) > 0
     return int(obj.get("hp", 0)) > 0
 
 func mission_object_named(id: String) -> Vector2i:
@@ -292,6 +466,8 @@ func all_required_objectives_met() -> bool:
     return true
 
 func get_objective_progress_line() -> String:
+    if test_mission_id == "scythe":
+        return "Clear the range. Scythe's Charge can be stopped by Overwatch."
     if test_mission_id == "chain":
         if mission_stage == 1:
             return "OPTIONAL: Destroy radio TX by end of turn 3"
@@ -325,12 +501,9 @@ func objective_action(actor_idx: int, tile: Vector2i) -> bool:
             status_message = "%s FREE! Once guards are defeated the prisoner evacuates safely." % str(obj["label"])
         else:
             var target_pos: Vector2i = mission_object_named(str(obj["target_id"]))
-            if target_pos.x >= 0 and mission_object_at(target_pos):
-                var pod: Dictionary = mission_objects[target_pos]
-                pod["hp"] = 0
-                mission_objects[target_pos] = pod
-                mission_flags["prototype_neutralized"] = true
-                status_message = "Prototype disabled through adjacent terminal (1 AP)."
+            mission_objects[target_pos]["hp"] = 0
+            mission_flags["prototype_neutralized"] = true
+            status_message = "Prototype disabled through adjacent terminal (1 AP)."
             obj["hp"] = 0
             mission_objects[tile] = obj
         add_log(status_message)
@@ -343,6 +516,9 @@ func objective_action(actor_idx: int, tile: Vector2i) -> bool:
     var dist: int = grid_distance(units[actor_idx]["pos"], tile)
     if not adjacent and (dist > int(units[actor_idx]["range"]) or not has_line_of_sight(units[actor_idx]["pos"], tile)):
         status_message = "Objective outside range or line of sight."
+        return false
+    if not adjacent and not spend_shot(actor_idx):
+        status_message = EMPTY_MAGAZINE
         return false
     units[actor_idx]["ap"] = int(units[actor_idx]["ap"]) - 1
     unit_action_counters[actor_idx]["basic_attacks"] = int(unit_action_counters[actor_idx]["basic_attacks"]) + 1
@@ -365,6 +541,7 @@ func objective_action(actor_idx: int, tile: Vector2i) -> bool:
 
 func append_enemy_to_battle(enemy: Dictionary) -> void:
     enemy["id"] = units.size()
+    fill_magazine(enemy)
     enemy["statuses"] = {}
     enemy["reaction_type"] = ""
     enemy["reaction_available"] = false
@@ -439,6 +616,8 @@ func enemy_attack_safehouse(idx: int) -> bool:
         return false
     var enemy: Dictionary = units[idx]
     if grid_distance(enemy["pos"], DEFENCE_HQ_POS) > int(enemy["range"]) or not has_line_of_sight(enemy["pos"], DEFENCE_HQ_POS):
+        return false
+    if not spend_shot(idx):
         return false
     units[idx]["ap"] = int(units[idx]["ap"]) - 1
     battle_stats[idx]["attacks"] = int(battle_stats[idx]["attacks"]) + 1
@@ -667,6 +846,9 @@ func barrel_preview(attacker_idx: int, tile: Vector2i) -> Dictionary:
     var result: Dictionary = {"valid": false, "reason": "Barrel unavailable", "distance": 0}
     if not barrel_is_active(tile) or attacker_idx < 0 or attacker_idx >= units.size():
         return result
+    if not has_attack_ammo(attacker_idx):
+        result["reason"] = EMPTY_MAGAZINE
+        return result
     var dist: int = grid_distance(units[attacker_idx]["pos"], tile)
     result["distance"] = dist
     if dist > int(units[attacker_idx]["range"]):
@@ -685,6 +867,8 @@ func attack_barrel(actor_idx: int, tile: Vector2i) -> bool:
         return false
     if int(units[actor_idx]["ap"]) < 1:
         status_message = "Need 1 AP to shoot barrel."
+        return false
+    if not spend_shot(actor_idx):
         return false
     units[actor_idx]["ap"] = int(units[actor_idx]["ap"]) - 1
     unit_action_counters[actor_idx]["basic_attacks"] = int(unit_action_counters[actor_idx]["basic_attacks"]) + 1
@@ -939,13 +1123,13 @@ func breach_plan(target_tile: Vector2i) -> Dictionary:
     # Single authoritative preflight used for both preview and execution.
     # The charge cannot turn, jump walls, target allies or shove equally heavy enemies.
     var plan: Dictionary = {"valid": false, "reason": "Select a destination", "path": [], "edges": [], "enemy": -1, "push": Vector2i(-1, -1), "lethal": false}
-    if units.size() <= 1 or int(units[1]["hp"]) <= 0:
+    if operative_kit(selected_id) != 1 or int(units[selected_id]["hp"]) <= 0:
         plan["reason"] = "Anvil is unavailable"
         return plan
-    if int(units[1]["ap"]) < SENTINEL_BREACH_AP or int(units[1].get("breach_used_turn", -99)) == turn_number:
+    if int(units[selected_id]["ap"]) < SENTINEL_BREACH_AP or int(units[selected_id].get("breach_used_turn", -99)) == turn_number:
         plan["reason"] = "Breach not ready: requires 1 AP, once per turn"
         return plan
-    var origin: Vector2i = units[1]["pos"]
+    var origin: Vector2i = units[selected_id]["pos"]
     var delta: Vector2i = target_tile - origin
     var length: int = grid_distance(origin, target_tile)
     if length < 1 or length > SENTINEL_BREACH_DISTANCE or (delta.x != 0 and delta.y != 0):
@@ -981,7 +1165,7 @@ func breach_plan(target_tile: Vector2i) -> Dictionary:
             if n != length:
                 plan["reason"] = "Enemy blocks the path: target its tile instead"
                 return plan
-            if int(units[occupant].get("weight", 2)) >= int(units[1].get("weight", 3)):
+            if int(units[occupant].get("weight", 2)) >= int(units[selected_id].get("weight", 3)):
                 plan["reason"] = "TARGET TOO HEAVY: cannot displace this enemy"
                 return plan
             plan["enemy"] = occupant
@@ -1002,7 +1186,9 @@ func breach_plan(target_tile: Vector2i) -> Dictionary:
     return plan
 
 func sentinel_breach(target_tile: Vector2i) -> bool:
-    var actor: Dictionary = units[1]
+    if operative_kit(selected_id) != 1:
+        return false
+    var actor: Dictionary = units[selected_id]
     if side_to_play != "player" or game_over or int(actor["hp"]) <= 0:
         return false
     if int(actor["ap"]) < SENTINEL_BREACH_AP or int(actor.get("breach_used_turn", -99)) == turn_number:
@@ -1012,12 +1198,12 @@ func sentinel_breach(target_tile: Vector2i) -> bool:
     if not bool(plan["valid"]):
         status_message = "BREACH BLOCKED: " + str(plan["reason"])
         return false
-    units[1]["ap"] = int(units[1]["ap"]) - SENTINEL_BREACH_AP
-    units[1]["breach_used_turn"] = turn_number
-    record_ability_use(1, BREACH_ACTION_NAME)
-    unit_action_counters[1]["moves"] = int(unit_action_counters[1]["moves"]) + 1
+    units[selected_id]["ap"] = int(units[selected_id]["ap"]) - SENTINEL_BREACH_AP
+    units[selected_id]["breach_used_turn"] = turn_number
+    record_ability_use(selected_id, BREACH_ACTION_NAME)
+    unit_action_counters[selected_id]["moves"] = int(unit_action_counters[selected_id]["moves"]) + 1
     var steps: Array = plan["path"]
-    movement_task = {"unit_idx": 1, "kind": "sentinel_breach", "path": steps, "cursor": 0, "after": {}}
+    movement_task = {"unit_idx": selected_id, "kind": "sentinel_breach", "path": steps, "cursor": 0, "after": {}}
     movement_tick = 0.03
     status_message = "BREACH: Anvil charging %d tiles; cover shatters on contact." % steps.size()
     add_log("Anvil begins %d-tile Breach charge (1 AP)." % steps.size())
@@ -1026,9 +1212,9 @@ func sentinel_breach(target_tile: Vector2i) -> bool:
 func draw_sentinel_breach_preview() -> void:
     # The same breach_plan() drives blue valid endpoints, red blocked tiles,
     # orange breakable edges and the exact green landing spot for displaced foes.
-    if units.size() <= 1 or int(units[1]["hp"]) <= 0:
+    if operative_kit(selected_id) != 1 or int(units[selected_id]["hp"]) <= 0:
         return
-    var origin: Vector2i = units[1]["pos"]
+    var origin: Vector2i = units[selected_id]["pos"]
     for direction in DIRECTIONS:
         for length in range(1, SENTINEL_BREACH_DISTANCE + 1):
             var destination: Vector2i = origin + direction * length
@@ -1097,8 +1283,43 @@ func draw_barrels() -> void:
         draw_label(str(barrel["hp"]), c + Vector2(10, -12), 11, Color("#ffffff"))
 
 func _ready() -> void:
+    for origin in SCYTHE_ORIGINS:
+        scythe_portraits[origin] = UnitSprites.create_texture(UnitSprites.scythe_role(origin), 4)
     restart_game()
-    mission_picker_open = true
+    mission_picker_open = false
+    var playable_classes: Array[String] = []
+    for idx in range(5):
+        var kit: String = units[idx]["name"]
+        playable_classes.append(kit)
+        headquarters.kit_profiles[kit] = units[idx].duplicate(true)
+        headquarters.kit_profiles[kit]["ability_text"] = ability_description(idx)
+        headquarters.portraits[kit] = unit_sprites[kit]
+    add_child(headquarters)
+    headquarters.campaign.seed(playable_classes)
+    headquarters.deployed.connect(deploy_hq_operation)
+    headquarters.open()
+
+func deploy_hq_operation(operation: String) -> void:
+    hq_deployment = true
+    test_mission_id = operation
+    mission_picker_open = false
+    restart_game()
+
+func hq_operative_id(idx: int) -> int:
+    return int(headquarters.campaign.mission["squad"][idx])
+
+func operative_kit(idx: int) -> int:
+    return int(units[idx].get("kit_index", idx)) if idx >= 0 and idx < 5 else -1
+
+func extract_hq_operation() -> void:
+    if not hq_deployment or not room_cleared or headquarters.campaign.mission.is_empty():
+        return
+    headquarters.campaign.finish("Extracted after Room %d" % (mission_stage + 1), units)
+    room_cleared = false
+    game_over = true
+    show_report = false
+    headquarters.open()
+    queue_redraw()
 
 func restart_game() -> void:
     # Restart always begins the full chain, not the current room.
@@ -1120,6 +1341,7 @@ func restart_game() -> void:
 func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
     mission_stage = stage
     breach_target_mode = false
+    loadout_action = ""
     room_cleared = false
     mission_victory = false
     if test_mission_id == "chain" and stage == 1:
@@ -1128,16 +1350,35 @@ func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
     else:
         radio_state.clear()
     # Three distinct maps: open kennels, fortified bunker, compact final arena.
-    var layout_stage: int = stage if test_mission_id in ["chain", "assassination"] else (0 if test_mission_id == "defence" else 1)
+    var layout_stage: int = stage if test_mission_id in ["chain", "assassination"] else (0 if test_mission_id in ["defence", "scythe"] else 1)
     scenario_index = 1 if layout_stage == 1 else 0
     arena_variant = 1 if layout_stage == 2 else 0
     setup_legacy_arena()
     var authored: Array[Dictionary] = []
     for idx in range(5):
-        authored.append(units[idx].duplicate(true))
+        if not hq_deployment:
+            authored.append(units[idx].duplicate(true))
+            continue
+        var id: int = hq_operative_id(idx)
+        var kit: String = headquarters.campaign.roster[id]["kit"]
+        var kit_index: int = headquarters.campaign.classes.find(kit)
+        var operative: Dictionary = units[kit_index].duplicate(true)
+        operative["kit_index"] = kit_index
+        operative["kit_name"] = kit
+        operative["name"] = headquarters.campaign.operative_name(id)
+        operative["pos"] = units[idx]["pos"]
+        authored.append(operative)
     if test_mission_id == "defence":
         # Wave controller will spawn enemies after the battle arrays initialise.
         pass
+    elif test_mission_id == "scythe":
+        var armoured_guard: Dictionary = make_chain_rifle("Armoured Guard", Vector2i(4, 2), true, "defensive")
+        armoured_guard["max_hp"] = 9
+        armoured_guard["hp"] = 9
+        armoured_guard["max_armour"] = 4
+        authored.append(armoured_guard)
+        authored.append(make_chain_rifle("Overwatch Sentry", Vector2i(6, 2), false, "defensive"))
+        authored.append(make_test_hound("Test Hound", Vector2i(8, 6)))
     elif test_mission_id in ["sabotage", "rescue"]:
         var positions: Array[Vector2i] = [Vector2i(14, 3), Vector2i(19, 3), Vector2i(16, 6), Vector2i(19, 11), Vector2i(14, 12)]
         for idx in range(positions.size()):
@@ -1201,6 +1442,23 @@ func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
     units = authored
     for idx in range(units.size()):
         units[idx]["id"] = idx  # IDs and battle-stat indices always match.
+        if idx < 5:
+            if hq_deployment:
+                var id: int = hq_operative_id(idx)
+                StarterLoadouts.equip(units[idx], headquarters.campaign.mission["gear"][id])
+            else:
+                StarterLoadouts.equip(units[idx], mission_loadouts[idx])
+        if idx == 0 and test_mission_id == "scythe":
+            units[idx]["special"] = SCYTHE_CHARGE_NAME
+            units[idx]["scythe_origin"] = scythe_origin
+            if scythe_origin == "Wolverine":
+                units[idx]["melee_weapon"] = WOLVERINE_CLAWS
+                units[idx]["melee_damage"] = 2
+            elif scythe_origin == "Arachnid":
+                units[idx]["move"] = MOVE_DISTANCE + SPIDER_AGILITY_BONUS
+            elif scythe_origin == "Blink":
+                units[idx]["blink_used_turn"] = -1
+        fill_magazine(units[idx])
         units[idx]["special_used_turn"] = -99
         units[idx]["special_ready_turn"] = -99
         units[idx]["stim_bonus"] = 0
@@ -1218,6 +1476,7 @@ func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
                 units[idx]["hp"] = int(carry[idx]["hp"])
                 units[idx]["downs"] = int(carry[idx]["downs"])
                 units[idx]["permanently_dead"] = bool(carry[idx]["permanently_dead"])
+                units[idx]["medkit_charges"] = int(carry[idx].get("medkit_charges", units[idx]["medkit_charges"]))
             if int(units[idx]["hp"]) <= 0:
                 units[idx]["ap"] = 0
         units[idx]["armour"] = int(units[idx]["max_armour"]) if armour_enabled and int(units[idx]["hp"]) > 0 else 0
@@ -1228,7 +1487,7 @@ func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
                 assert(units[i]["pos"] != units[j]["pos"], "Room living units overlap")
     for idx in range(units.size()):
         var class_weight: int = 1 if str(units[idx].get("kind", "")) == "horde" else 2
-        if idx == 1 or str(units[idx].get("name", "")) == "KGB Elite Enforcer":
+        if operative_kit(idx) == 1 or str(units[idx].get("name", "")) == "KGB Elite Enforcer":
             class_weight = 3
         units[idx]["weight"] = class_weight
         units[idx]["statuses"] = {}
@@ -1238,6 +1497,8 @@ func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
     setup_test_objectives()
     if test_mission_id == "defence":
         spawn_defence_wave(1)
+    elif test_mission_id == "scythe":
+        reserve_reaction(6, "overwatch")
     selected_id = -1
     for idx in range(5):
         if int(units[idx]["hp"]) > 0:
@@ -1251,6 +1512,8 @@ func load_mission_room(stage: int, carry: Array[Dictionary]) -> void:
         status_message = "The radio alert succeeded: THREE EXTRA HOUNDS have joined Room 3."
         add_log("ALERT CONSEQUENCE: three additional hounds in the final room.")
     add_log("%s — room %d/%d begins." % [test_mission_id.to_upper(), mission_stage + 1, mission_room_total()])
+    if hq_deployment:
+        print("HQ operation %s: entered room %d/%d." % [test_mission_id, mission_stage + 1, mission_room_total()])
     queue_redraw()
 
 func make_chain_rifle(label: String, at: Vector2i, stronger: bool, profile: String) -> Dictionary:
@@ -1281,7 +1544,12 @@ func save_room_result(advances: bool = false) -> void:
         after_hp.append(int(units[i]["hp"]))
     var radio_result: String = "NOT APPLICABLE"
     if test_mission_id == "chain" and mission_stage == 1:
-        radio_result = "DESTROYED ON TIME" if bool(radio_state.get("destroyed_in_time", false)) else "ALERT SENT (+3 HOUNDS)"
+        if bool(radio_state.get("destroyed_in_time", false)):
+            radio_result = "DESTROYED ON TIME"
+        elif radio_reinforcements_queued:
+            radio_result = "ALERT SENT (+3 HOUNDS)"
+        else:
+            radio_result = "ALERT NOT SENT"
     var activity: Array[Dictionary] = []
     var carry: Array[Dictionary] = carry_squad_to_next_room()
     for idx in range(5):
@@ -1315,7 +1583,7 @@ func carry_squad_to_next_room() -> Array[Dictionary]:
         var dead: bool = bool(unit.get("permanently_dead", false))
         if health <= 0 and downs == 1 and not dead:
             health = recoverable_hp(unit)
-        result.append({"hp": health, "downs": downs, "permanently_dead": dead})
+        result.append({"hp": health, "downs": downs, "permanently_dead": dead, "medkit_charges": int(unit["medkit_charges"])})
     return result
 
 func next_mission_room() -> void:
@@ -1702,6 +1970,64 @@ func radio_is_present() -> bool:
 func radio_is_active() -> bool:
     return radio_is_present() and int(radio_state.get("hp", 0)) > 0
 
+func fill_magazine(unit: Dictionary) -> void:
+    var default_capacity: int = 0 if unit.get("kind", "") == "horde" else DEFAULT_MAGAZINE_CAPACITY
+    unit["magazine_capacity"] = int(unit.get("magazine_capacity", default_capacity))
+    unit["rounds"] = int(unit["magazine_capacity"])
+
+func has_attack_ammo(idx: int) -> bool:
+    var unit: Dictionary = units[idx]
+    return int(unit["magazine_capacity"]) == 0 or int(unit["rounds"]) > 0
+
+func spend_shot(idx: int) -> bool:
+    if not has_attack_ammo(idx):
+        return false
+    if int(units[idx]["magazine_capacity"]) > 0:
+        units[idx]["rounds"] = int(units[idx]["rounds"]) - 1
+    return true
+
+func reload_weapon(idx: int) -> bool:
+    var unit: Dictionary = units[idx]
+    if int(unit["hp"]) <= 0 or int(unit["ap"]) < RELOAD_AP_COST or int(unit["rounds"]) >= int(unit["magazine_capacity"]):
+        return false
+    unit["ap"] = int(unit["ap"]) - RELOAD_AP_COST
+    fill_magazine(unit)
+    status_message = "%s reloads %s (%d/%d)." % [str(unit["name"]), str(unit["basic_attack"]), int(unit["rounds"]), int(unit["magazine_capacity"])]
+    add_log(status_message)
+    queue_redraw()
+    return true
+
+func reload_selected_weapon() -> void:
+    var idx: int = find_unit_by_id(selected_id)
+    if idx < 0 or int(units[idx]["hp"]) <= 0:
+        return
+    if reload_weapon(idx):
+        loadout_action = ""
+        special_mode = false
+        breach_target_mode = false
+        shred_landing_tile = Vector2i(-1, -1)
+    elif int(units[idx]["rounds"]) == int(units[idx]["magazine_capacity"]):
+        status_message = "Magazine already full."
+    else:
+        status_message = "Reload needs %d AP." % RELOAD_AP_COST
+    queue_redraw()
+
+func emergency_reload() -> void:
+    var idx: int = find_unit_by_id(selected_id)
+    if idx < 0 or int(units[idx]["hp"]) <= 0:
+        status_message = "Select a living operative."
+    elif not headquarters.campaign.mission.get("emergency_reload", false):
+        status_message = "Emergency Reload is unprepared or already spent."
+    elif int(units[idx]["rounds"]) >= int(units[idx]["magazine_capacity"]):
+        status_message = "Magazine already full."
+    elif not headquarters.campaign.use_emergency_reload():
+        status_message = "Emergency Reload requires %d Intel." % Headquarters.State.RELOAD_COST
+    else:
+        fill_magazine(units[idx])
+        status_message = "Emergency Reload refilled %s's magazine." % str(units[idx]["name"])
+        add_log(status_message)
+    queue_redraw()
+
 func radio_attack_preview(attacker_idx: int) -> Dictionary:
     var result: Dictionary = {"valid": false, "reason": "Radio unavailable", "damage": 0, "melee": false, "distance": 0}
     if not radio_is_active() or attacker_idx < 0 or attacker_idx >= units.size():
@@ -1718,6 +2044,9 @@ func radio_attack_preview(attacker_idx: int) -> Dictionary:
         result["damage"] = mini(2 + int(unit.get("stim_bonus", 0)), int(radio_state["hp"]))
         result["reason"] = "Adjacent melee strike (1 AP)"
     elif dist <= int(unit["range"]) and has_line_of_sight(unit["pos"], RADIO_POS):
+        if not has_attack_ammo(attacker_idx):
+            result["reason"] = EMPTY_MAGAZINE
+            return result
         result["valid"] = true
         result["damage"] = mini(int(unit["damage"]) + int(unit.get("stim_bonus", 0)), int(radio_state["hp"]))
         result["reason"] = "Ranged attack (1 AP)"
@@ -1777,6 +2106,8 @@ func attack_radio(attacker_idx: int) -> void:
         status_message = "Attacking the transmitter costs 1 AP."
         return
     var attack_name: String = "Relay Melee" if bool(preview["melee"]) else str(units[attacker_idx]["basic_attack"])
+    if not bool(preview["melee"]) and not spend_shot(attacker_idx):
+        return
     if hit_radio(attacker_idx, int(preview["damage"]), attack_name, 1):
         units[attacker_idx]["stim_bonus"] = 0
 
@@ -1793,6 +2124,9 @@ func attack_preview_from(attacker_index: int, target_index: int, from_tile: Vect
     var attacker: Dictionary = units[attacker_index]
     var target: Dictionary = units[target_index]
     if int(attacker["hp"]) <= 0 or int(target["hp"]) <= 0 or attacker["team"] == target["team"]:
+        return result
+    if not has_attack_ammo(attacker_index):
+        result["reason"] = EMPTY_MAGAZINE
         return result
     result["base"] = int(attacker["damage"]) + bonus_damage + int(attacker.get("stim_bonus", 0))
     result["side"] = attacked_side(from_tile, target["pos"])
@@ -1822,7 +2156,7 @@ func can_attack(attacker_index: int, target_index: int) -> bool:
 func record_ability_use(actor_idx: int, ability_name: String) -> void:
     # Only named signature abilities go in the player's ability-usage summary.
     # Ordinary weapon attacks already have their own action counter.
-    if actor_idx < 5 and (str(units[actor_idx].get("special", "")) == ability_name or ability_name == BREACH_ACTION_NAME):
+    if actor_idx < 5 and ability_name in [str(units[actor_idx].get("special", "")), BREACH_ACTION_NAME, StarterLoadouts.MEDKIT_NAME, SHORT_BLINK]:
         var counts: Dictionary = unit_action_counters[actor_idx]["named_abilities"]
         counts[ability_name] = int(counts.get(ability_name, 0)) + 1
     battle_stats[actor_idx]["ability_uses"] = int(battle_stats[actor_idx]["ability_uses"]) + 1
@@ -1883,6 +2217,13 @@ func complete_movement_task() -> void:
     var next_action: Dictionary = task.get("after", {})
     if str(next_action.get("kind", "")) == "area_shred":
         resolve_area_shred(unit_idx, next_action["aim"])
+    elif next_action.get("kind", "") == "scythe_charge":
+        var target_idx: int = find_unit_by_id(int(next_action["target"]))
+        if target_idx >= 0 and int(units[target_idx]["hp"]) > 0 and grid_distance(units[unit_idx]["pos"], units[target_idx]["pos"]) == 1:
+            var strike: Dictionary = melee_impact(unit_idx, target_idx, SCYTHE_CHARGE_DAMAGE)
+            resolve_attack(unit_idx, target_idx, strike, SCYTHE_CHARGE_NAME, 0, false, false)
+        else:
+            status_message = "Charge ended without reaching its target."
     elif str(task.get("kind", "")) == "sentinel_breach":
         status_message = "Breach complete. Cover and collision resolved along the travelled path."
     queue_redraw()
@@ -1941,7 +2282,12 @@ func advance_movement_task() -> void:
     apply_hazard_entry(moving_idx)
     assess_winner()
     if int(units[moving_idx]["hp"]) > 0 and not game_over and not room_cleared:
-        trigger_reactions_to_step(moving_idx)
+        var overwatch_fired: bool = trigger_reactions_to_step(moving_idx)
+        if overwatch_fired and movement_task["after"].get("kind", "") == "scythe_charge":
+            movement_task.clear()
+            status_message = "Overwatch interrupted Scythe's Charge before the strike."
+            add_log(status_message)
+            return
     if int(units[moving_idx]["hp"]) <= 0 or game_over:
         movement_task.clear()
         return
@@ -1962,8 +2308,14 @@ func clear_reactions_for_team(team: String) -> void:
 func reserve_reaction(idx: int, reaction_kind: String) -> bool:
     if reaction_kind != "overwatch":
         return false
+    if int(units[idx]["magazine_capacity"]) == 0:
+        status_message = "Overwatch requires a firearm."
+        return false
     if int(units[idx]["hp"]) <= 0 or int(units[idx]["ap"]) < REACTION_AP_COST:
         status_message = "Need 1 available AP to reserve a reaction."
+        return false
+    if not has_attack_ammo(idx):
+        status_message = EMPTY_MAGAZINE
         return false
     if bool(units[idx].get("reaction_available", false)):
         status_message = "Already has a reaction reserved this phase."
@@ -1977,12 +2329,13 @@ func reserve_reaction(idx: int, reaction_kind: String) -> bool:
     add_log(status_message)
     return true
 
-func trigger_reactions_to_step(mover_idx: int) -> void:
+func trigger_reactions_to_step(mover_idx: int) -> bool:
     # No chains: reactions trigger ONLY on traversed movement cells, never
     # on another reaction or on a non-movement attack.
+    var fired: bool = false
     for defender_idx in range(units.size()):
         if game_over or int(units[mover_idx]["hp"]) <= 0:
-            return
+            return fired
         if units[defender_idx]["team"] == units[mover_idx]["team"] or int(units[defender_idx]["hp"]) <= 0:
             continue
         if not bool(units[defender_idx].get("reaction_available", false)):
@@ -1996,6 +2349,8 @@ func trigger_reactions_to_step(mover_idx: int) -> void:
             battle_stats[defender_idx]["reactions"] = int(battle_stats[defender_idx]["reactions"]) + 1
             add_log("Overwatch triggers: %s!" % str(units[defender_idx]["name"]))
             perform_attack(defender_idx, mover_idx, "Overwatch", 0, 0, 0)
+            fired = true
+    return fired
 
 
 func record_damage_feedback(attacker_idx: int, target_idx: int, ability_name: String, arm: int, hp: int, cover: int = 0) -> void:
@@ -2128,6 +2483,12 @@ func perform_attack(attacker_idx: int, target_idx: int, named_ability: String = 
     var attack: Dictionary = attack_preview(attacker_idx, target_idx, bonus_damage, pierce)
     if not bool(attack["valid"]) or int(units[attacker_idx]["ap"]) < cost:
         return
+    if not spend_shot(attacker_idx):
+        return
+    var weapon_name: String = str(units[attacker_idx]["basic_attack"])
+    resolve_attack(attacker_idx, target_idx, attack, named_ability if named_ability != "" else weapon_name, cost, named_ability in ["", weapon_name])
+
+func resolve_attack(attacker_idx: int, target_idx: int, attack: Dictionary, ability: String, cost: int, basic: bool, record_use: bool = true) -> void:
     units[attacker_idx]["ap"] = int(units[attacker_idx]["ap"]) - cost
     var armour_damage: int = int(attack["armour_damage"])
     var hp_damage: int = int(attack["hp_damage"])
@@ -2135,8 +2496,7 @@ func perform_attack(attacker_idx: int, target_idx: int, named_ability: String = 
     units[target_idx]["hp"] = maxi(0, int(units[target_idx]["hp"]) - hp_damage)
     var attacker_name: String = str(units[attacker_idx]["name"])
     var defender_name: String = str(units[target_idx]["name"])
-    var ability: String = named_ability if named_ability != "" else str(units[attacker_idx]["basic_attack"])
-    if ability == str(units[attacker_idx]["basic_attack"]):
+    if basic:
         unit_action_counters[attacker_idx]["basic_attacks"] = int(unit_action_counters[attacker_idx]["basic_attacks"]) + 1
     # Count real harm only (HP + armour actually removed, not overkill).
     battle_stats[attacker_idx]["dealt_hp"] = int(battle_stats[attacker_idx]["dealt_hp"]) + hp_damage
@@ -2146,11 +2506,16 @@ func perform_attack(attacker_idx: int, target_idx: int, named_ability: String = 
     battle_stats[target_idx]["taken_arm"] = int(battle_stats[target_idx]["taken_arm"]) + armour_damage
     var key: String = ("REBEL | " if units[attacker_idx]["team"] == "player" else "ENEMY | ") + ability
     ability_damage_totals[key] = int(ability_damage_totals.get(key, 0)) + hp_damage + armour_damage
-    record_ability_use(attacker_idx, ability)
+    if record_use:
+        record_ability_use(attacker_idx, ability)
     record_damage_feedback(attacker_idx, target_idx, ability, armour_damage, hp_damage, int(attack["cover"]))
     units[attacker_idx]["stim_bonus"] = 0 # one attack consumes any serum buff
     add_log("%s [%s] -> %s: %d ARM, %d HP." % [attacker_name, ability, defender_name, armour_damage, hp_damage])
     status_message = "%s [%s]: -%d ARM / -%d HP." % [attacker_name, ability, armour_damage, hp_damage]
+    var armour_loss: int = int(attack.get("armour_cap_loss", 0))
+    if armour_loss > 0:
+        units[target_idx]["max_armour"] = int(units[target_idx]["max_armour"]) - armour_loss
+        add_log("%s loses %d maximum armour." % [defender_name, armour_loss])
     if int(units[target_idx]["hp"]) <= 0:
         battle_stats[attacker_idx]["kills"] = int(battle_stats[attacker_idx]["kills"]) + 1
         if units[target_idx]["team"] == "player":
@@ -2161,12 +2526,131 @@ func perform_attack(attacker_idx: int, target_idx: int, named_ability: String = 
             selected_id = -1
     assess_winner()
 
+func can_use_loadout_action(idx: int, action: String) -> bool:
+    if idx < 0 or int(units[idx]["hp"]) <= 0:
+        return false
+    var unit: Dictionary = units[idx]
+    if action == "melee":
+        return int(unit["melee_damage"]) > 0 and int(unit["ap"]) >= StarterLoadouts.MELEE_AP
+    if action == "blink":
+        return unit.get("scythe_origin", "") == "Blink" and int(unit["blink_used_turn"]) != turn_number and int(unit["ap"]) >= SHORT_BLINK_AP
+    return int(unit["medkit_charges"]) > 0 and int(unit["ap"]) >= StarterLoadouts.MEDKIT_AP
+
+func toggle_loadout_action(action: String) -> void:
+    var idx: int = find_unit_by_id(selected_id)
+    if not can_use_loadout_action(idx, action):
+        status_message = "Melee needs an equipped weapon and 1 AP." if action == "melee" else "Medkit needs an unused charge and 1 AP."
+        if action == "blink":
+            status_message = "Short Blink requires the Blink origin and 1 AP. Once per turn."
+        queue_redraw()
+        return
+    loadout_action = "" if loadout_action == action else action
+    special_mode = false
+    breach_target_mode = false
+    shred_landing_tile = Vector2i(-1, -1)
+    status_message = "Targeting cancelled."
+    if loadout_action == "melee":
+        status_message = "Click an adjacent enemy for a melee attack (1 AP)."
+    elif loadout_action == "medkit":
+        status_message = "Click yourself or an adjacent ally to use the medkit (1 AP)."
+    elif loadout_action == "blink":
+        status_message = "Click a visible landing tile within four tiles. Overwatch can fire on landing."
+    queue_redraw()
+
+func use_loadout_action(actor_idx: int, target_idx: int) -> bool:
+    if not can_use_loadout_action(actor_idx, loadout_action):
+        return false
+    var actor: Dictionary = units[actor_idx]
+    if loadout_action == "medkit":
+        if target_idx < 0 or units[target_idx]["team"] != "player" or grid_distance(actor["pos"], units[target_idx]["pos"]) > 1:
+            status_message = "Select yourself or an adjacent living ally for the medkit."
+            return false
+        if not apply_healing(actor_idx, target_idx, StarterLoadouts.MEDKIT_HP, StarterLoadouts.MEDKIT_NAME):
+            status_message = "This operative is already at their healing limit."
+            return false
+        actor["ap"] = int(actor["ap"]) - StarterLoadouts.MEDKIT_AP
+        actor["medkit_charges"] = int(actor["medkit_charges"]) - 1
+        if hq_deployment:
+            headquarters.campaign.spend_medkit(hq_operative_id(actor_idx))
+        return true
+    if target_idx < 0 or units[target_idx]["team"] == "player" or grid_distance(actor["pos"], units[target_idx]["pos"]) != 1:
+        status_message = "Select an adjacent enemy for a melee attack."
+        return false
+    var impact: Dictionary = melee_impact(actor_idx, target_idx, int(actor["melee_damage"]))
+    if armour_enabled and actor["melee_weapon"] == WOLVERINE_CLAWS:
+        impact["armour_cap_loss"] = mini(1, int(units[target_idx]["max_armour"]))
+    resolve_attack(actor_idx, target_idx, impact, str(actor["melee_weapon"]), StarterLoadouts.MELEE_AP, true)
+    return true
+
+func can_land_short_blink(idx: int, tile: Vector2i) -> bool:
+    var origin: Vector2i = units[idx]["pos"]
+    return tile != origin and grid_distance(origin, tile) <= SHORT_BLINK_RANGE and tile_is_open(tile) and has_line_of_sight(origin, tile)
+
+func use_short_blink(idx: int, tile: Vector2i) -> bool:
+    if not can_use_loadout_action(idx, "blink"):
+        return false
+    if not can_land_short_blink(idx, tile):
+        status_message = "Short Blink needs an open tile within four tiles and in line of sight."
+        return false
+    var operative: Dictionary = units[idx]
+    operative["ap"] = int(operative["ap"]) - SHORT_BLINK_AP
+    operative["blink_used_turn"] = turn_number
+    operative["pos"] = tile
+    unit_action_counters[idx]["moves"] = int(unit_action_counters[idx]["moves"]) + 1
+    record_ability_use(idx, SHORT_BLINK)
+    status_message = "%s uses Short Blink." % str(operative["name"])
+    add_log(status_message)
+    apply_hazard_entry(idx)
+    assess_winner()
+    if int(operative["hp"]) > 0 and not game_over and not room_cleared:
+        trigger_reactions_to_step(idx)
+    return true
+
+func melee_impact(actor_idx: int, target_idx: int, base_damage: int) -> Dictionary:
+    var target: Dictionary = units[target_idx]
+    var damage: int = base_damage + int(units[actor_idx].get("stim_bonus", 0))
+    var armour_hit: int = mini(int(target["armour"]), damage)
+    return {"armour_damage": armour_hit, "hp_damage": mini(int(target["hp"]), damage - armour_hit), "cover": 0}
+
+func scythe_charge_distance() -> int:
+    return SCYTHE_CHARGE_DISTANCE + (SPIDER_AGILITY_BONUS if units[0].get("scythe_origin", "") == "Arachnid" else 0)
+
+func scythe_charge_plan(target_idx: int) -> Dictionary:
+    if target_idx < 0 or units[target_idx]["team"] != "enemy" or int(units[target_idx]["hp"]) <= 0:
+        return {}
+    var origin: Vector2i = units[0]["pos"]
+    var enemy_tile: Vector2i = units[target_idx]["pos"]
+    var charge_distance: int = scythe_charge_distance()
+    var options: Dictionary = reachable(origin, charge_distance, 0)
+    var shortest: int = charge_distance + 1
+    var landing: Vector2i = Vector2i(-1, -1)
+    for offset in DIRECTIONS:
+        var candidate: Vector2i = enemy_tile + offset
+        if options.has(candidate) and int(options[candidate]) < shortest:
+            landing = candidate
+            shortest = int(options[candidate])
+    if landing.x < 0:
+        return {}
+    return {"landing": landing, "path": shortest_tile_path(origin, landing, 0), "impact": melee_impact(0, target_idx, SCYTHE_CHARGE_DAMAGE)}
+
+func start_scythe_charge(target_idx: int) -> bool:
+    var plan: Dictionary = scythe_charge_plan(target_idx)
+    if plan.is_empty():
+        status_message = "Choose an enemy with a walkable landing tile within %d steps." % scythe_charge_distance()
+        return false
+    units[0]["special_used_turn"] = turn_number
+    record_ability_use(0, SCYTHE_CHARGE_NAME)
+    status_message = "Scythe charges at %s." % str(units[target_idx]["name"])
+    add_log(status_message)
+    start_unit_movement(0, plan["landing"], special_cost(0), {"kind": "scythe_charge", "target": int(units[target_idx]["id"])})
+    return true
+
 func special_cost(idx: int) -> int:
     # Build 10 temporary test balance: every player signature costs 1 AP.
     return 1 if idx >= 0 and idx < 5 else 99
 
 func special_cooldown_remaining(idx: int) -> int:
-    if idx not in [3, 4]:
+    if operative_kit(idx) not in [3, 4]:
         return 0
     return maxi(0, int(units[idx].get("special_ready_turn", -99)) - turn_number)
 
@@ -2174,6 +2658,8 @@ func special_available(idx: int) -> bool:
     if int(units[idx]["special_used_turn"]) == turn_number:
         return false
     if special_cooldown_remaining(idx) > 0:
+        return false
+    if operative_kit(idx) in [2, 3] and not has_attack_ammo(idx):
         return false
     return int(units[idx]["ap"]) >= special_cost(idx)
 
@@ -2183,6 +2669,8 @@ func special_unavailable_message(idx: int) -> String:
     var remaining: int = special_cooldown_remaining(idx)
     if remaining > 0:
         return "Ability cooling down: %d player turn(s) until ready." % remaining
+    if operative_kit(idx) in [2, 3] and not has_attack_ammo(idx):
+        return EMPTY_MAGAZINE
     return "Insufficient AP: ability requires %d AP." % special_cost(idx)
 
 func special_readiness_label(idx: int) -> String:
@@ -2191,6 +2679,8 @@ func special_readiness_label(idx: int) -> String:
     var remaining: int = special_cooldown_remaining(idx)
     if remaining > 0:
         return "CD: %d TURN" % remaining
+    if operative_kit(idx) in [2, 3] and not has_attack_ammo(idx):
+        return "RELOAD"
     if int(units[idx]["ap"]) < special_cost(idx):
         return "NEED %d AP" % special_cost(idx)
     return "READY"
@@ -2277,10 +2767,13 @@ func resolve_area_shred(actor_idx: int, aim_tile: Vector2i) -> void:
     assess_winner()
 
 func try_special_action(actor_idx: int, target_idx: int, target_tile: Vector2i) -> bool:
-    if actor_idx == 0:
+    var kit: int = operative_kit(actor_idx)
+    if kit == 0:
         if not special_available(actor_idx):
             status_message = special_unavailable_message(actor_idx)
             return false
+        if test_mission_id == "scythe":
+            return start_scythe_charge(target_idx)
         if shred_landing_tile.x < 0:
             var options: Dictionary = reachable(units[actor_idx]["pos"], SHRED_CHARGE_DISTANCE, int(units[actor_idx]["id"]))
             if not options.has(target_tile):
@@ -2306,13 +2799,13 @@ func try_special_action(actor_idx: int, target_idx: int, target_tile: Vector2i) 
         status_message = special_unavailable_message(actor_idx)
         return false
     var ability: String = str(actor["special"])
-    if actor_idx in [2, 3] and units[target_idx]["team"] != "enemy":
+    if kit in [2, 3] and units[target_idx]["team"] != "enemy":
         status_message = "%s needs an enemy target." % ability
         return false
-    if actor_idx in [1, 4] and units[target_idx]["team"] != "player":
+    if kit in [1, 4] and units[target_idx]["team"] != "player":
         status_message = "%s needs a friendly target." % ability
         return false
-    if actor_idx == 1:
+    if kit == 1:
         if not armour_enabled:
             status_message = "Fortify requires armour mode ON."
             return false
@@ -2330,12 +2823,12 @@ func try_special_action(actor_idx: int, target_idx: int, target_tile: Vector2i) 
         record_ability_use(actor_idx, ability)
         status_message = "Anvil Fortify: +2 temporary ARM to %s and Anvil." % str(units[target_idx]["name"])
         add_log(status_message)
-    elif actor_idx == 2:
+    elif kit == 2:
         if not bool(attack_preview(actor_idx, target_idx, 2, 1)["valid"]):
             status_message = str(attack_preview(actor_idx, target_idx)["reason"])
             return false
         perform_attack(actor_idx, target_idx, ability, 2, 1, special_cost(actor_idx))
-    elif actor_idx == 3:
+    elif kit == 3:
         if not bool(attack_preview(actor_idx, target_idx, 1, 0)["valid"]):
             status_message = str(attack_preview(actor_idx, target_idx)["reason"])
             return false
@@ -2343,7 +2836,7 @@ func try_special_action(actor_idx: int, target_idx: int, target_tile: Vector2i) 
         if int(units[target_idx]["hp"]) > 0:
             units[target_idx]["jammed_actions"] = mini(2, int(units[target_idx]["jammed_actions"]) + 1)
             add_log(str(units[target_idx]["name"]) + " loses 1 AP next enemy phase.")
-    elif actor_idx == 4:
+    elif kit == 4:
         if grid_distance(actor["pos"], units[target_idx]["pos"]) > 3:
             status_message = "Field Treatment requires an ally within 3 tiles."
             return false
@@ -2352,7 +2845,7 @@ func try_special_action(actor_idx: int, target_idx: int, target_tile: Vector2i) 
             return false
         units[actor_idx]["ap"] = int(units[actor_idx]["ap"]) - special_cost(actor_idx)
     units[actor_idx]["special_used_turn"] = turn_number
-    if actor_idx in [3, 4]:
+    if kit in [3, 4]:
         # One *full next player turn* must pass before reuse.
         # If used in round 1: unusable round 2, ready round 3.
         units[actor_idx]["special_ready_turn"] = turn_number + 2
@@ -2395,6 +2888,11 @@ func complete_test_mission(success: bool) -> void:
     mission_victory = success
     winner = "MISSION COMPLETE" if success else "MISSION FAILED"
     status_message = ("Mission objective achieved!" if success else "Primary objective failed.") + " [P] room activity | [M] missions | [R] retry"
+    if hq_deployment:
+        headquarters.campaign.credit_reward(test_mission_id + "_complete", success)
+        headquarters.campaign.finish("Mission complete" if success else "Mission failed", units)
+        status_message = winner + "  [P] room activity  |  [F9] headquarters"
+        print("HQ operation %s: %s in room %d, round %d." % [test_mission_id, winner, mission_stage + 1, turn_number])
     show_report = true
     add_log(winner + " — " + get_objective_progress_line())
     queue_redraw()
@@ -2430,6 +2928,9 @@ func assess_winner() -> void:
     save_room_result(true)
     room_cleared = true
     status_message = "ROOM %d CLEARED. Review squad activity; ENTER to proceed." % (mission_stage + 1)
+    if hq_deployment:
+        status_message += " [E] extract to HQ."
+        print("HQ operation %s: cleared room %d in round %d." % [test_mission_id, mission_stage + 1, turn_number])
     add_log(status_message)
     queue_redraw()
 
@@ -2442,6 +2943,15 @@ func tile_at_screen(screen_pos: Vector2) -> Vector2i:
     )
 
 func _unhandled_input(event: InputEvent) -> void:
+    if headquarters.visible:
+        if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
+            headquarters.hide()
+            hq_deployment = false
+            test_mission_id = "chain"
+            restart_game()
+            mission_picker_open = true
+            queue_redraw()
+        return
     if event is InputEventMouseMotion:
         var next_tile: Vector2i = tile_at_screen(event.position)
         if next_tile != hovered_tile:
@@ -2450,14 +2960,29 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     if not movement_task.is_empty():
         return
+    if loadout_open:
+        handle_loadout_input(event)
+        return
     if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode == KEY_F9 and (mission_picker_open or (hq_deployment and game_over)):
+            headquarters.open()
+            return
+        if hq_deployment:
+            if event.keycode == KEY_E and room_cleared:
+                extract_hq_operation()
+                return
+            if event.keycode == KEY_G and side_to_play == "player" and not game_over and not room_cleared:
+                emergency_reload()
+                return
+            if event.keycode in [KEY_M, KEY_R, KEY_A, KEY_I, KEY_F6, KEY_F7, KEY_F8]:
+                return
         if event.keycode == KEY_M:
             mission_picker_open = not mission_picker_open
             queue_redraw()
             return
         if mission_picker_open:
-            if event.keycode in [KEY_1, KEY_2, KEY_3, KEY_4, KEY_5]:
-                choose_test_mission(TEST_MISSION_IDS[event.keycode - KEY_1])
+            if event.keycode >= KEY_1 and event.keycode < KEY_1 + TEST_MISSION_IDS.size():
+                begin_loadout(TEST_MISSION_IDS[event.keycode - KEY_1])
             return
         if event.keycode == KEY_L:
             show_hit_ledger = not show_hit_ledger
@@ -2500,6 +3025,12 @@ func _unhandled_input(event: InputEvent) -> void:
             restart_game()
         elif event.keycode == KEY_SPACE and side_to_play == "player" and not game_over:
             end_player_turn()
+        elif event.keycode == KEY_X and side_to_play == "player" and not game_over:
+            reload_selected_weapon()
+        elif event.keycode in [KEY_J, KEY_K] and side_to_play == "player" and not game_over:
+            toggle_loadout_action("melee" if event.keycode == KEY_J else "medkit")
+        elif event.keycode == KEY_Z and side_to_play == "player" and not game_over:
+            toggle_loadout_action("blink")
         elif event.keycode in [KEY_T, KEY_C]:
             status_message = "This is one continuous mission. Clear the room to advance; R restarts from room 1."
             queue_redraw()
@@ -2510,6 +3041,7 @@ func _unhandled_input(event: InputEvent) -> void:
         elif event.keycode == KEY_O and side_to_play == "player" and not game_over:
             var who: int = find_unit_by_id(selected_id)
             if who >= 0 and reserve_reaction(who, "overwatch"):
+                loadout_action = ""
                 special_mode = false
                 shred_landing_tile = Vector2i(-1, -1)
             queue_redraw()
@@ -2527,12 +3059,14 @@ func _unhandled_input(event: InputEvent) -> void:
             show_report = not show_report
             queue_redraw()
         elif event.keycode == KEY_ESCAPE:
+            loadout_action = ""
             breach_target_mode = false
             special_mode = false
             shred_landing_tile = Vector2i(-1, -1)
             queue_redraw()
         elif event.keycode == KEY_B and side_to_play == "player" and not game_over:
-            if selected_id == 1 and int(units[1]["hp"]) > 0:
+            if operative_kit(selected_id) == 1 and int(units[selected_id]["hp"]) > 0:
+                loadout_action = ""
                 breach_target_mode = not breach_target_mode
                 special_mode = false
                 status_message = "BREACH: select a blue straight-line destination (1-4 tiles). Orange = destroyed; green = push; red X = blocked." if breach_target_mode else "Breach targeting cancelled."
@@ -2545,10 +3079,15 @@ func _unhandled_input(event: InputEvent) -> void:
                 if not special_available(cur):
                     status_message = special_unavailable_message(cur)
                 else:
+                    loadout_action = ""
                     special_mode = not special_mode
                     breach_target_mode = false
                     shred_landing_tile = Vector2i(-1, -1)
-                    status_message = ("Scythe Area Shred: choose landing tile within 3 steps." if cur == 0 else "SELECT TARGET for " + str(units[cur]["special"])) if special_mode else "Ability targeting cancelled."
+                    status_message = "Ability targeting cancelled."
+                    if special_mode:
+                        status_message = "SELECT TARGET for " + str(units[cur]["special"])
+                        if operative_kit(cur) == 0 and test_mission_id != "scythe":
+                            status_message = "Scythe Area Shred: choose landing tile within 3 steps."
             queue_redraw()
         elif event.keycode == KEY_D:
             ai_debug_enabled = not ai_debug_enabled
@@ -2558,6 +3097,7 @@ func _unhandled_input(event: InputEvent) -> void:
             var next_id: int = event.keycode - KEY_1
             if next_id < 5 and int(units[next_id]["hp"]) > 0:
                 selected_id = next_id
+                loadout_action = ""
                 breach_target_mode = false
                 special_mode = false
                 shred_landing_tile = Vector2i(-1, -1)
@@ -2568,6 +3108,7 @@ func _unhandled_input(event: InputEvent) -> void:
                 var next_id: int = (maxi(-1, selected_id) + offset) % 5
                 if int(units[next_id]["hp"]) > 0 and int(units[next_id]["ap"]) > 0:
                     selected_id = next_id
+                    loadout_action = ""
                     breach_target_mode = false
                     special_mode = false
                     shred_landing_tile = Vector2i(-1, -1)
@@ -2583,17 +3124,20 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     var clicked: Vector2 = event.position
     if mission_picker_open:
+        if HQ_BUTTON.has_point(clicked):
+            headquarters.open()
+            return
         for i in range(TEST_MISSION_IDS.size()):
             if mission_picker_rect(i).has_point(clicked):
-                choose_test_mission(TEST_MISSION_IDS[i])
+                begin_loadout(TEST_MISSION_IDS[i])
                 return
         return
-    if Rect2(884, 51, 140, 25).has_point(clicked):
+    if not hq_deployment and Rect2(884, 51, 140, 25).has_point(clicked):
         mission_picker_open = true
         queue_redraw()
         return
     for room_idx in range(ROOM_COUNT):
-        if dev_button_rect(room_idx).has_point(clicked):
+        if not hq_deployment and dev_button_rect(room_idx).has_point(clicked):
             dev_jump_to_room(room_idx)
             return
     if room_cleared:
@@ -2602,9 +3146,12 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     if game_over and show_report:
         if REPORT_RESET.has_point(clicked):
-            restart_game()
+            if hq_deployment:
+                headquarters.open()
+            else:
+                restart_game()
         return
-    if RESET_BUTTON.has_point(clicked):
+    if not hq_deployment and RESET_BUTTON.has_point(clicked):
         restart_game()
         return
     if END_BUTTON.has_point(clicked):
@@ -2613,11 +3160,32 @@ func _unhandled_input(event: InputEvent) -> void:
         return
     if game_over or side_to_play != "player":
         return
+    var weapon_owner: int = find_unit_by_id(selected_id)
+    if weapon_owner >= 0 and int(units[weapon_owner]["hp"]) > 0:
+        if units[weapon_owner].get("scythe_origin", "") == "Blink" and SHORT_BLINK_BUTTON.has_point(clicked):
+            toggle_loadout_action("blink")
+            return
+        if MELEE_BUTTON.has_point(clicked) or MEDKIT_BUTTON.has_point(clicked):
+            toggle_loadout_action("melee" if MELEE_BUTTON.has_point(clicked) else "medkit")
+            return
+        var loaded: bool = has_attack_ammo(weapon_owner)
+        if (RELOAD_BUTTON if loaded else EMPTY_RELOAD_BUTTON).has_point(clicked):
+            reload_selected_weapon()
+            return
+        if loaded and SHOOT_BUTTON.has_point(clicked):
+            loadout_action = ""
+            special_mode = false
+            breach_target_mode = false
+            shred_landing_tile = Vector2i(-1, -1)
+            status_message = "Click a target to shoot for 1 AP." if int(units[weapon_owner]["ap"]) > 0 else "Shooting needs 1 AP."
+            queue_redraw()
+            return
     # Compact squad tabs on the inspector, in addition to keys 1-5 and Tab.
     for row in range(5):
         if squad_tab_rect(row).has_point(clicked):
             if int(units[row]["hp"]) > 0:
                 selected_id = row
+                loadout_action = ""
                 breach_target_mode = false
                 special_mode = false
                 shred_landing_tile = Vector2i(-1, -1)
@@ -2628,6 +3196,13 @@ func _unhandled_input(event: InputEvent) -> void:
     if not is_in_bounds(tile):
         return
     var clicked_unit_idx: int = find_unit_at(tile)
+    if loadout_action != "":
+        var actor: int = find_unit_by_id(selected_id)
+        var acted: bool = use_short_blink(actor, tile) if loadout_action == "blink" else use_loadout_action(actor, clicked_unit_idx)
+        if acted:
+            loadout_action = ""
+        queue_redraw()
+        return
     if breach_target_mode:
         var worked: bool = sentinel_breach(tile)
         if worked:
@@ -2646,7 +3221,7 @@ func _unhandled_input(event: InputEvent) -> void:
         breach_target_mode = false
         special_mode = false
         shred_landing_tile = Vector2i(-1, -1)
-        status_message = "Selected %s. Movement: 1 AP, up to %d tiles. Attack: 1 AP." % [str(units[clicked_unit_idx]["name"]), MOVE_DISTANCE]
+        status_message = "Selected %s. Movement: 1 AP, up to %d tiles. Attack: 1 AP." % [str(units[clicked_unit_idx]["name"]), int(units[clicked_unit_idx]["move"])]
         queue_redraw()
         return
     var selected_idx: int = find_unit_by_id(selected_id)
@@ -2680,7 +3255,7 @@ func _unhandled_input(event: InputEvent) -> void:
             status_message = str(attack_preview(selected_idx, clicked_unit_idx)["reason"]) + "."
         queue_redraw()
         return
-    var valid_tiles: Dictionary = reachable(units[selected_idx]["pos"], MOVE_DISTANCE, selected_id)
+    var valid_tiles: Dictionary = reachable(units[selected_idx]["pos"], int(units[selected_idx]["move"]), selected_id)
     if valid_tiles.has(tile) and tile != units[selected_idx]["pos"]:
         move_unit(selected_idx, tile, int(valid_tiles[tile]))
         status_message = "%s moves. %d AP remaining." % [str(units[selected_idx]["name"]), int(units[selected_idx]["ap"])]
@@ -2699,6 +3274,7 @@ func end_player_turn() -> void:
     if test_mission_id == "chain" and mission_stage == 1 and turn_number >= RADIO_DEADLINE_ROUND and not bool(radio_state.get("destroyed_in_time", false)):
         queue_radio_alert("three player turns elapsed")
     run_mission_events("player_end")
+    loadout_action = ""
     special_mode = false
     shred_landing_tile = Vector2i(-1, -1)
     side_to_play = "enemy"
@@ -2739,7 +3315,7 @@ func end_player_turn() -> void:
     queue_redraw()
 
 func _process(delta: float) -> void:
-    if mission_picker_open:
+    if headquarters.visible or mission_picker_open or loadout_open:
         return
     if not damage_floaters.is_empty():
         for i in range(damage_floaters.size() - 1, -1, -1):
@@ -2768,7 +3344,10 @@ func _process(delta: float) -> void:
     enemy_action_cursor += 1
     last_acting_enemy = enemy_idx
     if int(units[enemy_idx]["hp"]) > 0 and int(units[enemy_idx]["ap"]) > 0:
-        if test_mission_id == "defence":
+        var fleeing: bool = bool(units[enemy_idx].get("mission_target", false)) and bool(mission_flags.get("escape_active", false))
+        if not fleeing and not has_attack_ammo(enemy_idx):
+            reload_weapon(enemy_idx)
+        elif test_mission_id == "defence":
             defence_enemy_step(enemy_idx)
         elif bool(units[enemy_idx].get("mission_target", false)) and test_mission_id == "assassination":
             fleeing_officer_step(enemy_idx)
@@ -2798,6 +3377,8 @@ func finish_enemy_phase() -> void:
         for i in range(units.size()):
             if bool(units[i].get("mission_target", false)) and int(units[i]["hp"]) > 0 and units[i]["pos"] == ESCAPE_EXIT:
                 officer_escapes(i)
+                if game_over:
+                    return
     if test_mission_id == "defence" and turn_number >= DEFENCE_LAST_ROUND:
         complete_test_mission(int(mission_objects[DEFENCE_HQ_POS]["hp"]) > 0)
         return
@@ -2983,6 +3564,8 @@ func ai_best_fire_plan(enemy_idx: int, origin_tile: Vector2i, shots: int) -> Dic
     # HP are simulated after the first hit so we don't double-count a kill or
     # waste a shot on a model already incapacitated.
     var best: Dictionary = {"score": 0.0, "first": -1, "second": -1}
+    if int(units[enemy_idx]["magazine_capacity"]) > 0:
+        shots = mini(shots, int(units[enemy_idx]["rounds"]))
     if shots <= 0:
         return best
     for first_idx in range(5):
@@ -3063,6 +3646,9 @@ func smart_choose_action(enemy_idx: int) -> Dictionary:
     return best_action
 
 func smart_enemy_step(enemy_idx: int) -> void:
+    if not has_attack_ammo(enemy_idx):
+        reload_weapon(enemy_idx)
+        return
     var action: Dictionary = smart_choose_action(enemy_idx)
     var name: String = str(units[enemy_idx]["name"])
     var profile: String = str(units[enemy_idx].get("ai_profile", "balanced"))
@@ -3341,7 +3927,9 @@ func boss_enemy_step(idx: int) -> void:
 
 
 func ability_description(idx: int) -> Array[String]:
-    match idx:
+    if idx == 0 and test_mission_id == "scythe":
+        return ["CHARGE | 1 AP | once/turn", "Move up to %d tiles and strike one enemy for 2 damage." % scythe_charge_distance(), "Hostile Overwatch can stop Charge before the strike."]
+    match operative_kit(idx):
         0: return ["AREA SHRED | 1 AP | once/turn", "Charge 0-3 steps, then sweep 3 adjacent tiles for 2 damage each.", "Charge can trigger enemy reactions; sweep ignores cover."]
         1: return ["FORTIFY | 1 AP | once/turn", "+2 temporary ARM to one ally (range 2) and Anvil.", "Bonuses expire at next player armour reset."]
         2: return ["PRECISION SHOT | 1 AP | once/turn", "Attack: base weapon damage +2; ignores 1 cover level.", "Uses normal weapon range and line of sight."]
@@ -3445,19 +4033,21 @@ func draw_room_activity(record: Dictionary, final_report: bool = false) -> void:
         draw_label("Dealt %d  /  Taken %d" % [int(u["dealt_hp"]) + int(u["dealt_arm"]), int(u["taken_hp"]) + int(u["taken_arm"])], Vector2(1041, yy + 24), 12, Color("#dff2fd"))
         draw_label("Kills %d   |   HP hit %d" % [int(u["kills"]), int(u["dealt_hp"])], Vector2(1041, yy + 45), 12, Color("#ccdae8"))
     var footer: String = "Room 2 objective: " + str(record["radio"]) if test_mission_id == "chain" and current_page == 2 else "Mission: " + test_mission_id.to_upper() + " | Movement tiles include charged movement."
-    var footer_warn: bool = test_mission_id == "chain" and current_page == 2 and str(record["radio"]) != "DESTROYED ON TIME"
+    var footer_warn: bool = test_mission_id == "chain" and current_page == 2 and bool(record["radio_bonus"])
     draw_label(footer, Vector2(142, 659), 15, Color("#ffb6a0") if footer_warn else Color("#bce5c8"))
     if not final_report:
-        draw_label("Pending recoveries stand at half HP. HP limits carry over; armour, AP and cooldowns reset.", Vector2(142, 691), 14, Color("#d3e0ec"))
+        draw_label("Pending recoveries stand at half HP. Armour, AP and cooldowns reset. Magazines refill.", Vector2(142, 691), 14, Color("#d3e0ec"))
         draw_rect(NEXT_ROOM_BUTTON, Color("#2b806f"), true)
         draw_rect(NEXT_ROOM_BUTTON, Color("#9ce4d0"), false, 2.0)
         draw_label("CONTINUE TO ROOM %d  [ENTER]" % (mission_stage + 2), Vector2(570, 774), 19, Color.WHITE)
-        draw_label("[L] This room's hit ledger   |   [R] Restart mission", Vector2(142, 816), 13, Color("#aac2d3"))
+        var transition_navigation: String = "[E] Extract to HQ with secured rewards" if hq_deployment else "[R] Restart mission"
+        draw_label("[L] This room's hit ledger   |   " + transition_navigation, Vector2(142, 816), 13, Color("#aac2d3"))
     else:
         draw_label("[LEFT/RIGHT] Review completed rooms    [P] Return to battle report", Vector2(142, 714), 14, Color("#d3e0ec"))
         draw_rect(REPORT_RESET, Color("#6a4e5b"), true)
-        draw_label("RESTART [R]", Vector2(1209, 836), 18, Color.WHITE)
-        draw_label("[L] Hit ledger: final room only   |   [R] Restart selected mission   |   [M] Mission menu", Vector2(142, 815), 13, Color("#aac2d3"))
+        draw_label("HQ [F9]" if hq_deployment else "RESTART [R]", Vector2(1209, 836), 18, Color.WHITE)
+        var activity_navigation: String = "[F9] Return to HQ" if hq_deployment else "[R] Restart selected mission   |   [M] Mission menu"
+        draw_label("[L] Hit ledger: final room only   |   " + activity_navigation, Vector2(142, 815), 13, Color("#aac2d3"))
 
 func draw_room_transition() -> void:
     if room_history.is_empty():
@@ -3499,7 +4089,10 @@ func draw_battle_report() -> void:
     draw_label("Top enemy attacker: %s (%d)" % [str(units[enemy_attacker]["name"]), stat_damage(enemy_attacker,"dealt")], Vector2(57, 628), 12, Color("#cad8e4"))
     draw_label("Movement counts actual traversed tiles. Reactions:", Vector2(57, 664), 12, Color("#a7bace"))
     draw_label("Rebels %d   |   Enemies %d" % [team_reactions("player"), team_reactions("enemy")], Vector2(57, 679), 11, Color("#a7bace"))
-    draw_label("Hounds: 4 HP, move 5/AP. Others: 4/AP.", Vector2(57, 701), 12, Color("#a7bace"))
+    var movement_note: String = "Hounds: 4 HP, move 5/AP. Others: 4/AP."
+    if test_mission_id == "scythe" and scythe_origin == "Arachnid":
+        movement_note = "Hounds and Arachnid: move 5/AP. Others: 4/AP."
+    draw_label(movement_note, Vector2(57, 701), 12, Color("#a7bace"))
     draw_label("Hit ledger [L] — %s" % ledger_audit_text(), Vector2(57, 727), 12, Color("#9de4b2") if ledger_audit_text() == "RECONCILED" else Color("#ff9999"))
     draw_label("TOTAL: %d rooms | %d rebel dmg | %d enemy dmg" % [room_history.size(), chain_sum("player_damage"), chain_sum("enemy_damage")], Vector2(57, 752), 11, Color("#f0dbad"))
     draw_label("ENEMY PERFORMANCE", Vector2(473, 241), 18, Color("#ffab9e"))
@@ -3530,8 +4123,9 @@ func draw_battle_report() -> void:
         draw_label("%d dmg / %d" % [total, used], Vector2(1312, y), 11, Color("#e9e2c8"))
     draw_label("Heal and buffs are counted for units, not as damage.", Vector2(970, 740), 11, Color("#a6bfd2"))
     draw_rect(REPORT_RESET, Color("#6a4e5b"))
-    draw_label("RESTART [R]", Vector2(1209, 836), 19, Color("#fffaf2"))
-    draw_label("[P] Squad activity by room  |  [V] Battlefield / Report  |  [L] Hit ledger  |  [R] Restart", Vector2(47, 832), 13, Color("#dbe7f0"))
+    draw_label("HQ [F9]" if hq_deployment else "RESTART [R]", Vector2(1209, 836), 19, Color("#fffaf2"))
+    var report_navigation: String = "  |  [F9] Return to HQ" if hq_deployment else "  |  [R] Restart"
+    draw_label("[P] Squad activity by room  |  [V] Battlefield / Report  |  [L] Hit ledger" + report_navigation, Vector2(47, 832), 13, Color("#dbe7f0"))
 
 func draw_label(text: String, position: Vector2, font_size: int = 16, color: Color = Color.WHITE) -> void:
     draw_string(ThemeDB.fallback_font, position, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
@@ -3632,6 +4226,8 @@ func target_range_state(attacker_idx: int, target_idx: int) -> String:
     # A target can be geometrically in range but have no clear line of sight.
     if attacker_idx < 0 or target_idx < 0:
         return "NONE"
+    if not has_attack_ammo(attacker_idx):
+        return "MAGAZINE EMPTY"
     var start: Vector2i = units[attacker_idx]["pos"]
     var target: Vector2i = units[target_idx]["pos"]
     if grid_distance(start, target) > int(units[attacker_idx]["range"]):
@@ -3643,13 +4239,13 @@ func target_range_state(attacker_idx: int, target_idx: int) -> String:
 func future_enemy_threat_tiles(idx: int) -> Dictionary:
     # Threat preview is a deliberately conservative reachable-set estimate,
     # not a promise of where a tactical AI planner will decide to fire.
-    # Enemies have two AP, enough for one move and one attack; disrupted units
-    # with only one AP are evaluated from their current tile alone.
     var projected: Dictionary = {}
     if idx < 5 or idx >= units.size() or int(units[idx]["hp"]) <= 0:
         return projected
     var origins: Dictionary = {units[idx]["pos"]: 0}
     var next_ap: int = maxi(0, int(units[idx]["max_ap"]) - int(units[idx].get("jammed_actions", 0)))
+    if not has_attack_ammo(idx):
+        next_ap -= RELOAD_AP_COST
     if next_ap >= 2:
         origins = reachable(units[idx]["pos"], int(units[idx]["move"]), int(units[idx]["id"]))
     if next_ap <= 0:
@@ -3760,6 +4356,23 @@ func alive_count(team: String) -> int:
             count += 1
     return count
 
+func draw_action_button(rect: Rect2, label: String, enabled: bool) -> void:
+    draw_rect(rect, Color("#31576b") if enabled else Color("#293846"))
+    draw_rect(rect, Color("#85b9c6") if enabled else Color("#506472"), false, 1.0)
+    draw_label(label, rect.position + Vector2(10, 18), 12, Color("#f1ecd3") if enabled else Color("#a7b2ba"))
+
+func draw_scythe_charge_preview(plan: Dictionary) -> void:
+    if plan.is_empty():
+        return
+    var from: Vector2 = ORIGIN + (Vector2(units[0]["pos"]) + Vector2(0.5, 0.5)) * TILE
+    for step in plan["path"]:
+        var centre: Vector2 = ORIGIN + (Vector2(step) + Vector2(0.5, 0.5)) * TILE
+        draw_line(from, centre, Color("#ffda8b"), 2.0)
+        draw_circle(centre, 4.0, Color("#ffda8b"))
+        from = centre
+    var landing: Vector2 = ORIGIN + Vector2(plan["landing"]) * TILE
+    draw_rect(Rect2(landing + Vector2(2, 2), Vector2(TILE - 4, TILE - 4)), Color("#ffda8b"), false, 2.0)
+
 func _draw() -> void:
     draw_rect(Rect2(0, 0, 1460, 900), Color("#131c29"))
     draw_label("HAMMER & ASH  /  COMBAT PROTOTYPE", Vector2(32, 43), 24, Color("#ebf0f9"))
@@ -3767,10 +4380,16 @@ func _draw() -> void:
     if mission_picker_open:
         draw_mission_picker()
         return
-    draw_rect(Rect2(884, 51, 140, 25), Color("#31576b"), true)
-    draw_rect(Rect2(884, 51, 140, 25), Color("#7abec7"), false, 1.0)
-    draw_label("MISSIONS [M]", Vector2(897, 68), 13, Color("#f6ecd6"))
-    draw_developer_room_buttons()
+    if loadout_open:
+        draw_loadout()
+        return
+    if hq_deployment:
+        draw_label("RESISTANCE OPERATIONS", Vector2(897, 68), 13, Color("#f6ecd6"))
+    else:
+        draw_rect(Rect2(884, 51, 140, 25), Color("#31576b"), true)
+        draw_rect(Rect2(884, 51, 140, 25), Color("#7abec7"), false, 1.0)
+        draw_label("MISSIONS [M]", Vector2(897, 68), 13, Color("#f6ecd6"))
+        draw_developer_room_buttons()
     if room_cleared:
         draw_room_transition()
         return
@@ -3784,12 +4403,16 @@ func _draw() -> void:
         return
 
     var current_idx: int = find_unit_by_id(selected_id)
+    var current_kit: int = operative_kit(current_idx)
+    var aiming_charge: bool = test_mission_id == "scythe" and current_kit == 0 and special_mode
+    var aiming_blink: bool = loadout_action == "blink" and can_use_loadout_action(current_idx, "blink")
+    var charge_preview: Dictionary = scythe_charge_plan(find_unit_at(hovered_tile)) if aiming_charge else {}
     var movement_options: Dictionary = {}
     if not game_over and side_to_play == "player" and current_idx >= 0 and int(units[current_idx]["hp"]) > 0 and int(units[current_idx]["ap"]) > 0:
-        if special_mode and current_idx == 0 and shred_landing_tile.x < 0:
+        if special_mode and current_kit == 0 and not aiming_charge and shred_landing_tile.x < 0:
             movement_options = reachable(units[current_idx]["pos"], SHRED_CHARGE_DISTANCE, selected_id)
-        elif not special_mode:
-            movement_options = reachable(units[current_idx]["pos"], MOVE_DISTANCE, selected_id)
+        elif not special_mode and loadout_action == "":
+            movement_options = reachable(units[current_idx]["pos"], int(units[current_idx]["move"]), selected_id)
 
     draw_rect(Rect2(ORIGIN - Vector2(5, 5), Vector2(board_w * TILE + 10, board_h * TILE + 10)), Color("#182536"))
     for y in range(board_h):
@@ -3808,12 +4431,17 @@ func _draw() -> void:
                 draw_hazard_tile(r, str(hazards[tile]["kind"]))
             if walls.has(tile):
                 draw_wall_tile(r)
+            if aiming_blink and can_land_short_blink(current_idx, tile):
+                draw_rect(r.grow(-3), Color(0.62, 0.47, 0.90, 0.2))
+                draw_rect(r.grow(-3), Color("#c3a9f5"), false, 1.0)
             if tile == hovered_tile:
                 draw_rect(r.grow(-2), Color("#ffe7a0"), false, 2.0)
     draw_hover_enemy_threat()
-    if special_mode and current_idx == 0:
+    if aiming_charge:
+        draw_scythe_charge_preview(charge_preview)
+    elif special_mode and current_kit == 0:
         if shred_landing_tile.x < 0:
-            var origin_pos: Vector2i = units[0]["pos"]
+            var origin_pos: Vector2i = units[current_idx]["pos"]
             # Scythe's own tile is a legal zero-move landing choice.
             var centre: Vector2 = ORIGIN + Vector2(float(origin_pos.x * TILE + TILE / 2), float(origin_pos.y * TILE + TILE / 2))
             draw_circle(centre, 20.0, Color("#97e5f7"), false, 2.0)
@@ -3821,7 +4449,7 @@ func _draw() -> void:
             var land_pos: Vector2 = ORIGIN + Vector2(float(shred_landing_tile.x * TILE), float(shred_landing_tile.y * TILE))
             var land_rect: Rect2 = Rect2(land_pos + Vector2(2,2), Vector2(TILE - 4, TILE - 4))
             draw_rect(land_rect, Color("#91e4ff"), false, 3.0)
-            var razor_pos: Vector2i = units[0]["pos"]
+            var razor_pos: Vector2i = units[current_idx]["pos"]
             var start_center: Vector2 = ORIGIN + Vector2(float(razor_pos.x * TILE + TILE / 2), float(razor_pos.y * TILE + TILE / 2))
             var land_center: Vector2 = land_pos + Vector2(float(TILE) / 2.0, float(TILE) / 2.0)
             if razor_pos != shred_landing_tile:
@@ -3861,7 +4489,7 @@ func _draw() -> void:
         draw_rect(lane, Color(1.0, 0.62, 0.25, 0.11), true)
         draw_rect(lane.grow(-2), Color("#eab671"), false, 2.0)
         draw_label("WAVE NEXT TURN", lane.position + Vector2(8, 23), 12, Color("#f5d18f"))
-    if show_firing_range and current_idx >= 0 and side_to_play == "player" and not special_mode and not breach_target_mode:
+    if show_firing_range and current_idx >= 0 and side_to_play == "player" and not special_mode and not breach_target_mode and not aiming_blink:
         draw_base_attack_links(current_idx)
     for idx in range(units.size()):
         var unit: Dictionary = units[idx]
@@ -3899,7 +4527,7 @@ func _draw() -> void:
             draw_rect(Rect2(center.x - 15, center.y + 21, 30.0 * float(unit["armour"]) / float(unit["max_armour"]), 3), Color("#75c7ff"))
 
     # Draw Breach atop units so too-heavy targets show an unambiguous red X.
-    if breach_target_mode and current_idx == 1:
+    if breach_target_mode and current_kit == 1:
         draw_sentinel_breach_preview()
     draw_damage_floaters()
 
@@ -3933,21 +4561,41 @@ func _draw() -> void:
     draw_label("SELECTED OPERATIVE", Vector2(884, 265), 13, Color("#a4c2d6"))
     if current_idx >= 0:
         var active: Dictionary = units[current_idx]
-        draw_label(str(active["name"]).to_upper(), Vector2(884, 290), 19, Color("#88d2ff"))
+        var display_name: String = str(active["name"])
+        if active.has("scythe_origin"):
+            display_name += " · " + str(active["scythe_origin"])
+        draw_label(display_name.to_upper(), Vector2(884, 290), 19, Color("#88d2ff"))
+        var melee_name: String = str(active["melee_weapon"]) if int(active["melee_damage"]) > 0 else "Melee slot empty"
+        draw_label("%s  ·  %s  ·  %s" % [str(active["basic_attack"]), melee_name, str(active["armour_name"])], Vector2(885, 304), 11, Color("#b8d2e1"))
         var current_armour: int = int(active["armour"]) if armour_enabled else 0
         var maximum_armour: int = int(active["max_armour"]) if armour_enabled else 0
         draw_label("HP  %d/%d" % [int(active["hp"]), int(active["max_hp"])], Vector2(885, 319), 15, Color("#e5f4e4"))
         draw_label("ARM  %d/%d" % [current_armour, maximum_armour], Vector2(1026, 319), 15, Color("#c6e7ff"))
         draw_label("AP  %d/%d" % [int(active["ap"]), int(active["max_ap"])], Vector2(1180, 319), 15, Color("#f3e9ca"))
         draw_label("WT %d" % int(active.get("weight", 2)), Vector2(1330, 319), 14, Color("#e3deee"))
-        draw_label("MOVE %d tiles/AP    ATTACK %d dmg    RANGE %d" % [int(active["move"]), int(active["damage"]), int(active["range"])], Vector2(885, 341), 13, Color("#c8d8e8"))
+        draw_label("MOVE %d tiles/AP    ATTACK %d dmg    RANGE %d    AMMO %d/%d" % [int(active["move"]), int(active["damage"]), int(active["range"]), int(active["rounds"]), int(active["magazine_capacity"])], Vector2(885, 341), 13, Color("#c8d8e8"))
+        if int(active["hp"]) > 0 and side_to_play == "player" and not game_over:
+            draw_action_button(MELEE_BUTTON, "MELEE [J]", can_use_loadout_action(current_idx, "melee"))
+            draw_action_button(MEDKIT_BUTTON, "MEDKIT [K] %d" % int(active["medkit_charges"]), can_use_loadout_action(current_idx, "medkit"))
+            var loaded: bool = has_attack_ammo(current_idx)
+            if loaded:
+                draw_action_button(SHOOT_BUTTON, "SHOOT", int(active["ap"]) > 0)
+            var reload_ready: bool = int(active["ap"]) >= RELOAD_AP_COST and int(active["rounds"]) < int(active["magazine_capacity"])
+            draw_action_button(RELOAD_BUTTON if loaded else EMPTY_RELOAD_BUTTON, "RELOAD [X]", reload_ready)
         draw_wrapped_label("STATUS: " + selected_status_text(current_idx), Vector2(885, 363), 515.0, 12, Color("#eed7a0"), 15.0, 2)
         var description: Array[String] = ability_description(current_idx)
         var ready: String = special_readiness_label(current_idx)
         draw_label("[Q] %s   [%s]" % [description[0], ready], Vector2(885, 402), 12, Color("#f2d28c"))
         draw_wrapped_label(description[1], Vector2(885, 420), 515.0, 11, Color("#dae7f1"), 13.0, 1)
-        if current_idx == 1:
+        if current_kit == 1:
             draw_label("[B] BREACH: 1 AP · 4-tile charge / cover break / 5 dmg", Vector2(885, 438), 11, Color("#96dbb9"))
+        elif active.get("scythe_origin", "") == "Blink" and side_to_play == "player" and not game_over:
+            var blink_label: String = "SHORT BLINK [Z] · 1 AP"
+            if int(active["blink_used_turn"]) == turn_number:
+                blink_label = "SHORT BLINK [Z] · USED"
+            draw_action_button(SHORT_BLINK_BUTTON, blink_label, can_use_loadout_action(current_idx, "blink"))
+        elif active.get("scythe_origin", "") == "Arachnid":
+            draw_label("SPIDER AGILITY  +1 tile to movement and Charge", Vector2(885, 438), 11, Color("#e1a1b6"))
     else:
         draw_label("No living operative selected.", Vector2(884, 295), 14, Color("#dbe9f2"))
 
@@ -3964,7 +4612,8 @@ func _draw() -> void:
         draw_label("AP  %d/%d" % [int(foe["ap"]), int(foe["max_ap"])], Vector2(1180, 520), 14, Color("#f3e9ca"))
         draw_label("WT %d" % int(foe.get("weight", 2)), Vector2(1330, 520), 14, Color("#dfd9e8"))
         draw_wrapped_label("STATUS: " + selected_status_text(hovered_idx), Vector2(885, 543), 515.0, 12, Color("#f3d8a1"), 15.0, 1)
-        draw_label("ATTACK %d dmg   RANGE %d   MOVE %d   ·   %s" % [int(foe["damage"]), int(foe["range"]), int(foe["move"]), str(foe.get("ai_role", foe.get("kind", "enemy"))).to_upper()], Vector2(885, 565), 12, Color("#d3dfeb"))
+        var foe_ammo: String = "   AMMO %d/%d" % [int(foe["rounds"]), int(foe["magazine_capacity"])] if int(foe["magazine_capacity"]) > 0 else ""
+        draw_label("ATTACK %d dmg   RANGE %d   MOVE %d   ·   %s%s" % [int(foe["damage"]), int(foe["range"]), int(foe["move"]), str(foe.get("ai_role", foe.get("kind", "enemy"))).to_upper(), foe_ammo], Vector2(885, 565), 12, Color("#d3dfeb"))
         if current_idx >= 0:
             var base_range: String = target_range_state(current_idx, hovered_idx)
             draw_label("BASE WEAPON: " + base_range, Vector2(885, 586), 12, Color("#8fe0b0") if base_range == "IN RANGE + CLEAR LOS" else Color("#f2af9e"))
@@ -3996,10 +4645,13 @@ func _draw() -> void:
     draw_rect(Rect2(870, 625, 543, 97), Color("#202f3d"), true)
     draw_rect(Rect2(870, 625, 543, 97), Color("#42586c"), false, 1.0)
     draw_label("OBJECTIVE — %s" % ("ELIMINATE ALL ENEMIES" if test_mission_id == "chain" else test_mission_id.to_upper()), Vector2(884, 647), 13, Color("#f2ddad"))
-    if test_mission_id != "chain":
+    if test_mission_id == "scythe":
+        draw_label(get_objective_progress_line(), Vector2(884, 674), 13, Color("#f2d7a2"))
+        draw_label("The sentry starts with Overwatch reserved.", Vector2(884, 695), 11, Color("#a9c0d5"))
+    elif test_mission_id != "chain":
         draw_wrapped_label(get_objective_progress_line(), Vector2(884, 674), 509.0, 13, Color("#f2d7a2"), 17.0, 2)
         var next_wave: int = next_defence_wave_round()
-        var detail: String = "Clear guards + objectives; [M] switch tests."
+        var detail: String = "Clear guards and complete objectives." if hq_deployment else "Clear guards + objectives; [M] switch tests."
         if test_mission_id == "defence":
             detail = "NEXT WAVE: ROUND %d (east entry lane)." % next_wave if next_wave > 0 else "Final wave deployed — survive through enemy round 8."
         draw_label(detail, Vector2(884, 714), 11, Color("#a9c0d5"))
@@ -4016,19 +4668,25 @@ func _draw() -> void:
     draw_label("[F] ATTACK LINKS: %s   ·   [H] ENEMY THREAT: %s" % ["ON" if show_firing_range else "OFF", "ON" if show_enemy_threat else "OFF"], Vector2(884, 714), 11, Color("#9cbee0"))
 
     draw_rect(END_BUTTON, Color("#345e7e") if side_to_play == "player" and not game_over else Color("#304251"))
-    draw_rect(RESET_BUTTON, Color("#6a4e5b"))
     draw_label("END TURN", Vector2(919, 790), 19, Color("#ffffff"))
-    draw_label("RESTART", Vector2(1146, 790), 19, Color("#ffffff"))
-    draw_label("SPACE: END TURN   |   1-5: SELECT   |   TAB: NEXT", Vector2(872, 838), 13, Color("#a6bccc"))
+    if not hq_deployment:
+        draw_rect(RESET_BUTTON, Color("#6a4e5b"))
+        draw_label("RESTART", Vector2(1146, 790), 19, Color("#ffffff"))
+    draw_label("SPACE: END TURN   |   1-5: SELECT   |   TAB: NEXT   |   X: RELOAD", Vector2(872, 838), 13, Color("#a6bccc"))
     draw_label("H: THREAT | O: OVERWATCH | Q: ABILITY | L: LEDGER", Vector2(872, 858), 12, Color("#a6bccc"))
-    draw_label("B: BREACH | M: MISSIONS | F6/F7/F8: ORIGINAL ROOM JUMP", Vector2(872, 876), 11, Color("#a6bccc"))
+    var battle_navigation: String = "B: BREACH | M: MISSIONS | F6/F7/F8: ORIGINAL ROOM JUMP"
+    if hq_deployment:
+        battle_navigation = "B: BREACH"
+        if headquarters.campaign.mission.get("emergency_reload", false):
+            battle_navigation += " | G: EMERGENCY RELOAD (%d INTEL)" % Headquarters.State.RELOAD_COST
+    draw_label(battle_navigation, Vector2(872, 876), 11, Color("#a6bccc"))
 
 
     draw_rect(Rect2(20, 680, 410, 203), Color("#192738"), true)
     draw_rect(Rect2(20, 680, 410, 203), Color("#456174"), false, 1.0)
     draw_label("ATTACK / AREA PREVIEW", Vector2(32, 701), 14, Color("#9db9cf"))
     var preview_text: String = "Hover an enemy for range and damage details."
-    if current_idx == 1 and breach_target_mode:
+    if current_kit == 1 and breach_target_mode:
         var breach_data: Dictionary = breach_plan(hovered_tile)
         if bool(breach_data["valid"]):
             var structural: int = breach_data["edges"].size()
@@ -4039,9 +4697,14 @@ func _draw() -> void:
     elif current_idx >= 0 and barrel_is_active(hovered_tile):
         var barrel_info: Dictionary = barrel_preview(current_idx, hovered_tile)
         preview_text = "%s BARREL: %s. Blast + knockback up to 2 tiles; 3-round hazard." % [str(barrels[hovered_tile]["kind"]).to_upper(), str(barrel_info["reason"])]
-    elif current_idx >= 0 and special_mode and current_idx == 0:
+    elif aiming_charge:
+        preview_text = "Charge: choose an enemy with a landing tile within %d walkable steps." % scythe_charge_distance()
+        if not charge_preview.is_empty():
+            var impact: Dictionary = charge_preview["impact"]
+            preview_text = "Charge (1 AP): %d steps · %d ARM / %d HP before Overwatch." % [charge_preview["path"].size(), int(impact["armour_damage"]), int(impact["hp_damage"])]
+    elif current_idx >= 0 and special_mode and current_kit == 0:
         if shred_landing_tile.x < 0:
-            var options: Dictionary = reachable(units[0]["pos"], SHRED_CHARGE_DISTANCE, selected_id)
+            var options: Dictionary = reachable(units[current_idx]["pos"], SHRED_CHARGE_DISTANCE, selected_id)
             preview_text = "Area Shred: select landing (%d/3 steps), then choose an attack direction." % int(options[hovered_tile]) if options.has(hovered_tile) else "Area Shred: click a blue landing tile (0–3 steps)."
         else:
             var arc_tiles: Array[Vector2i] = shred_arc(shred_landing_tile, hovered_tile)
@@ -4052,13 +4715,16 @@ func _draw() -> void:
                     hits += 1
             preview_text = "Area Shred: %d enemies at %d DMG each, 1 AP total." % [hits, SHRED_DAMAGE] if not arc_tiles.is_empty() else "Aim at a tile adjacent to the blue landing square."
     elif current_idx >= 0 and mission_object_at(hovered_tile):
-        preview_text = "%s — %s" % [str(mission_objects[hovered_tile]["label"]), "Click from adjacency (1 AP)" if str(mission_objects[hovered_tile]["kind"]) in ["prisoner", "terminal"] else "Shoot or strike machine (1 AP)"]
+        var objective_hint: String = "Click from adjacency (1 AP)"
+        if str(mission_objects[hovered_tile]["kind"]) == "machine":
+            objective_hint = "Shoot or strike machine (1 AP)" if has_attack_ammo(current_idx) else "Magazine empty. Move adjacent to strike or reload [X]."
+        preview_text = "%s — %s" % [str(mission_objects[hovered_tile]["label"]), objective_hint]
     elif current_idx >= 0 and radio_is_active() and hovered_tile == RADIO_POS:
         var objective_preview: Dictionary = radio_attack_preview(current_idx)
         preview_text = "RADIO: %s | %d HP damage. Must destroy by end of turn 3." % [str(objective_preview["reason"]), int(objective_preview["damage"])]
     elif current_idx >= 0 and hovered_idx >= 0 and units[hovered_idx]["team"] == "enemy":
-        var bonus: int = 2 if special_mode and current_idx == 2 else (1 if special_mode and current_idx == 3 else 0)
-        var pierce: int = 1 if special_mode and current_idx == 2 else 0
+        var bonus: int = 2 if special_mode and current_kit == 2 else (1 if special_mode and current_kit == 3 else 0)
+        var pierce: int = 1 if special_mode and current_kit == 2 else 0
         var preview: Dictionary = attack_preview(current_idx, hovered_idx, bonus, pierce)
         if bool(preview["valid"]):
             preview_text = "%s: %d base - %d cover = %d impact (%d ARM / %d HP)." % [str(units[hovered_idx]["name"]), int(preview["base"]), int(preview["cover"]), int(preview["damage"]), int(preview["armour_damage"]), int(preview["hp_damage"])]
@@ -4068,7 +4734,17 @@ func _draw() -> void:
         var hh: Dictionary = hazards[hovered_tile]
         preview_text = "%s HAZARD: 1 damage on entry/phase; applies status. Expires in %d rounds." % [str(hh["kind"]).to_upper(), maxi(0, int(hh["expires_round"]) - turn_number)]
     elif current_idx >= 0 and movement_options.has(hovered_tile) and hovered_tile != units[current_idx]["pos"]:
-        preview_text = "Move 1 AP / %d tiles. H previews hovered enemy's next-turn move + attack threat." % MOVE_DISTANCE
+        preview_text = "Move 1 AP / %d tiles. H previews hovered enemy's next-turn move + attack threat." % int(units[current_idx]["move"])
+    if loadout_action == "melee" and current_idx >= 0:
+        preview_text = "%s: %d damage to an adjacent enemy (1 AP)." % [str(units[current_idx]["melee_weapon"]), int(units[current_idx]["melee_damage"])]
+        if units[current_idx]["melee_weapon"] == WOLVERINE_CLAWS:
+            preview_text += " Removes 1 maximum armour."
+    elif loadout_action == "medkit":
+        preview_text = "Medkit: heal up to %d HP on yourself or an adjacent ally (1 AP)." % StarterLoadouts.MEDKIT_HP
+    elif aiming_blink:
+        preview_text = "Short Blink: choose a highlighted tile. Overwatch can fire on landing."
+        if can_land_short_blink(current_idx, hovered_tile) and hazards.has(hovered_tile):
+            preview_text = "Short Blink: %s hazard and eligible Overwatch apply on landing." % str(hazards[hovered_tile]["kind"]).capitalize()
     draw_wrapped_label(preview_text, Vector2(32, 723), 384.0, 12, Color("#e7d7ab"), 14.0, 2)
     draw_wrapped_label("STATUS: " + status_message, Vector2(32, 752), 384.0, 12, Color("#ecf1f7"), 14.0, 2)
     var debug_line: String = "AI: " + ai_last_decision if ai_debug_enabled and not ai_last_decision.is_empty() else "RECENT ACTIONS"

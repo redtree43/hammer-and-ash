@@ -41,6 +41,16 @@ Build 10 uses the current names for its five playable operatives and retains the
 
 These special actions cost 1 AP in the current test balance. Area Shred, Fortify and Precision Shot are once per turn. Arc Disruptor and Field Treatment each skip the next full player turn before reuse.
 
+### Scythe test fixture
+
+Fixture 6 gives Scythe **Charge** in place of Area Shred. For 1 AP once per turn, choose one enemy and move up to two walkable tiles to a legal adjacent landing. Arachnid extends Charge to three tiles. The innate strike deals 2 damage before armour. An Overwatch shot stops the move at the triggered tile and cancels the strike. The AP and once-per-turn use are spent.
+
+Wolverine is the default test origin. **Claws** are an innate 2-damage melee option that blocks the equipped melee slot. Each claw strike lowers the target's maximum armour by 1, to a floor of zero, after resolving ordinary damage. The reduced maximum survives armour refreshes. Charge uses its own strike.
+
+**Arachnid's Spider Agility** increases ordinary movement to five tiles and Charge movement to three. **Blink's Short Blink** costs 1 AP and can be used once per turn, independently of Charge. Press **Z** and choose a visible, unoccupied walkable tile up to four tiles away. Hazards and eligible Overwatch resolve on landing.
+
+Choose an origin from the illustrated loadout cards or cycle with **W** before deploying. Standard Scythe remains available for comparison. Origins and their sprites apply only in fixture 6.
+
 ## Enemies and matchups
 
 **Confirmed direction.** Use moderate counters based on understandable unit mechanics and composition. A horde pressures slow high-damage fire, a healer sustains an armoured anchor, and ranged threats or zoning punish an all-melee approach. Five copies of one class may incur substantial time, resource, casualty, or objective costs. Keep a plausible imperfect response through allies, gear, positioning, hazards, objective play, or between-room withdrawal. Exceptional specialist gates need conspicuous warning and a credible alternative. Enemies should work toward objectives and remain active beyond the player's immediate view subject to their awareness rules.

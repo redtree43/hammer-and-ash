@@ -16,9 +16,19 @@
 | Powers and resources | Use readable ability-specific costs such as AP, cooldowns, charges or ammunition. The design has no global Willpower meter. | The combination of costs for each ability and whether heat, strain or exhaustion apply. |
 | Status and terrain | Valid effects apply deterministically subject to immunity. Reapplication may extend duration under the design baseline. Hazards and breakable terrain are in scope. | Status catalogue and caps, individual immunity and tick rules, hazard trigger order, and friendly-fire exceptions. The 21 November spec carries forward a displacement baseline without incidental collision or fall damage. Build 10 tests collision damage. |
 
+### Ammunition and equipment
+
+Firearms use magazines with unlimited replacements. The first tuning pass gives every allied and enemy firearm three rounds per magazine. Later weapon types can use different capacities. A loaded weapon can shoot or reload while partially spent. An empty weapon cannot fire, and its Shoot control is replaced by Reload. Build 10 uses the existing 1 AP working reload cost. Reloading fills the magazine, and entering the next room refills all magazines automatically.
+
+Overwatch requires a loaded firearm and spends a round when it fires. Armed AI reloads an empty magazine. Build 10 also counts Precision Shot, Arc Disruptor and ranged shots against objectives or barrels as gunfire. Melee attacks, adjacent objective strikes and utility actions use no rounds.
+
+The starting loadout has four slots for a ranged weapon, a melee weapon, armour and one equipment item. Gear locks at deployment. Two-handed rifles block the melee slot. Wolverine Claws also block it in the Scythe fixture. Arachnid and Blink may equip melee weapons where their gear allows it. Restrictions for other weapons, armour and classes remain open. Class powers use no equipment slots.
+
+The prototype offers issued firearms, a Service Rifle, a Service Pistol, a Utility Knife, issued armour, a Field Vest and a Medkit. The Service Rifle and Needle's issued rifle are two-handed. The Utility Knife deals 2 damage to an adjacent enemy for 1 AP. The Medkit heals up to 3 HP on the user or an adjacent living ally for 1 AP and respects the mission healing cap. Medkits have one charge each, and spent charges carry forward between rooms.
+
 ### Earlier combat decisions retained for reconciliation
 
-Conversation evidence describes single shots as the default, class-specific bursts, magazine-based ammunition with a 1 AP reload, deterministic explosives with friendly fire, and move-and-strike melee. It also describes kinetic, thermal, chemical, and electrical damage families, small elevation modifiers, falloff outside effective range, and teleport or forced movement bypassing melee opportunity triggers. These details need reconciliation against weapon legality, reaction exception and damage formula questions in the 21 November combat spec. Build 10 does not establish final weapon, damage-type, or ammunition systems. Seven initial statuses and an eventual range of roughly ten to twelve are reported working scope, with the catalogue still open.
+Conversation evidence describes single shots as the default, class-specific bursts, deterministic explosives with friendly fire, and move-and-strike melee. It also describes kinetic, thermal, chemical, and electrical damage families, small elevation modifiers, falloff outside effective range, and teleport or forced movement bypassing melee opportunity triggers. These details need reconciliation against weapon legality, reaction exception and damage formula questions in the 21 November combat spec. Seven initial statuses and an eventual range of roughly ten to twelve are reported working scope, with the catalogue still open.
 
 ### Downing, recovery and attrition
 
@@ -35,9 +45,9 @@ Show legal destinations, AP, shot range and LOS, cover, expected damage and effe
 
 ## Campaign and roster
 
-- **Confirmed direction.** Model C combines an authored narrative backbone and regional milestones with reactive events and a partly hidden Soviet programme simulation. The player receives broad explanations and increasingly precise forecasts with better intelligence.
-- **Confirmed direction.** Resistance capacity, Soviet suppression/technological capacity, and adaptive security doctrine drive change conceptually. Mission outcomes may change faction support, recruits, resources, research, or later threats and routes. Exact currencies, formulas, and which information is shown remain open.
-- **Confirmed direction.** The mobile HQ supports mission selection, roster/recovery, research, equipment, recruitment, and faction communication. Aim for a compact strategic layer and credible recovery from ordinary setbacks.
+- The [campaign master v0.5](campaign/H_A_Campaign_Design_Master_v05.md) governs strategy and progression. Choose one of two regional offers and commit until liberation or permanent loss. Liberate four of eight regions to unlock Moscow. Five regional lockouts or the terminal Soviet countdown can end the run. The target is 15–30 hours, with room for longer runs on higher difficulty.
+- The HQ is envisioned as a reskinnable underground resistance bunker. Choose five individuals from one shared roster before each campaign mission. Mission and event recruits supplement timed, class-selectable base recruitment.
+- Supplies and Intel fund campaign decisions. The Workshop produces consumables. Permanent gear comes from missions, salvage, events or contacts. Research spans Workshop recipes, in-mission Stratagems and Intel Ops. Intel can be spent during preparation and combat.
 - The six class identities are defined by tactical role. Power archetypes vary playstyle within each class, and skill-tree abilities use no equipment slots. Current class names and provisional archetypes are in [Classes and Enemies](CLASSES_AND_ENEMIES.md). Forward-only mission flow, extraction, and carry-over are in [Missions](MISSIONS.md).
 
 ## Superseded or excluded
