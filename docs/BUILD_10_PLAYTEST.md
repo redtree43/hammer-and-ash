@@ -37,6 +37,32 @@ Both assassination outcomes were replayed through all three rooms using the norm
 
 The scripted runs checked outcome rules and inputs. Manual pacing and balance assessment remain open.
 
+## Bunker operation playthroughs
+
+23 November 2026 • Godot 4.7.2 on Windows • OpenGL Compatibility at 1460 × 900
+
+The playthrough driver deployed through **USSR → Region 1**, then used the normal combat handlers for tile clicks, abilities, reloads, Overwatch, turns and room transitions. It accelerated animation and read battle state to choose actions. These playthroughs left enemy AI, AP, wounds and objectives to resolve in the game. They used no room jumps or edits to deployed squads, health, enemy state or objectives.
+
+| Operation | Cases verified |
+| --- | --- |
+| Assassination | Three successful rendered runs with distinct squads. All crossed Room 2 via the normal transition. A fourth squad was defeated in Room 3 and reached the failure report. Two additional mixed-squad runs succeeded headlessly. |
+| Sabotage | Three successful rendered runs. The prototype was stopped before activation in two runs and destroyed after activation in one. |
+| Rescue | Three successful rendered runs, including freeing prisoners before clearing the guards and clearing the guards first. |
+| Defence | Three successful rendered runs through all four waves and enemy Round 8. The safehouse finished with 12–20 HP. |
+
+The targeted edge checks use direct state setup. Sabotage now disables the terminal once the pod is destroyed or the robot activates. The inactive terminal cannot consume AP through an objective interaction. When Orlov's escape ends Assassination, the live round now matches the report and the game skips the next player-phase setup.
+
+The reported Room 2 window closure was not reproduced. The bunker build writes room entry, room clearance and operation outcome to Godot's log for the next playtest. The original log only contained startup information.
+
+## Build 10 checkpoint retest
+
+23 November 2026 • Godot 4.7.2 stable on Windows
+
+- Editor import completed and **F5** opened the Resistance Bunker. The rendered OpenGL Compatibility checks passed for the Personnel dossier and all 13 bunker operation runs. Twelve runs reached success and one Assassination run reached the failure report after a squad wipe.
+- Headless checks passed all 30 bunker integration assertions and five targeted checks for the sabotage terminal and Orlov's escape.
+- The bunker now opens the test selector with **M** and returns from it with **F9**. A headless input driver deployed all six fixtures through their loadout screens. It replayed fixture 1 through both normal room transitions and verified HP carry-over for standing operatives and magazine refills. Room 3 had seven enemies after an on-time radio disable and ten after the alert. Both runs reached the final report.
+- Manual pacing and balance remain open. The previously reported Room 2 closure did not recur in the checkpoint operation runs.
+
 ## First-down recovery and battlefield visuals
 
 Replayed the original three-room chain on Windows with Godot 4.7.2 using the normal controls. Both runs advanced with Enter and used no room jumps.
@@ -55,3 +81,33 @@ Rendered checks covered the three cover tiers, walls, barrels, hazard tiles, rad
 Replayed both radio branches through all three rooms using normal controls on Windows in Godot 4.7.2. The squad tabs, operative inspector, room activity and debrief displayed Scythe, Anvil, Needle, Iskra and Alkhimik with their existing kits and sprites. Glaz had no playable slot. A focused check verified Anvil Breach still cost 1 AP and used the new name in the hit ledger and ability-use counts.
 
 The timely radio run entered Room 3 with seven enemies and won in Round 5 with four operatives standing. The late run entered with ten enemies, including three Alert Hounds, and ended in a Round 5 wipe with four enemies left. Operative HP, timed recovery, room carry-over and second-down losses matched the pre-rename runs.
+
+## Ammunition and reload retest
+
+Godot 4.7.2 on Windows showed Shoot and Reload at 1/3 rounds and only Reload at 0/3. Focused checks verified 1 AP reloads with unlimited replacements, ammunition use for gunfire and Overwatch, armed AI reloads, and ammo-free adjacent strikes on objectives. Empty weapons could not shoot units, barrels, or objectives.
+
+Both radio runs used normal controls and verified full magazines on each room entry. The on-time run entered Room 3 with seven enemies and won in Round 5 with three operatives standing. The late run entered with ten enemies, including three Alert Hounds, and ended in a Round 8 squad wipe with one enemy left.
+
+## Starter loadout retest
+
+Godot 4.7.2 on Windows opened the four-slot loadout through the mission selector and deployed with Enter. Equipping a two-handed rifle cleared and blocked the melee slot, including for Needle's issued rifle. Switching to a Service Pistol made the melee slot available again. Chosen firearm and armour stats applied at deployment and gear stayed locked after leaving a draft without deploying.
+
+Focused checks verified that the knife costs 1 AP and uses no ammunition. The Medkit spends one charge and 1 AP only when it restores HP. Treatment respected the wound cap and appeared in room activity. Spent charges and equipment carried into Room 2, magazines refilled, and restarting with the same gear restored the Medkit.
+
+Both original-chain radio branches matched the ammunition baseline with the issued guns and armour. The timely run won in Round 5 with three operatives standing. The late run added three Alert Hounds and ended in a Round 8 squad wipe.
+
+## Scythe test range
+
+On Windows in Godot 4.7.2, fixture 6 opened from the mission selector and cleared through normal controls. Focused checks verified the two-step limit, route and landing preview, 1 AP cost, once-per-turn use, and rejection of invalid targets. The sentry's nonlethal Overwatch stopped Scythe on the first step before the strike, spending one enemy round and leaving Charge used for the turn.
+
+An uninterrupted Charge dealt one strike and did not reduce maximum armour. A follow-up Wolverine Claw attack reduced the armoured guard's maximum from 4 to 3, and its next refresh restored only 3 armour. Switching to Standard Scythe restored the normal melee slot for comparison.
+
+Both original-chain radio branches matched the prior baseline. Scythe kept Area Shred, the timely run won in Round 5, and the late run added three Alert Hounds and ended in a Round 8 squad wipe.
+
+## Scythe origin retest
+
+In Godot 4.7.2 on Windows, the loadout cards and battlefield showed distinct Wolverine, Arachnid, Blink and Standard sprites. Arachnid walked five tiles for 1 AP, rejected a six-tile walk, and completed a three-tile Charge. Wolverine retained the two-tile Charge, opening Overwatch interruption, and lasting claw armour reduction.
+
+Short Blink rejected occupied, blocked and out-of-range destinations. A four-tile Blink cost 1 AP and relocated Scythe directly. The landing fire hazard applied, the intermediate radiation tile did not, and the sentry fired on landing. Scythe could still use Charge in the same turn and could Blink again on the next turn.
+
+Both original-chain radio branches matched the prior outcomes. Scythe kept the original sprite, four-tile movement and Area Shred.

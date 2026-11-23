@@ -17,6 +17,48 @@ const SPRITES: Dictionary = {
         ".#sm#.#mm#...",
         ".###...###...",
     ],
+    "Wolverine": [
+        "....#.#......",
+        "...#hhh#.....",
+        "...#vht#.....",
+        ".##.#s#..##..",
+        "#hh#######hh#",
+        "#ms#mmmm#ms#.",
+        "vsv#hhms#vsv.",
+        "v.v.#mm#..v.v",
+        "...#mssm#....",
+        "..#hh##mm#...",
+        "..#ms..#ms#..",
+        ".####..####..",
+    ],
+    "Arachnid": [
+        "....####.....",
+        "...#hhmm#....",
+        ".#.#vaav#.#..",
+        "..#.#ss#.#...",
+        "...##mm##....",
+        "#.##mhsm##..#",
+        ".#.#sahs#.#..",
+        "..#mhmhmhm#..",
+        "..##msmm##...",
+        ".#..#m#m#..#.",
+        "...#ms.#ms#..",
+        "..####.####..",
+    ],
+    "Blink": [
+        ".....##......",
+        "....#hh#.....",
+        "...#hmms#....",
+        "..#shvvms#...",
+        "...#ssms#....",
+        "..##hmms##...",
+        ".#mmshmmms#..",
+        "v#smmhsms#..v",
+        ".v#smmmms#v..",
+        "...#sm#ms#...",
+        "..#ss#.#sm#v.",
+        ".v###...###..",
+    ],
     "Anvil": [
         "....#####....",
         "...#hhmms#...",
@@ -203,6 +245,9 @@ const SPRITES: Dictionary = {
 
 const MATERIAL_COLORS: Dictionary = {
     "Scythe": ["#213945", "#5e8189", "#b8d3be"],
+    "Wolverine": ["#393135", "#855936", "#e9b56d"],
+    "Arachnid": ["#392337", "#8e3c58", "#e17c8b"],
+    "Blink": ["#262741", "#5d588f", "#a99df0"],
     "Anvil": ["#1e3344", "#597187", "#b8d0db"],
     "Needle": ["#2c3d32", "#6c805e", "#c1cf96"],
     "Iskra": ["#3c3839", "#806a56", "#ddaf72"],
@@ -228,25 +273,30 @@ const DETAILS: Dictionary = {
 static func create_textures() -> Dictionary[String, Texture2D]:
     var textures: Dictionary[String, Texture2D] = {}
     for role in SPRITES:
-        var rows: Array = SPRITES[role]
-        var colors: Array = MATERIAL_COLORS[role]
-        var palette: Dictionary = DETAILS.duplicate()
-        palette["s"] = colors[0]
-        palette["m"] = colors[1]
-        palette["h"] = colors[2]
-        var image: Image = Image.create_empty(rows[0].length(), rows.size(), false, Image.FORMAT_RGBA8)
-        for y in range(rows.size()):
-            var row: String = rows[y]
-            for x in range(row.length()):
-                if row[x] != ".":
-                    image.set_pixel(x, y, Color(palette[row[x]]))
-        image.resize(image.get_width() * 2, image.get_height() * 2, Image.INTERPOLATE_NEAREST)
-        textures[role] = ImageTexture.create_from_image(image)
+        textures[role] = create_texture(role, 2)
     return textures
+
+static func create_texture(role: String, scale: int) -> ImageTexture:
+    var rows: Array = SPRITES[role]
+    var colors: Array = MATERIAL_COLORS[role]
+    var palette: Dictionary = DETAILS.duplicate()
+    palette["s"] = colors[0]
+    palette["m"] = colors[1]
+    palette["h"] = colors[2]
+    var image: Image = Image.create_empty(rows[0].length(), rows.size(), false, Image.FORMAT_RGBA8)
+    for y in range(rows.size()):
+        var row: String = rows[y]
+        for x in range(row.length()):
+            if row[x] != ".":
+                image.set_pixel(x, y, Color(palette[row[x]]))
+    image.resize(image.get_width() * scale, image.get_height() * scale, Image.INTERPOLATE_NEAREST)
+    return ImageTexture.create_from_image(image)
 
 static func role_for(unit: Dictionary) -> String:
     if unit["team"] == "player":
-        return str(unit["name"])
+        if unit.has("scythe_origin"):
+            return scythe_role(str(unit["scythe_origin"]))
+        return str(unit.get("kit_name", unit["name"]))
     if bool(unit.get("prototype_robot", false)):
         return "robot"
     if bool(unit.get("mission_target", false)):
@@ -263,3 +313,6 @@ static func role_for(unit: Dictionary) -> String:
     if str(unit["name"]).begins_with("Orlov Bodyguard "):
         return "bodyguard"
     return "veteran" if int(unit["max_armour"]) >= 2 else "rifle"
+
+static func scythe_role(origin: String) -> String:
+    return "Scythe" if origin == "Standard" else origin
