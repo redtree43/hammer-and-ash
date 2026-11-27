@@ -1,13 +1,17 @@
 # HAMMER & ASH: UPRISING
 # Codex Implementation Brief — Headquarters Progression Sandbox (TRIAL v0.2)
 
+> Historical trial work order. See the [current design specification](../design/README.md) for intended behavior and the [bunker playtest](../IMPLEMENTATION_NOTES.md) for the active prototype.
+
 **Brief version:** 0.2 · **Date:** 23 November 2026\
 **Companion master design:** `H_A_Campaign_Design_Master_v05.md`; audit: `H_A_Campaign_Decision_Register_v05.md`\
 **Scope:** First test of equipment acquisition, Workshop consumables, three-branch research, Intel support, and slow, class-selectable recruitment. **Do not build a complete regional campaign yet.**
 
+**24 November status.** This brief records the original trial work order. Build 10 now uses an issued Supersuit and one consumable slot, so the permanent gear fixtures and equipment tests below are historical. The live bunker exposes Stratagems and Intelligence Operations with one shared research slot. Workshop recipe research remains a campaign branch awaiting placement in the interface. Use the current [bunker instructions and verification](../IMPLEMENTATION_NOTES.md) for active playtests.
+
 ## 0. Important handoff rules
 
-- Read `H_A_Campaign_Design_Master_v05.md` and `H_A_Campaign_Decision_Register_v05.md` BEFORE implementation. The master/register specify player intent; this brief is only the initial HQ trial.
+- The original trial used the campaign master and register as its design inputs. The current [campaign specification](../design/CAMPAIGN.md) governs subsequent design work.
 - Stage 5 Decisions **22–27** are **OPEN** and must not be implemented from recommendations or earlier prompts.
 - Preserve any existing repo documentation for tactical combat, class abilities and mission objectives. If this brief conflicts with the repo, **report the conflict and propose a smallest change** rather than overwriting other design documents.
 - The following legacy visual is **not authoritative and intentionally excluded**: `H_A_Base_Operations_Wireframe.png`, which incorrectly depicted craftable armour.
@@ -220,7 +224,7 @@ When finished, provide:
 
 1. Inspect root docs, existing design decisions, any `AGENTS.md` instructions, Godot version, and current git status. **Do not overwrite unrelated work or assume repo is pristine.**
 2. Put the transferred design documents under the project's existing design-document structure (e.g. `docs/design/campaign/` only if suitable). Keep original filenames unless the repository has naming conventions; note any mapping.
-3. Mark `H_A_Campaign_Design_Master_v05.md` as canonical for campaign direction, and link the decision register and this brief from existing design-index/readme files where appropriate.
+3. The trial transferred the campaign master, the decision register and this brief. The [current design index](../design/README.md) now points to the governing campaign specification.
 4. Compare the repo's existing campaign design and prototype implementation with this master. Make a concise difference/impact list first: **already implemented / missing / conflicting / blocked by open design**.
 5. Implement only the trial vertical slice. Use feature flags/fixtures for unapproved details; don't silently implement Stage 5.
 6. Keep all copied design files readable in Markdown and commit them (plus code) in logical reviewable commits; don't force-push or delete unrelated assets. Report exact commit IDs if commits were made.

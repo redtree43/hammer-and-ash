@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hammer &amp; Ash — Origin trees for review</title>
+<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#e7e3d8;color:#222a27;font:16px/1.4 system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:20px}article,section{padding:36px;background:#fffdf5;margin:0 0 24px;border-top:6px solid #833c30}h1,h2{font: bold 40px/1.05 Georgia,serif;margin:7px 0}h3{margin:18px 0 4px}.kicker,.rank,small,.base{font-weight:700}.kicker{color:#804030;letter-spacing:.12em;font-size:13px}nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:8px}a{color:#274b40}nav a,.base{background:#e7eee5;padding:8px 12px}.base{margin:12px 0}.row{display:grid;grid-template-columns:105px 1fr;padding:7px 0;border-bottom:1px solid #cec9b9;align-items:start}.rank{color:#854435;font-size:20px}.rank small{display:block;color:#525850;font-size:11px}.cards{display:grid;gap:12px}.two{grid-template-columns:1fr 1fr}.card strong{display:block;color:#233f36}aside b{color:#794432}aside p{margin:8px 0}.back{font-size:13px}@media(max-width:620px){main{padding:6px}section,article{padding:15px}.row{grid-template-columns:64px 1fr}.two{grid-template-columns:1fr}}@page{size:A4 portrait;margin:11mm}@media print{body{background:white;font-size:9.7pt;line-height:1.22}main{padding:0;max-width:none}article,section{margin:0;padding:8px 0;break-before:page}section:first-child{break-before:auto}.back{display:none}.row{padding:5px 0;grid-template-columns:83px 1fr;break-inside:avoid}.two{grid-template-columns:1fr 1fr}h2{font-size:27pt}.rank{font-size:14pt}nav{grid-template-columns:repeat(3,1fr)}nav a{padding:4px}}</style>
+<main>
+<section id="index">
+<div class="kicker">HAMMER &amp; ASH / DESIGN REVIEW / UPDATED 26 NOV 2026</div>
+<h1>Eleven origin trees</h1>
+<p>Choose an origin to review its nine levels. Jaguar is the reference sheet. Each choice is independent; choosing the left node never locks you into the left column at a later level. The Scorpion, Anvil, Drone Command and Healing trees reflect the creator's 26 November direction. The Drone Command and Healing builds are proposals. Items marked for review still need a decision.</p>
+<p>The <a href="COMBAT.md#damage-resolution">combat spec</a> uses one untyped damage value. The marked protection and damage bonuses need review under that rule.</p>
+<nav>
+<a href="#tree0">Scythe · Scorpion</a>
+<a href="#tree1">Anvil · Steel Skin</a>
+<a href="#tree2">Anvil · Psionic Armour</a>
+<a href="#tree3">Needle · Eye Powers</a>
+<a href="#tree4">Needle · Hawk Wings</a>
+<a href="#tree5">Iskra · Drone Command</a>
+<a href="#tree6">Iskra · Artillery Suit</a>
+<a href="#tree7">Alkhimik · Darwinian</a>
+<a href="#tree8">Alkhimik · Healing (Jekyll / Hyde)</a>
+<a href="#tree9">Glaz · Telepathy</a>
+<a href="#tree10">Glaz · Telekinesis</a>
+</nav>
+<h3>Reading the trees</h3>
+<p>Level 1 grants both a shared class active and an origin passive, including any actions that passive unlocks. Levels 4 and 7 are shared by both origins. At levels 2, 3, 5, 6 and 9 choose one of the two nodes. Level 8 is automatic. Basic attacks and standard moves cost 1 AP. CD2 means the ability becomes available at the start of your second subsequent turn. Rooms reset cooldowns and encounter resources.</p>
+<p>Range uses grid tiles including diagonals. Ranged powers require line of sight and respect directional cover unless specified. Area attacks affect allies unless they explicitly select foes. Count each unit once per area. Flight and hops require a legal landing, cannot cross solid walls or ceilings, and trigger landing hazards. Forced movement respects weight, footprint and legal destinations. Glaz’s voluntary ally slides are usable on otherwise empty clear tiles; allied movement still resolves landing hazards.</p>
+<p>Temporary armour absorbs before ordinary armour, expires as specified and never raises permanent capacity. Healing respects downing and wound limits. Armour piercing bypasses current armour entirely. Heat may never exceed four. Charged ranged basics provisionally hold three charges and recharge for 1 AP. Separate powers spend the listed AP, charges or heat.</p>
+<h3>Drone orders</h3>
+<p>Drone Command deploys one drone alongside the operative, with no AP cost. The drone occupies a tile, can be targeted and has no independent AP. A standard order costs the operator 1 AP and uses the drone's activation for the turn. The operator can issue orders from anywhere in the room. A standard order lets the drone move up to two tiles, fire Arc Bolt, or use Rolling Barricade. Chain Arc instead costs 2 AP and uses the same activation. Measure attack range and line of sight from the drone. Suit and repair abilities use their own listed targeting rules. The drone follows its operator to each linked room. It keeps its HP and follows the normal room-entry armour refresh. A destroyed drone stays lost for the rest of the operation unless Emergency Rebuild restores it.</p>
+<h3>First playtest</h3>
+<p>Use the same team and substitute the two origins of one class. Try the fleeing officer, hounds protecting a healer, and the prototype robot. Record who reaches the target by turn two, AP spent on setup, HP lost in the enemy reply and what the weaker matchup can still accomplish. For Scorpion compare Jaguar on the same map.</p>
+</section>
+<article id="tree0">
+<header>
+<div class="kicker">HAMMER &amp; ASH / SCYTHE</div>
+<h2>Scorpion</h2>
+<p>Catch a runner and decide whether to keep both fighters pinned or let go and finish it with venom.</p>
+</header>
+<div class="base">Melee · Tail Sting, 2 damage</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Charge</strong> Spend 1–3 AP. Gain two movement tiles per AP spent for this turn. No built-in attack. CD2.</div>
+<div class="card ">
+<strong>Segmented Carapace</strong> +1 armour capacity, standard move four. Direct Tail Sting hits, including basic hits granted by skills, give organic foes Venom: 1 damage at each of their next two phase starts.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Deflective Plates</strong> Gain +1 armour capacity.</div>
+<div class="card ">
+<strong>Stronger Poison</strong> Your Venom lasts one additional tick.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Claw Grab</strong> 1 AP · CD2. Hit an adjacent foe for 2 damage. Both units lose voluntary movement until your next turn. Either unit being displaced or downed ends the hold.</div>
+<div class="card ">
+<strong>Hooked Pincers</strong> 1 AP · CD2. Pull one eligible foe from two tiles away one tile toward you. If it lands adjacent, strike for 2 damage.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Threatening Presence</strong> Reaction · once per round · Make a basic melee hit when an adjacent foe walks away. Shoves, leaps and teleports skip this reaction.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Carapace Slam</strong> 2 AP · CD2. Hit one adjacent foe for 2 damage plus your current armour, capped at +3.</div>
+<div class="card ">
+<strong>Venom Jet</strong> 1 AP · CD2. Spray a straight three-tile line. Give each organic unit Venom with zero impact damage. Solid walls stop the spray.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Moulting Skin</strong> Once per room, after an incoming hit depletes your current armour, resolve any HP spillover first. If still standing, immediately refill armour to its current maximum.</div>
+<div class="card ">
+<strong>Barbed Retort</strong> Once per round, after surviving a direct adjacent melee hit, answer with Tail Sting if the attacker is still adjacent.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Breach Relay</strong> 1 AP · once per room · Hit an adjacent foe, then hold position, step one clear tile, or swap places with an adjacent squadmate.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Numbing Sting</strong> A unit carrying your Venom moves one fewer tile per standard move, minimum one.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Burrow Defense</strong> Once per operation, when an attack would down you, reduce your HP to 1 and burrow underground. You are immune to damage for the rest of the round. At the start of the next player turn, emerge at 1 HP and clear all status effects.</div>
+<div class="card ">
+<strong>Burrowing Strike</strong> 2 AP · once per room. Tunnel up to four tiles beneath units and low cover to a visible empty tile at your elevation, then Tail Sting an adjacent foe. Cannot pass walls or trigger walking reactions.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>Example turn</b> Spend AP on Charge to reach a fleeing officer, then use Claw Grab if you have AP left.</p>
+<p>
+<b>Under pressure</b> Machines ignore Venom. Your pincers and body remain effective, but distant shooters can punish a prolonged hold.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree1">
+<header>
+<div class="kicker">HAMMER &amp; ASH / ANVIL</div>
+<h2>Steel Skin</h2>
+<p>Draw fire, intercept enemies crossing your zone, and disrupt their cover.</p>
+</header>
+<div class="base">Melee · Iron Fist, 3 damage</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Taunt</strong> Choose one enemy within four tiles. For one turn it must attack the Anvil if it can make a legal attack.</div>
+<div class="card ">
+<strong>Ferrous Body</strong> +3 armour capacity. Effects that permanently reduce maximum armour fail against you, including during Plastic Skin. Ordinary hits deplete current armour normally.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Rolled Plate</strong> Gain +1 armour capacity.</div>
+<div class="card ">
+<strong>Heavy Hands</strong> Your basic melee hit gains +1 damage against a foe with current armour.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Throw</strong> Pick up an adjacent enemy and throw it up to three tiles away.</div>
+<div class="card ">
+<strong>Drop Hammer</strong> 2 AP · CD2. Deal 5 damage to one adjacent foe, +1 if your current armour is full.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Protecting Interceptor</strong> Reaction · once per round. Show a visible three-tile overwatch area. When an enemy moves within it, the Anvil moves to intercept if it can legally reach the enemy, attacks, and stops that enemy's movement.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Gleaming Armour</strong> Blind units in an area centred on Steel Skin.</div>
+<div class="card ">
+<strong>Thundering Taunt</strong> 2 AP. Taunt all enemies within two tiles. On their next turn they must attack Steel Skin if they can make a legal attack.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Tempered Knuckles</strong> Gain +1 movement speed.</div>
+<div class="card ">
+<strong>Shining Knight</strong> Reduce incoming ranged attack damage by 1.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Linebreaker</strong> Charge forward and disrupt cover. Enemies in the path can be knocked back two tiles and take a small amount of damage. The playtest uses up to three tiles of travel and two-tile knockback. Cover and impact damage remain provisional.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Work Hardening</strong> Gain +2 armour capacity.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Plastic Skin</strong> 1 AP, once per room. Lose all current armour and become immune to melee and ranged attacks until your next turn.</div>
+<div class="card ">
+<strong>Colossal Combo</strong> 2 AP · CD2. Strike one adjacent enemy three times. Each hit deals Iron Fist's base damage (3 in this review).</div>
+</div>
+</div>
+<aside>
+<p>
+<b>Example turn</b> Taunt an elite within four tiles, then use Drop Hammer if it is adjacent and you have AP left.</p>
+<p>
+<b>Under pressure</b> Multiple light enemies waste your single-target damage. Piercing fire still reaches HP.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree2">
+<header>
+<div class="kicker">HAMMER &amp; ASH / ANVIL</div>
+<h2>Psionic Armour</h2>
+<p>Lend part of your shell to an exposed ally, or collapse it into a shockwave and face the retaliation bare.</p>
+</header>
+<div class="base">Melee · Mantle Fist, 2 damage</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Taunt</strong> Choose one enemy within four tiles. For one turn it must attack the Anvil if it can make a legal attack.</div>
+<div class="card ">
+<strong>Living Mantle</strong> Gain +3 armour capacity. The ranged lending action is the Level 3 choice in this draft.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Long Mantle</strong> Increase the ally-targeting range of Lend Armour or Shelter Reflex by one tile.</div>
+<div class="card ">
+<strong>Thick Mantle</strong> Increase your armour capacity by one.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Lend Armour</strong> Send your current armour to an ally up to five tiles away. Transfer up to 3 armour until your next turn. Unused armour returns.</div>
+<div class="card ">
+<strong>Shelter Reflex</strong> Expand your armour around one adjacent ally. You and the ally each gain 3 temporary armour until the start of your next turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Protecting Interceptor</strong> Reaction · once per round. Show a visible three-tile overwatch area. When an enemy moves within it, the Anvil moves to intercept if it can legally reach the enemy, attacks, and stops that enemy's movement.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Encasing Armour</strong> Wrap one enemy in your armour, deal 4 damage and immobilise it for the turn. Psionic Armour has no armour for the next enemy turn.</div>
+<div class="card ">
+<strong>Pressure Front</strong> Spend all current armour and deal 3 damage to other units within two tiles. Skip the next armour refresh. These are provisional playtest values.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Returning Mantle</strong> The ally protected by Lend Armour or Shelter Reflex also gains the benefits of full cover for the duration of that protection. Cover protects from the side facing Anvil.</div>
+<div class="card ">
+<strong>Shock Grapple</strong> When Lend Armour returns or Shelter Reflex expires, strengthen Psionic Armour's protection. Gain 1 temporary armour until your next turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Linebreaker</strong> Charge forward and disrupt cover. Enemies in the path can be knocked back two tiles and take a small amount of damage. The playtest uses up to three tiles of travel and two-tile knockback. Cover and impact damage remain provisional.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Mantle Recall</strong> Once per round, recall a chosen ally’s mantle to absorb up to 2 damage from a direct hit against you. The ally loses that mantle. Select the recipient to arm the reaction.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Empty the Shell</strong> 2 AP · once per room. Spend all current armour (minimum two). Other units within two tiles take 2 damage plus armour spent, capped at 6. Skip your next armour refresh.</div>
+<div class="card ">
+<strong>Sanctuary</strong> 2 AP · once per room. Spend all current armour (minimum two). Divide that many temporary armour points among visible allies within four until your second subsequent turn. Skip your next refresh.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>Example turn</b> Use Encasing Armour to hold an enemy in place while allies take position. Plan for the next enemy turn with no armour.</p>
+<p>
+<b>Under pressure</b> Separated allies dilute your lending range. Heavy expenditure leaves an enemy phase with little or no armour.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree3">
+<header>
+<div class="kicker">HAMMER &amp; ASH / NEEDLE</div>
+<h2>Eye Powers</h2>
+<p>Find an angle on a valuable target. Decide whether to send a narrow beam through its armour or widen the beam to catch its escort.</p>
+</header>
+<div class="base">Ranged · Sightline, 2 damage, reach seven, charged</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Designate Quarry</strong> 1 AP · once per turn. Apply Vulnerable to one visible enemy within eight tiles until your next turn. Each of the next three attack hits from any attacker deals 2 additional direct HP damage. The third hit ends the designation. A new Needle designation refreshes the allowance to three and becomes the active mark. Each Needle can maintain one active mark.</div>
+<div class="card ">
+<strong>Focal Lens</strong> Direct Eye attacks gain +1 damage at five or more tiles. Adjacent targets take 1 less damage from your Eye attacks, minimum one.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Long Focus</strong> Sightline gains one reach.</div>
+<div class="card ">
+<strong>Afterglow</strong> After Sightline damages enemy HP, its next use on the same foe this turn costs no charge, once per turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Needle Beam</strong> 2 AP · CD2. Deal 4 armour-piercing damage to one foe within seven.</div>
+<div class="card ">
+<strong>Split Focus</strong> 1 AP · CD2. Hit two distinct foes within six that are adjacent to each other for 2 damage each.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Read the Opening</strong> Passive · once per turn · Your first direct hit on a quarry which a squadmate already damaged this phase deals +1 damage.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Sweep Beam</strong> 2 AP · CD2. Choose three consecutive visible tiles in a straight line within six. Each occupant takes 3 damage.</div>
+<div class="card ">
+<strong>Corneal Lance</strong> 1 AP · CD2. Deal 2 armour-piercing damage within five. If the foe survives, its next standard move loses one tile.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Steady Gaze</strong> Eye Powers attacks deal +1 damage per hit.</div>
+<div class="card ">
+<strong>Peripheral Vision</strong> Sightline and ranged Eye Powers attacks gain one tile of reach.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Finish the Job</strong> 1 AP · once per room · Make a base attack within its normal reach. If the target started the action at half HP or less, add 2 damage. Pay any normal base charge.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Rangefinder</strong> You are immune to Blinded. Your attacks ignore half and full cover. Solid walls still block line of sight.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Pinhole Sun</strong> 2 AP · once per room. Hit a visible foe within eight for 6 armour-piercing damage and apply Burning.</div>
+<div class="card ">
+<strong>Prismatic Burst</strong> 2 AP · once per room. Hit one visible foe within seven for 4 damage and Freeze it for its next turn, preventing voluntary movement.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>One 3 AP turn</b> Designate Quarry (1), then Needle Beam (2) through the elite’s armour. A squadmate who damaged it first improves the shot.</p>
+<p>
+<b>Under pressure</b> Solid geometry cuts firing lanes. Adjacent pressure forces you to spend AP getting another angle.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree4">
+<header>
+<div class="kicker">HAMMER &amp; ASH / NEEDLE</div>
+<h2>Hawk Wings</h2>
+<p>Fly over the screen, strike the exposed specialist and save enough movement to leave.</p>
+</header>
+<div class="base">Melee · Talons, 2 damage</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Designate Quarry</strong> 1 AP · once per turn. Apply Vulnerable to one visible enemy within eight tiles until your next turn. Each of the next three attack hits from any attacker deals 2 additional direct HP damage. The third hit ends the designation. A new Needle designation refreshes the allowance to three and becomes the active mark. Each Needle can maintain one active mark.</div>
+<div class="card ">
+<strong>Hawk Wings</strong> Fly for 1 AP once per turn up to five tiles to a visible empty landing, over units, gaps and low cover. After flying three or more tiles gain +2 on your next melee hit this turn. No hovering. Base armour zero.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Long Primaries</strong> Fly one tile farther.</div>
+<div class="card ">
+<strong>Silent Landing</strong> After Fly, ignore the first walking-away melee reaction from the foe you next hit this turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Stooping Strike</strong> 1 AP · CD2. Strike an adjacent foe for 3 damage, +1 if you flew this turn, and apply Slow. Draft tuning: reduce its standard move by one tile, minimum one, on its next turn.</div>
+<div class="card ">
+<strong>Banking Turn</strong> 1 AP · CD2. Make a basic melee hit, then fly up to two tiles to a legal landing.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Read the Opening</strong> Passive · once per turn · Your first direct hit on a quarry which a squadmate already damaged this phase deals +1 damage.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Raking Pass</strong> 2 AP · CD2. Fly up to four tiles over one chosen foe. Deal 4 damage to it and land beyond it.</div>
+<div class="card ">
+<strong>Hook and Drop</strong> 2 AP · CD2. Hit an adjacent foe for 3 damage, then move an eligible one-tile foe onto an empty tile adjacent to you.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Tailwind</strong> Once per turn after killing your quarry, fly up to two tiles immediately.</div>
+<div class="card ">
+<strong>Pinion Guard</strong> After flying, reduce the first direct ranged hit before your next turn by 1 damage.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Finish the Job</strong> 1 AP · once per room · Make a base attack within its normal reach. If the target started the action at half HP or less, add 2 damage. Pay any normal base charge.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>High Perch</strong> You are immune to effects that Slow or immobilise you, including Freeze. Walking and flight still require legal paths and landings.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Peregrine Dive</strong> 2 AP · once per room. Fly up to six tiles, land adjacent to a quarry and strike for 5 damage. Counts as Fly for damage bonuses.</div>
+<div class="card ">
+<strong>Wingover</strong> 1 AP · once per room. Hit an adjacent foe for basic damage with armour piercing and apply Bleeding, then fly up to five tiles. Your next designation this turn costs 0 AP.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>One 3 AP turn</b> Fly (1) over a low barrier, Stooping Strike (1) the exposed healer, then use a standard move (1) to reach cover.</p>
+<p>
+<b>Under pressure</b> Landing squares are a real constraint. Trapped beside a surviving bruiser, Hawk has little armour and loses its flight bonus.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree5">
+<header>
+<div class="kicker">HAMMER &amp; ASH / ISKRA</div>
+<h2>Drone Command</h2>
+<p>Set up an arc that jumps through a squad or drive a portable barricade into open ground. Your light suit helps the drone shape the fight and lets you keep contributing if it goes down.</p>
+</header>
+<div class="base">Ranged · Arc Pistol, 2 damage, reach four, charged</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Induction Tap</strong> 1 AP · CD2. Pulse one visible foe within three for 1 damage. A robot also loses two current armour before the hit.</div>
+<div class="card ">
+<strong>Paired Deployment</strong> Deploy with one drone on an adjacent legal tile. Your light power armour grants +1 armour capacity. The drone has 4 HP, 1 armour capacity, and a 2-damage Arc Bolt at reach four. See Drone orders above.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Assault Chassis</strong> Unlock Chain Arc as a 2 AP drone order, CD2. Hit a visible foe within four tiles for 3 damage, then choose up to two more foes for 2 and 1 damage. Each jump can bend around a corner if the next foe is within two tiles of, and visible from, the previous target. A unit can only be hit once per arc.</div>
+<div class="card ">
+<strong>Guardian Chassis</strong> Gain +1 drone armour capacity and unlock Rolling Barricade as a drone order, CD2. Move the drone up to three legal tiles and choose a cardinal facing. It projects three contiguous full-cover edges perpendicular to that facing, centred on its forward edge. Preview the line before committing. The line provides cover without blocking movement and lasts until your next turn or until the drone moves or is destroyed.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Magnetic Tow</strong> 1 AP · CD2. Pull a visible standard-or-lighter enemy within three tiles of the drone one legal tile toward it. Measure visibility from the drone. This leaves the drone's activation available, so you can pull an enemy into an arc or out from behind cover before giving the order.</div>
+<div class="card ">
+<strong>Field Service</strong> 1 AP · once per room. Service the adjacent drone to restore 2 HP and reset its chassis signature cooldown. This leaves its activation available and requires a surviving drone.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Grounded Chassis</strong> If you end your turn without moving, reduce damage from the first incoming direct hit by 1 before your next turn. Moving ends the protection.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Rescue Winch</strong> 1 AP · CD2. Swap the drone with a visible, willing one-tile squadmate within three tiles of the drone. Both destinations must be legal. Resolve landing hazards. This uses the drone's activation and gives the rescued ally two temporary armour until your next turn.</div>
+<div class="card ">
+<strong>Shock Mine</strong> 1 AP · CD2. Place a visible mine on an empty tile within two tiles and line of sight of either the operator or the drone. The first enemy to step onto it before your next turn takes 2 damage and becomes Shocked. Only one mine can be active. The operator can place it even after the drone is destroyed.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Crossfire</strong> Once per turn, your first Arc Pistol hit that comes from a different cover-facing side than the drone's earlier hit on the same target this turn deals +2 damage. For a Chain Arc jump, use the tile of the previous target as the source.</div>
+<div class="card ">
+<strong>Retaliation Circuit</strong> Once per round, after surviving a direct hit from an enemy it can legally target with Arc Bolt, the drone returns fire. This reaction uses neither operator AP nor the drone's activation.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Field Rewire</strong> 1 AP · once per room. Restore up to two current armour to yourself or a visible allied machine within three, including your drone. This does not repair HP or rebuild a destroyed drone.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Tandem Drive</strong> Once per turn, after the operator takes a standard move, the drone may move up to two legal tiles without spending its activation. The drone can take this move anywhere in the room.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Emergency Rebuild</strong> 2 AP · once per operation. If the drone was destroyed, rebuild it with its learned upgrades on a legal adjacent tile at half maximum HP, rounded up. It can activate on your next turn.</div>
+<div class="card ">
+<strong>Overclock Link</strong> 2 AP · once per room. Spend the drone's unspent activation to use its chassis signature even if on cooldown, then set its normal CD2. Assault may move up to three legal tiles first and arc through up to four foes for 4, 3, 2 and 1 damage. Guardian uses Rolling Barricade and can project a second line on a different side of the drone. Up to two standing squadmates adjacent to the drone also gain two temporary armour until your next turn.</div>
+</div>
+</div>
+<aside>
+<p><b>Assault turn</b> Pull a foe out from behind cover with Magnetic Tow, then spend the remaining 2 AP on Chain Arc with that foe as the first link.</p>
+<p><b>Guardian turn</b> Drive the drone ahead of the squad and put up Rolling Barricade. A Shock Mine can punish a flank beside the line. If you picked Rescue Winch instead, you can use it on a later turn to swap the drone with an ally caught out of position.</p>
+<p><b>After a loss</b> Arc Pistol, Induction Tap, Shock Mine if selected, and Field Rewire on yourself remain available.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree6">
+<header>
+<div class="kicker">HAMMER &amp; ASH / ISKRA</div>
+<h2>Artillery Suit</h2>
+<p>Choose a firing position that will still matter when the suit heats up. One more shell can cost you next turn’s opening shot.</p>
+</header>
+<div class="base">Ranged · Suit Cannon, 3 damage, reach six, charged</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Induction Tap</strong> 1 AP · CD2. Pulse one visible foe within three for 1 damage. A robot also loses two current armour before the hit.</div>
+<div class="card ">
+<strong>Boiler Plate</strong> +2 armour capacity. Heat starts at zero, maximum four. Cannon adds one heat. At four, heat-generating actions lock until cooled. Vent for 1 AP to remove two. Lose one heat at each own turn start.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Baffled Exhaust</strong> Vent removes three heat.</div>
+<div class="card ">
+<strong>Braced Mount</strong> Your first cannon hit each turn deals +1 if you have not moved.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Mortar Cup</strong> 2 AP · CD2 · +2 heat. Centre a blast that deals 3 damage four to seven tiles away. Hits centre and four cardinal neighbours.</div>
+<div class="card ">
+<strong>Breaker Slug</strong> 1 AP · CD2 · +1 heat. Hit a foe within six for 3 damage. Against a robot, remove two current armour before impact.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Grounded Chassis</strong> If you end your turn without moving, reduce damage from the first incoming direct hit by 1 before your next turn. Moving ends the protection.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Walking Barrage</strong> 2 AP · CD2 · +2 heat. Hit three consecutive visible tiles in a straight line within six for 3 damage each.</div>
+<div class="card ">
+<strong>Arc Canister</strong> 2 AP · CD2 · +2 heat. Deal 2 damage to all units within one tile of a centre three to six tiles away. Robots hit lose one AP on their next refresh, once per target per round.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Heat Jacket</strong> While at three or four heat, reduce incoming direct attack hits by 1 damage.</div>
+<div class="card ">
+<strong>Feed Mechanism</strong> Once per turn, venting also restores one spent cannon charge.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Field Rewire</strong> 1 AP · once per room. Restore up to two current armour to yourself or a visible allied machine within three, including your drone. This does not repair HP or rebuild a destroyed drone.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Hot Breech</strong> At exactly two heat before firing, your next heat-generating attack deals +1 damage per target. Check once per action.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Siege Salvo</strong> 2 AP · once per room · +3 heat. Hit a centre four to eight tiles away and its four cardinal neighbours for 5 damage. Damage destructible cover there for 2 after hits.</div>
+<div class="card ">
+<strong>Blowdown</strong> 1 AP · once per room. Discharge all heat, minimum two. Other units within two tiles take damage equal to heat removed. Surviving robots are pushed one tile if eligible.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>One 3 AP turn</b> From heat zero, fire Mortar Cup (2, +2 heat), then Suit Cannon (1, +1 heat). Next turn starts hot enough to make venting a real choice.</p>
+<p>
+<b>Under pressure</b> Standard move covers two tiles. Nearby foes are inside the mortar’s minimum range, and repeated fire forces a cooling action.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree7">
+<header>
+<div class="kicker">HAMMER &amp; ASH / ALKHIMIK</div>
+<h2>Darwinian</h2>
+<p>Hop a gap or drag an enemy out of position as Frog, hold a choke as Jellyfish, or attack from range and foul an enemy's route as Skunk. Shift when the fight calls for a different tool.</p>
+</header>
+<div class="base">Variable · Frog and Jellyfish melee, Skunk ranged</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Field Formula</strong> 1 AP · CD2. Treat yourself or an adjacent standing squadmate for 2 HP, or deal 2 damage to an adjacent enemy and reduce its next direct hit before your next turn by 1 damage, to a minimum of 1. Both options are available in every form. Healing respects the wound ceiling.</div>
+<div class="card ">
+<strong>Darwinian Shift</strong> Choose a starting form at deployment and retain your active form between rooms. Shift for 1 AP, once per turn. Each signature costs 1 AP and has its own CD2. Shifting preserves all cooldowns and does not consume HP or a separate resource.
+<ul>
+<li><b>Frog</b> has +1 standard move and a 2-damage melee Bite. <b>Tongue Vault</b> hops up to three tiles to a legal landing, then may pull one visible standard-or-lighter enemy within two tiles one legal tile toward Frog.</li>
+<li><b>Jellyfish</b> has −1 standard move, minimum one, and a 2-damage melee Sting. <b>Nettle Lock</b> deals 2 damage to an adjacent enemy and reduces its standard move by two tiles, minimum one, during its next turn.</li>
+<li><b>Skunk</b> has an uncharged 2-damage ranged Spray at reach four. <b>Musk Trail</b> coats three consecutive visible tiles in a straight line within four until your next turn. The first time each enemy enters the trail or starts its turn there, it takes 1 damage and becomes Blinded. Each enemy is affected once per cast.</li>
+</ul></div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Quick Adaptation</strong> After shifting, you may take one legal step in your new form. Resolve ordinary hazards and movement reactions.</div>
+<div class="card ">
+<strong>Settled Form</strong> If you end your turn in the same form you started it in without shifting, reduce the first incoming direct hit by 1 before your next turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Shed Skin</strong> 1 AP · CD2. Clear one of Burning, Venom or Blinded from yourself and shift. Counts as the turn's shift.</div>
+<div class="card ">
+<strong>Rapid Metamorph</strong> 1 AP · CD2. Shift and immediately use the new form's signature if it is ready, for the total cost of 1 AP. This spends the turn's shift and puts the used signature on cooldown.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Clinical Eye</strong> Once per turn, add +1 HP to the first heal on a target below half its healing ceiling, or +1 damage to a Field Formula attack on a target below half maximum HP. The first qualifying action uses the bonus.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Express Trait</strong> 2 AP · CD2 shared across all three variants. Frog hops up to three tiles to a legal landing, then strikes an adjacent foe for 2 damage, knocks it up to two tiles if eligible, and cancels its reactions until its next turn. Jellyfish stings an adjacent foe for 1 damage and, if it is standard-weight or lighter and eligible for Stun, disables its actions and reactions through the end of its next turn. This operative can inflict this stun once per room in total, including through Perfect Adaptation. Skunk sprays three consecutive visible tiles in a straight line within five for 3 damage to each occupying unit, including allies.</div>
+<div class="card ">
+<strong>Passing Trait</strong> 1 AP · CD2. Choose a visible standing squadmate within three. Frog lets them take up to two legal steps immediately, resolving ordinary hazards and reactions without spending their AP. Jellyfish grants two temporary armour and reduces the first forced move against them by one tile before your next turn. Skunk adds two tiles of reach to the ally's next ranged basic attack this turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Vestigial Plates</strong> After you shift, gain two temporary armour until your next turn.</div>
+<div class="card ">
+<strong>Form Mastery</strong> If you start your turn in the form you used for all of your previous turn, improve that form until you shift or the turn ends. Frog's Tongue Vault hop gains one tile, Jellyfish's Nettle Lock gains one damage, or Skunk's basic Spray gains one tile of reach.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Reserve Dose</strong> 1 AP · once per room. Choose yourself or an adjacent standing ally. Clear Burning or Venom if present and add +1 damage to that unit’s next basic attack this turn. Usable in any form.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Reflex Shift</strong> Once per room, take a standard shift for 0 AP. It still uses the turn's shift.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Mosaic Body</strong> 2 AP · once per room. Use two different ready signatures in either order, temporarily borrowing their traits while keeping your active form. Both signatures enter their normal cooldowns. This does not use the turn's shift.</div>
+<div class="card ">
+<strong>Perfect Adaptation</strong> 2 AP · once per room. Shift and immediately use the new form's Express Trait, even if you did not learn it or it is on cooldown. Counts as the turn's shift and starts Express Trait's normal cooldown if learned.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>One 3 AP turn</b> As Frog, use Tongue Vault to clear an obstacle and drag a pursuer into reach (1). Shift to Jellyfish (1) and use Nettle Lock (1) so it struggles to close again.</p>
+<p>
+<b>When to switch</b> Use Frog when reach or displacement decides the fight. Stay Jellyfish when one enemy needs to be kept in a choke. Shift to Skunk when closing is unsafe or enemies must cross a lane you can coat.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree8">
+<header>
+<div class="kicker">HAMMER &amp; ASH / ALKHIMIK</div>
+<h2>Healing (Jekyll / Hyde)</h2>
+<p>Move wounded allies out of danger and clear space for the squad as Jekyll. Become Hyde to break a position or chase down a kill, then decide whether to take a second attack turn or return early to treat the squad.</p>
+</header>
+<div class="base">Jekyll · Irritant Dart, 1 damage, reach four, uncharged / Hyde · Rending Strike, 3 melee damage</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Field Formula</strong> 1 AP · CD2. Treat yourself or an adjacent standing squadmate for 2 HP, or deal 2 damage to an adjacent enemy and reduce its next direct hit before your next turn by 1 damage, to a minimum of 1. Both options are available in every form. Healing respects the wound ceiling.</div>
+<div class="card ">
+<strong>Dual Nature</strong> Trial proposal. Start each room as Jekyll. Once per room, spend 1 AP to become Hyde for the activation turn and up to one further player turn. At the start of that second turn you may revert early. Otherwise revert automatically before your following AP refresh. On reversion, your next player-turn refresh as Jekyll grants 1 fewer AP (normally 2). Early reversion applies the penalty immediately. Clearing a room as Hyde forces reversion and carries any unpaid recovery penalty to the next linked room. Entry into Hyde is unavailable during that recovery turn. Switching does not change the shared abilities or reset their cooldowns or use limits.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Bedside Cover</strong> Once per turn as Jekyll, after taking a standard move, you may give one adjacent standing squadmate below half their healing ceiling one temporary armour until your next turn.</div>
+<div class="card ">
+<strong>Break Through</strong> On the turn you enter Hyde, your first damaging basic melee hit may push an eligible foe one tile. Hyde may step into the vacated tile if legal.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Adrenal Rescue</strong> Jekyll only · 1 AP · CD2. A visible, willing, standing ally within four may immediately take a legal move of up to two tiles, spending no AP and skipping walking reactions. Resolve landing hazards, then heal the ally for 2 HP if still standing. The ally can stay in place and receive the heal.</div>
+<div class="card ">
+<strong>Hurl Aside</strong> Hyde only · 1 AP · CD2. Deal 3 damage to an adjacent enemy. If it survives and is standard-weight or lighter, push it up to two tiles away. If a unit blocks the push, deal 1 collision damage to both and stop the push.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Clinical Eye</strong> Once per turn, add +1 HP to the first heal on a target below half its healing ceiling, or +1 damage to a Field Formula attack on a target below half maximum HP. The first qualifying action uses the bonus.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Quarantine Field</strong> Jekyll only · 2 AP · CD2. Place a field on a visible tile within four and its four cardinal neighbours until your next turn. Standing squadmates there clear Burning, Venom and Irradiated when the field appears or when they enter. While inside, they cannot gain those statuses. Hazards remain on the board.</div>
+<div class="card ">
+<strong>Rampage</strong> Hyde only · 2 AP · CD2. Hit an adjacent enemy for 4 damage. If that hit defeats it, move up to two legal tiles and strike a different adjacent enemy for 3 damage. Resolve normal movement reactions before the second strike.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Trauma Ward</strong> Once per round as Jekyll, after a squadmate within two tiles takes a direct hit and remains standing below half their healing ceiling, give them two temporary armour until the start of your next turn.</div>
+<div class="card ">
+<strong>Adrenal Rebound</strong> When Hyde returns to Jekyll, gain two temporary armour until your next turn. The recovery AP penalty still applies.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Reserve Dose</strong> 1 AP · once per room. Choose yourself or an adjacent standing ally. Clear Burning or Venom if present and add +1 damage to that unit’s next basic attack this turn. Usable in any form.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Controlled Reversion</strong> When you revert on the battlefield, Jekyll may immediately take one legal step without spending AP, resolving normal movement reactions.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Field Hospital</strong> Jekyll only · 2 AP · once per room. Place a ward on a visible tile within four and its four cardinal neighbours until the start of your second subsequent turn. Up to three distinct standing squadmates in the ward may receive treatment per cast. Choose recipients on placement or entry. Each restores 3 HP within their healing ceiling and gains two temporary armour until the start of your next turn after treatment. Each recipient can receive treatment once per cast.</div>
+<div class="card ">
+<strong>Break the Vial</strong> 2 AP · once per room. Enter Hyde using the room's available transformation, or use this while already Hyde. This cannot extend the duration or bypass recovery. Move up to three legal tiles and strike an adjacent foe for 5 damage.</div>
+</div>
+</div>
+<aside>
+<p><b>Typical cycle</b> Transform when a melee opening justifies spending the room's one use. At the next player turn, return early to treat the squad or take your final Hyde turn. Budget for a shorter Jekyll turn after reversion.</p>
+<p><b>Example choices</b> Jekyll can use Adrenal Rescue to get an ally to cover before treating them. Hyde can use Hurl Aside to expose a target or Rampage to finish a foe and reach another. Reserve Dose remains available in either form.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree9">
+<header>
+<div class="kicker">HAMMER &amp; ASH / GLAZ</div>
+<h2>Telepathy</h2>
+<p>Identify the organic enemy whose next decision matters most. Break its attack, its support action or its route while the squad exploits the opening.</p>
+</header>
+<div class="base">Ranged · Synaptic Prick, 2 damage, reach five, uncharged, organics only</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Distort Aim</strong> 1 AP · CD2. Choose a visible enemy within four tiles, organic or machine. Its next direct attack hit before your next turn deals 2 less damage, minimum 1.</div>
+<div class="card ">
+<strong>Surface Thought</strong> Once per turn when Synaptic Prick hits an organic foe, you may cancel its reactions until its next turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Read Intent</strong> Your first Synaptic Prick hit each turn against a foe with a reaction currently available deals +1 damage. Check before Surface Thought cancels its reactions.</div>
+<div class="card ">
+<strong>Quiet Mind</strong> After cancelling a reaction, gain one temporary armour until your next turn, once per turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Panic Spike</strong> 1 AP · CD2. Choose a visible organic foe within five tiles. It loses reactions until the end of its next turn and moves two fewer tiles per standard move on that turn, minimum one.</div>
+<div class="card ">
+<strong>Aphasia</strong> 1 AP · CD2. Choose a visible organic foe within five tiles. It cannot use heals or buffs on its next turn. It can still move and attack.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Residual Distortion</strong> A squad member who survives the hit weakened by Distort Aim may immediately take one legal step. Resolve movement hazards and eligible reactions.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Phantom Threat</strong> 1 AP · CD2. Choose a visible organic foe within five tiles and one visible squad member. Until your next turn, the foe cannot directly attack that squad member while another legal target is available.</div>
+<div class="card ">
+<strong>Feedback Spike</strong> 2 AP · CD2. Deal 4 damage to a visible organic foe within five tiles, or 6 if one of your powers already removed an available reaction from it this turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Divided Attention</strong> Once per turn when Surface Thought cancels a reaction, that foe also moves one fewer tile per standard move on its next turn, minimum one. Apply only the strongest movement reduction if it also has Panic Spike.</div>
+<div class="card ">
+<strong>Empathic Echo</strong> After a squadmate hits an organic foe you affected with a power this turn, restore 1 HP to yourself, once per turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Safe Passage</strong> 1 AP · once per room. Move yourself or a willing adjacent squadmate up to three legal steps. This move skips walking reactions and still resolves hazards along the path.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Intrusive Thought</strong> Once per round, after you survive a direct melee hit from an adjacent organic enemy, cancel that enemy's remaining reactions until the start of its next turn.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Crowd Panic</strong> 2 AP · once per room. Choose a visible organic foe within five tiles. It and adjacent organic enemies lose reactions through the end of their next turn and move two fewer tiles per standard move during that turn, minimum one.</div>
+<div class="card ">
+<strong>Thought Arrest</strong> 2 AP · once per room. One visible organic foe within four tiles loses two AP on its next refresh, to a minimum of one. Cannot stack on the same refresh.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>One 3 AP turn</b> Use Synaptic Prick (1) to cancel an organic guard's ready reaction, then use Feedback Spike (2) for the boosted hit.</p>
+<p>
+<b>Under pressure</b> Machines ignore neural powers. Glaz can still spoil a machine’s aim and reposition an ally. A second adjacent attacker can overwhelm the first interruption.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+<article id="tree10">
+<header>
+<div class="kicker">HAMMER &amp; ASH / GLAZ</div>
+<h2>Telekinesis</h2>
+<p>Line up a foe, an obstacle and a landing tile. Even an unsuccessful push can become the hardest hit in the room.</p>
+</header>
+<div class="base">Ranged · Force Bolt, 2 damage, reach five, uncharged</div>
+<div class="row">
+<div class="rank">01<small>Gain both</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Distort Aim</strong> 1 AP · CD2. Choose a visible enemy within four tiles, organic or machine. Its next direct attack hit before your next turn deals 2 less damage, minimum 1.</div>
+<div class="card ">
+<strong>Impulse</strong> Once per turn after a Force Bolt hit, you may push the target one tile directly away if weight and destination permit. Base push affects standard or lighter units.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">02<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Leverage</strong> Impulse may move one weight tier heavier.</div>
+<div class="card ">
+<strong>Follow Through</strong> Impulse can push its target up to two tiles directly away instead of one. Stop at the last legal tile.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">03<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Vector Pull</strong> 1 AP · CD2. Pull a visible standard-or-lighter unit within five tiles up to two tiles directly toward you. Allies must be willing. You may stop after one tile.</div>
+<div class="card ">
+<strong>Lateral Slip</strong> 1 AP · CD2. Shift a visible standard-or-lighter unit within four tiles one tile to either legal side of the firing line. Allies must be willing.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">04<small>Class passive</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Residual Distortion</strong> A squad member who survives the hit weakened by Distort Aim may immediately take one legal step. Resolve movement hazards and eligible reactions.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">05<small>Active · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Compression</strong> 2 AP · CD2. Hit a foe within four for 4 damage. Add 2 if directly backed against a solid wall along the firing line.</div>
+<div class="card ">
+<strong>Hurl Debris</strong> 2 AP · CD2. Choose a visible piece of light destructible cover within three tiles and a foe within four tiles of that piece. Deal 4 damage with range and line of sight measured from the cover's tile. Resolve the hit against cover in place, then remove the piece you threw.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">06<small>Passive · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Long Lever</strong> Force Bolt, Vector Pull and Lateral Slip each gain one tile of reach.</div>
+<div class="card ">
+<strong>Set the Angle</strong> Once per turn, your first Force Bolt hit against an enemy you already displaced this turn deals +1 damage.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">07<small>Class active</small>
+</div>
+<div class="cards ">
+<div class="card shared">
+<strong>Safe Passage</strong> 1 AP · once per room. Move yourself or a willing adjacent squadmate up to three legal steps. This move skips walking reactions and still resolves hazards along the path.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">08<small>Origin passive</small>
+</div>
+<div class="cards ">
+<div class="card ">
+<strong>Counterweight</strong> Once per turn after moving an enemy with a power, you may slide a willing ally within three of you one legal tile. Cannot trigger itself.</div>
+</div>
+</div>
+<div class="row">
+<div class="rank">09<small>Capstone · pick 1</small>
+</div>
+<div class="cards two">
+<div class="card ">
+<strong>Spatial Exchange</strong> 2 AP · once per room. Swap a willing squadmate and a standard-or-lighter enemy, both visible within four of you. Both footprints must fit. Resolve both landings.</div>
+<div class="card ">
+<strong>Wrecking Ball</strong> 2 AP · once per room. Hurl a standard-or-lighter foe within four up to three tiles in a straight line. Deal 4 damage to it and 4 to the first unit blocking its path, then stop before that unit.</div>
+</div>
+</div>
+<aside>
+<p>
+<b>One 3 AP turn</b> Use Vector Pull (1) to move a guard into line with a wall directly behind it, then use Compression (2) for the wall bonus.</p>
+<p>
+<b>Under pressure</b> Heavy targets resist movement. Open rooms deny collisions, and pulling a bruiser too close puts Glaz in melee.</p>
+</aside>
+<a class="back" href="#index">Back to origins ↑</a>
+</article>
+</main>
+</html>

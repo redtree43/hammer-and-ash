@@ -3,15 +3,12 @@ extends CanvasLayer
 const State = preload("res://scripts/hq_trial_state.gd")
 const Loadouts = preload("res://scripts/starter_loadouts.gd")
 const Art = preload("res://scripts/personnel_art.gd")
+const PlayerClasses = preload("res://scripts/player_classes.gd")
+const ClassCombat = preload("res://scripts/class_combat.gd")
+const OriginAvatars = preload("res://scripts/origin_avatars.gd")
+const USSRMap = preload("res://scripts/ussr_map.gd")
 const TABS: Array[String] = ["USSR", "Personnel", "Workshop", "Research"]
-const BRANCHES: Array[String] = ["Stratagems", "Intelligence Ops"]
-const CLASS_ROLES: Dictionary = {
-    "Scythe": "Close-quarters damage",
-    "Anvil": "Defence and squad protection",
-    "Needle": "Precision target elimination",
-    "Iskra": "Technology and environmental manipulation",
-    "Alkhimik": "Healing and enhancement",
-}
+const RESEARCH_TITLES: Dictionary = {"Stratagems": "Stratagems", "Intelligence Ops": "Intelligence Operations"}
 
 signal deployed(operation: String)
 
@@ -19,19 +16,17 @@ var campaign: State = State.new()
 var surface: PanelContainer
 var body: VBoxContainer
 var tab: String = "USSR"
-var branch: String = "Stratagems"
 var operation: String = ""
-var region: int = 0
+var region: int = -1
+var preparing_squad: bool = false
+var viewing_intel: bool = false
 var squad: Array[int] = []
 var draft_gear: Dictionary = {}
 var prepare_reload: bool = false
 var selected_operative: int = 0
 var personnel_operative: int = 0
-var personnel_origin_preview: String = "Wolverine"
 var sort_by_type: bool = true
-var gear_filter: int = 0
 var kit_profiles: Dictionary = {}
-var portraits: Dictionary = {}
 var recruit_class: String = ""
 
 func _ready() -> void:
@@ -63,10 +58,16 @@ func refresh() -> void:
     line(header, "Resistance Bunker", 32).size_flags_horizontal = Control.SIZE_EXPAND_FILL
     line(layout, "Day %d    ·    Supplies %d    ·    Intel %d    ·    %d ready / %d operatives" % [
         campaign.day, campaign.supplies, campaign.intel, ready_count(), campaign.roster.size()], 19)
+    var navigation := HBoxContainer.new()
+    navigation.add_theme_constant_override("separation", 32)
+    layout.add_child(navigation)
     var toolbar := HBoxContainer.new()
-    layout.add_child(toolbar)
+    toolbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    navigation.add_child(toolbar)
     for name_text in TABS:
         action(toolbar, name_text, select_tab.bind(name_text), tab == name_text)
+    if tab == "Workshop":
+        line(navigation, "Equipment inventory", 23).size_flags_horizontal = Control.SIZE_EXPAND_FILL
     var scroll := ScrollContainer.new()
     scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
     scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -107,12 +108,13 @@ func make_theme() -> Theme:
     style.set_color("font_color", "Label", Color("#e3ebdd"))
     return style
 
-func action(parent: Control, title: String, callback: Callable, disabled: bool = false) -> void:
+func action(parent: Control, title: String, callback: Callable, disabled: bool = false) -> Button:
     var button := Button.new()
     button.text = title
     button.disabled = disabled
     button.pressed.connect(run_action.bind(callback))
     parent.add_child(button)
+    return button
 
 func run_action(callback: Callable) -> void:
     callback.call()
@@ -149,63 +151,167 @@ func job_summary() -> String:
     var active_recruit: String = "Recruitment idle"
     if not campaign.recruitment.is_empty():
         active_recruit = "%s recruit due day %d" % [campaign.recruitment["kit"], campaign.recruitment["finish"]]
-    return "%s    ·    %s    ·    Medkits %d" % [active_project, active_recruit, campaign.medkits]
+    return "%s    ·    %s" % [active_project, active_recruit]
 
 func show_ussr() -> void:
-    if not operation.is_empty():
+    if preparing_squad:
         show_loadout()
         return
-    line(body, "Regions", 26)
-    var regions := row()
-    for index in range(1, 9):
-        var title: String = "Moscow" if index == 8 else "Region %d" % index
-        action(regions, title, select_region.bind(index), index == region)
-    if region > 0:
-        line(body, "Test region" if region == 1 else "No operations available in this region.", 22)
-    if region == 1:
-        for id in State.OPERATIONS:
-            var entry := row()
-            action(entry, State.OPERATIONS[id]["label"], select_operation.bind(id))
-            line(entry, State.OPERATIONS[id]["brief"])
+    var heading := row()
+    if region < 0:
+        line(heading, "Russia / Federal districts", 26).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        show_country_map()
+    else:
+        line(heading, USSRMap.DISTRICTS[region]["name"], 26).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        action(heading, "Back to Russia", select_region.bind(-1))
+        show_district_map()
     if not campaign.debrief.is_empty():
         line(body, "Latest operation report", 22)
         for entry in campaign.debrief:
             line(body, entry)
 
+func map_sidebar(columns: HBoxContainer) -> VBoxContainer:
+    var panel := PanelContainer.new()
+    var style := StyleBoxFlat.new()
+    style.bg_color = Color("#1c2b2c")
+    style.border_color = Color("#3b5150")
+    style.set_border_width_all(1)
+    for side in [SIDE_LEFT, SIDE_RIGHT, SIDE_TOP, SIDE_BOTTOM]:
+        style.set_content_margin(side, 16)
+    panel.add_theme_stylebox_override("panel", style)
+    columns.add_child(panel)
+    var sidebar := VBoxContainer.new()
+    sidebar.custom_minimum_size.x = 296
+    sidebar.add_theme_constant_override("separation", 10)
+    panel.add_child(sidebar)
+    return sidebar
+
+func show_country_map() -> void:
+    var columns := row()
+    var map := USSRMap.new()
+    map.configure(-1, {})
+    map.district_selected.connect(func(index: int) -> void: run_action(select_region.bind(index)))
+    columns.add_child(map)
+    var sidebar := map_sidebar(columns)
+    line(sidebar, "Select a district", 20)
+    for index in range(USSRMap.DISTRICTS.size()):
+        var entry: Dictionary = USSRMap.DISTRICTS[index]
+        var item := HBoxContainer.new()
+        sidebar.add_child(item)
+        var swatch := ColorRect.new()
+        swatch.color = entry["colour"]
+        swatch.custom_minimum_size = Vector2(10, 0)
+        swatch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        item.add_child(swatch)
+        var button := action(item, entry["name"], select_region.bind(index))
+        button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+        button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+func show_district_map() -> void:
+    var columns := row()
+    var map := USSRMap.new()
+    var district_id: String = USSRMap.DISTRICTS[region]["id"]
+    var sites: Dictionary = USSRMap.Geography.data[district_id].get("sites", {})
+    var markers: Dictionary = {}
+    for id in sites:
+        var mission_name: String = State.OPERATIONS[id]["label"]
+        var button := action(map, mission_name, select_operation.bind(id))
+        button.tooltip_text = sites[id]["sector"]
+        button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+        var pin_style := StyleBoxFlat.new()
+        pin_style.bg_color = Color("#172526")
+        pin_style.border_color = Color("#e3bb75") if operation == id else Color("#61766d")
+        pin_style.set_border_width_all(1)
+        pin_style.set_corner_radius_all(3)
+        pin_style.content_margin_left = 28
+        pin_style.content_margin_right = 10
+        pin_style.content_margin_top = 6
+        pin_style.content_margin_bottom = 6
+        button.add_theme_stylebox_override("normal", pin_style)
+        var hover_style: StyleBoxFlat = pin_style.duplicate()
+        hover_style.bg_color = Color("#344a42")
+        button.add_theme_stylebox_override("hover", hover_style)
+        button.add_theme_stylebox_override("pressed", hover_style)
+        button.draw.connect(draw_mission_pin.bind(button, operation == id))
+        markers[id] = {"button": button, "point": sites[id]["point"]}
+    map.configure(region, markers)
+    columns.add_child(map)
+    var sidebar := map_sidebar(columns)
+    if operation.is_empty():
+        line(sidebar, "Available missions", 20)
+        if sites.is_empty():
+            wrapped_line(sidebar, "No missions available in this district.")
+        else:
+            wrapped_line(sidebar, "Select a mission pin to open its briefing.")
+        return
+    var mission: Dictionary = State.OPERATIONS[operation]
+    line(sidebar, sites[operation]["sector"], 16).modulate = Color("#bccaaf")
+    line(sidebar, mission["label"], 28)
+    wrapped_line(sidebar, mission["brief"])
+    var actions := HBoxContainer.new()
+    sidebar.add_child(actions)
+    action(actions, "Deploy", begin_squad_preparation)
+    action(actions, "Intel Op", toggle_intel)
+    action(actions, "Back", select_operation.bind(""))
+    if viewing_intel:
+        sidebar.add_child(HSeparator.new())
+        show_facility_recon(sidebar)
+
+func draw_mission_pin(button: Button, selected: bool) -> void:
+    var point := Vector2(15, roundf(button.size.y * 0.5))
+    var colour := Color("#f5d792") if selected else Color("#d6ad6c")
+    button.draw_colored_polygon(PackedVector2Array([point + Vector2(-5, 0), point + Vector2(5, 0), point + Vector2(0, 8)]), colour)
+    button.draw_circle(point + Vector2(0, -2), 6, colour, true, -1, true)
+    button.draw_circle(point + Vector2(0, -2), 2.2, Color("#172526"), true, -1, true)
+
 func select_region(index: int) -> void:
     region = index
+    select_operation("")
 
 func select_operation(id: String) -> void:
     operation = id
+    preparing_squad = false
+    viewing_intel = false
     squad.clear()
     draft_gear.clear()
     selected_operative = 0
     prepare_reload = false
 
+func begin_squad_preparation() -> void:
+    preparing_squad = true
+
+func return_to_briefing() -> void:
+    preparing_squad = false
+
+func toggle_intel() -> void:
+    viewing_intel = not viewing_intel
+
+func show_facility_recon(parent: VBoxContainer) -> void:
+    if campaign.prepared_recon == operation:
+        line(parent, "Facility Recon active", 18)
+        wrapped_line(parent, State.OPERATIONS[operation]["recon"])
+        return
+    var support := HBoxContainer.new()
+    parent.add_child(support)
+    action(support, "Facility Recon (%d Intel)" % State.RECON_COST, campaign.buy_recon.bind(operation),
+        not campaign.unlocks.has("recon") or campaign.intel < State.RECON_COST or not campaign.prepared_recon.is_empty())
+    if not campaign.unlocks.has("recon"):
+        wrapped_line(parent, "Unlock Facility Recon in Research.")
+    elif not campaign.prepared_recon.is_empty():
+        wrapped_line(parent, "Recon already prepared for %s." % State.OPERATIONS[campaign.prepared_recon]["label"])
+    elif campaign.intel < State.RECON_COST:
+        wrapped_line(parent, "Insufficient Intel.")
+
 func show_loadout() -> void:
     line(body, "%s / Squad loadout" % State.OPERATIONS[operation]["label"], 26)
     var launch := row()
-    action(launch, "Back to operations", select_operation.bind(""))
+    action(launch, "Back to briefing", return_to_briefing)
     var can_launch: bool = campaign.can_deploy(operation, squad, draft_gear)
     action(launch, "Deploy", deploy, not can_launch)
     line(launch, "%d / %d operatives selected" % [squad.size(), State.SQUAD_SIZE])
     if squad.size() == State.SQUAD_SIZE and not can_launch:
-        line(launch, "Reduce shared rifles or medkits to fit available stock.")
-    var support := row()
-    line(support, "Intelligence Op")
-    if campaign.prepared_recon == operation:
-        line(support, "Facility Recon active")
-    else:
-        action(support, "Facility Recon (%d Intel)" % State.RECON_COST, campaign.buy_recon.bind(operation),
-            not campaign.unlocks.has("recon") or campaign.intel < State.RECON_COST or not campaign.prepared_recon.is_empty())
-        if not campaign.unlocks.has("recon"):
-            line(support, "Requires research")
-        elif not campaign.prepared_recon.is_empty():
-            line(support, "Recon already prepared for %s" % State.OPERATIONS[campaign.prepared_recon]["label"])
-        elif campaign.intel < State.RECON_COST:
-            line(support, "Insufficient Intel")
-    if campaign.prepared_recon == operation:
-        wrapped_line(body, State.OPERATIONS[operation]["recon"])
+        line(launch, "Pack fewer medkits to fit available stock.")
+    show_facility_recon(body)
     var stratagems := row()
     line(stratagems, "Stratagem")
     var stratagem := OptionButton.new()
@@ -215,7 +321,7 @@ func show_loadout() -> void:
     stratagem.select(1 if prepare_reload else 0)
     stratagem.item_selected.connect(select_stratagem)
     stratagems.add_child(stratagem)
-    var reload_detail: String = "%d Intel on use · Full magazine · No AP · Once per operation [G]" % State.RELOAD_COST
+    var reload_detail: String = "%d Intel on use · Refills ranged charges · No AP · Once per operation [G]" % State.RELOAD_COST
     line(stratagems, reload_detail if campaign.unlocks.has("reload") else "Requires research")
     var columns := row()
     var roster_column := column(columns, 420)
@@ -227,14 +333,40 @@ func show_loadout() -> void:
         var entry := HBoxContainer.new()
         roster_column.add_child(entry)
         var selected: bool = squad.has(id)
-        line(entry, campaign.operative_name(id)).custom_minimum_size.x = 170
+        var profile: Dictionary = campaign.roster[id]
+        entry.add_child(origin_portrait(profile, 1))
+        var identity := VBoxContainer.new()
+        identity.custom_minimum_size.x = 178
+        identity.add_theme_constant_override("separation", 0)
+        entry.add_child(identity)
+        line(identity, campaign.operative_name(id), 17)
+        line(identity, origin_label(profile), 13).modulate = Color("#b4c9c0")
         action(entry, "Remove" if selected else "Select", toggle_squad.bind(id),
             not selected and squad.size() == State.SQUAD_SIZE)
         if selected:
             action(entry, "Gear", inspect_operative.bind(id), selected_operative == id)
     if squad.has(selected_operative):
-        line(equipment, campaign.operative_name(selected_operative), 22)
-        show_gear_slots(equipment, selected_operative, draft_gear[selected_operative], true)
+        var profile: Dictionary = campaign.roster[selected_operative]
+        var build: Dictionary = profile["class_build"]
+        var header := HBoxContainer.new()
+        header.add_theme_constant_override("separation", 12)
+        equipment.add_child(header)
+        header.add_child(origin_portrait(profile, 2))
+        var details := VBoxContainer.new()
+        details.alignment = BoxContainer.ALIGNMENT_CENTER
+        header.add_child(details)
+        line(details, campaign.operative_name(selected_operative), 22)
+        line(details, "Level %d · %s" % [int(build["level"]), origin_label(profile)], 16)
+        if profile["kit"] == "Alkhimik" and int(build["origin"]) == 0:
+            class_picker(equipment, "Starting form", PlayerClasses.FORMS,
+                PlayerClasses.FORMS.find(build["form"]), change_form.bind(selected_operative))
+        line(equipment, Loadouts.SUPERSUIT, 19)
+        var attack: Dictionary = PlayerClasses.base_attack(profile["kit"], build, build["form"],
+            kit_profiles[profile["kit"]]["damage"], kit_profiles[profile["kit"]]["range"])
+        line(equipment, "%s · %d damage · %d tile%s" % [attack["name"], attack["damage"],
+            attack["range"], "" if attack["melee"] else "s"])
+        line(equipment, "Consumable")
+        add_consumable_picker(equipment, selected_operative, draft_gear[selected_operative], true)
 
 func toggle_squad(id: int) -> void:
     if squad.has(id):
@@ -244,7 +376,7 @@ func toggle_squad(id: int) -> void:
             selected_operative = 0 if squad.is_empty() else squad.back()
     elif campaign.available(id) and squad.size() < State.SQUAD_SIZE:
         squad.append(id)
-        draft_gear[id] = campaign.roster[id]["loadout"].duplicate()
+        draft_gear[id] = campaign.roster[id]["consumable"]
         selected_operative = id
 
 func select_stratagem(index: int) -> void:
@@ -283,9 +415,10 @@ func show_personnel() -> void:
     var roster := OptionButton.new()
     roster.custom_minimum_size.x = 232
     roster.disabled = ids.is_empty()
+    roster.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     for id in ids:
         var ready: String = "  ·  Recovering" if not campaign.available(id) else ""
-        roster.add_item(campaign.operative_name(id) + ready, id)
+        roster.add_icon_item(operative_avatar(campaign.roster[id]), campaign.operative_name(id) + ready, id)
     if not ids.is_empty():
         roster.select(roster.get_item_index(personnel_operative))
     roster.item_selected.connect(func(index: int) -> void:
@@ -315,21 +448,17 @@ func show_personnel() -> void:
 
     var id: int = personnel_operative
     var kit: String = campaign.roster[id]["kit"]
-    var choices: Array = campaign.roster[id]["loadout"]
-    var equipped: Dictionary = kit_profiles[kit].duplicate()
-    Loadouts.equip(equipped, choices)
     var columns := row()
-    columns.alignment = BoxContainer.ALIGNMENT_CENTER
-    show_operative_card(personnel_panel(columns, 282, false), id, kit, equipped)
-    show_class_path(personnel_panel(columns, 445, true), kit)
-    var equipment := personnel_panel(columns, 390, true)
+    show_operative_card(bunker_panel(columns, 344, false), id)
+    show_class_path(bunker_panel(columns, 495, true), id, kit)
+    var equipment := bunker_panel(columns, 338, false)
     line(equipment, "Equipment", 24)
-    var equipment_note := line(equipment, "Defaults for future deployments", 15)
-    equipment_note.modulate = Color("#a6b9b0")
-    for slot in [1, 0, 2, 3]:
-        show_personnel_gear(equipment, id, choices, equipped, slot)
+    show_personnel_gear(equipment, id, 0)
+    show_personnel_gear(equipment, id, 1)
+    equipment.add_child(HSeparator.new())
+    show_operative_stats(equipment, id)
 
-func personnel_panel(parent: HBoxContainer, width: float, expand: bool) -> VBoxContainer:
+func bunker_panel(parent: HBoxContainer, width: float, expand: bool) -> VBoxContainer:
     var panel := PanelContainer.new()
     panel.custom_minimum_size.x = width
     if expand:
@@ -350,129 +479,195 @@ func personnel_panel(parent: HBoxContainer, width: float, expand: bool) -> VBoxC
     panel.add_child(content)
     return content
 
-func show_operative_card(parent: VBoxContainer, id: int, kit: String, equipped: Dictionary) -> void:
+func show_operative_card(parent: VBoxContainer, id: int) -> void:
+    var profile: Dictionary = campaign.roster[id]
+    var tree: Dictionary = PlayerClasses.data(profile["kit"])
+    var origin: Dictionary = tree["origins"][int(profile["class_build"]["origin"])]
     line(parent, campaign.operative_name(id), 25)
-    var ready: bool = campaign.available(id)
-    var status: String = "Ready to deploy" if ready else "Recovering until day %d" % campaign.roster[id]["ready_day"]
-    line(parent, status, 15).modulate = Color("#a3d9b1") if ready else Color("#efbd82")
+    line(parent, origin_label(profile), 17).modulate = Color(tree["color"])
+    if profile["kit"] == "Alkhimik" and int(profile["class_build"]["origin"]) == 0:
+        class_picker(parent, "Starting form", PlayerClasses.FORMS,
+            PlayerClasses.FORMS.find(profile["class_build"]["form"]), change_form.bind(id))
 
     var portrait_frame := PanelContainer.new()
     var backdrop := StyleBoxFlat.new()
-    backdrop.bg_color = Color("#172424")
+    backdrop.bg_color = Color("#142020").lerp(Color(tree["color"]), 0.07)
     backdrop.border_color = Color("#405753")
     backdrop.set_border_width_all(1)
     backdrop.set_corner_radius_all(6)
     portrait_frame.add_theme_stylebox_override("panel", backdrop)
+    portrait_frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
     parent.add_child(portrait_frame)
-    var portrait := TextureRect.new()
-    portrait.texture = portraits[kit]
-    portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-    portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-    portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-    portrait.custom_minimum_size = Vector2(214, 220)
+    var portrait: TextureRect = origin_portrait(profile, 10)
+    portrait.custom_minimum_size.y = 348
     portrait_frame.add_child(portrait)
+    if origin.has("identity"):
+        line(parent, str(origin["identity"]).capitalize(), 15).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    var ready: bool = campaign.available(id)
+    var status: String = "Ready to deploy" if ready else "Recovering until day %d" % profile["ready_day"]
+    line(parent, status, 15).modulate = Color("#a3d9b1") if ready else Color("#efbd82")
 
-    line(parent, "Combat stats", 21)
+func show_operative_stats(parent: VBoxContainer, id: int) -> void:
+    line(parent, "Current stats", 24)
     var stats := GridContainer.new()
     stats.columns = 2
     stats.add_theme_constant_override("h_separation", 14)
-    stats.add_theme_constant_override("v_separation", 5)
+    stats.add_theme_constant_override("v_separation", 10)
     parent.add_child(stats)
+    var profile: Dictionary = campaign.roster[id]
+    var build: Dictionary = profile["class_build"]
+    var equipped: Dictionary = kit_profiles[profile["kit"]].duplicate()
+    Loadouts.equip(equipped, profile["consumable"])
+    var skills: Dictionary = PlayerClasses.unlocked(profile["kit"], build)
+    var modifiers: Vector2i = PlayerClasses.stat_modifiers(skills, build["form"])
+    var attack: Dictionary = PlayerClasses.base_attack(profile["kit"], build, build["form"],
+        equipped["damage"], equipped["range"])
     var values: Dictionary = {
-        "HP": equipped["hp"], "Armour": equipped["max_armour"],
-        "Base melee": equipped["melee_damage"], "Base ranged": equipped["damage"],
-        "Action points": equipped["max_ap"], "Move": "%d tiles" % equipped["move"],
-        "Resistances": "None",
+        "Max HP": PlayerClasses.maximum_hp(build["level"], skills, equipped["supersuit_hp_bonus"]),
+        "Protection": PlayerClasses.armour_capacity(equipped["max_armour"], modifiers.x, skills),
+        "Action points": equipped["max_ap"], "Move": "%d tiles" % maxi(1, int(equipped["move"]) + modifiers.y),
+        "Base attack": attack["name"],
+        "Base damage": attack["damage"], "Attack range": attack["range"],
     }
     for stat in values:
         line(stats, stat, 15).size_flags_horizontal = Control.SIZE_EXPAND_FILL
         line(stats, str(values[stat]), 15).modulate = Color("#ebbe8e")
 
-func show_class_path(parent: VBoxContainer, kit: String) -> void:
+func origin_label(profile: Dictionary) -> String:
+    var branch: Dictionary = PlayerClasses.data(profile["kit"])["origins"][int(profile["class_build"]["origin"])]
+    return str(branch["name"])
+
+func operative_avatar(profile: Dictionary, scale: int = 1) -> Texture2D:
+    return OriginAvatars.texture(OriginAvatars.variant(profile["kit"], profile["class_build"]), scale)
+
+func origin_portrait(profile: Dictionary, scale: int) -> TextureRect:
+    var portrait := TextureRect.new()
+    portrait.texture = operative_avatar(profile, scale)
+    portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+    portrait.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+    portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    return portrait
+
+func class_picker(parent: Control, caption: String, options: Array, selected: int, on_select: Callable,
+        icons: Array[Texture2D] = []) -> void:
+    var fields := HBoxContainer.new()
+    fields.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    parent.add_child(fields)
+    line(fields, caption, 15)
+    var picker := OptionButton.new()
+    picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    picker.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+    for index in range(options.size()):
+        if icons.is_empty():
+            picker.add_item(str(options[index]))
+        else:
+            picker.add_icon_item(icons[index], str(options[index]))
+    picker.select(selected)
+    picker.item_selected.connect(on_select)
+    fields.add_child(picker)
+
+func change_form(index: int, id: int) -> void:
+    campaign.roster[id]["class_build"]["form"] = PlayerClasses.FORMS[index]
+    refresh.call_deferred()
+
+func change_class_build(index: int, id: int, field: String, level: int = 0) -> void:
+    var build: Dictionary = campaign.roster[id]["class_build"]
+    match field:
+        "origin":
+            build["origin"] = index
+            build["choices"].clear()
+        "level":
+            campaign.set_playtest_level(id, index)
+        "choice":
+            if level > int(build["level"]):
+                return
+            build["choices"][level] = index
+    refresh.call_deferred()
+
+func show_class_path(parent: VBoxContainer, id: int, kit: String) -> void:
     parent.add_theme_constant_override("separation", 6)
-    line(parent, "Class path", 24)
-    line(parent, CLASS_ROLES[kit], 15).modulate = Color("#a6b9b0")
-    if kit == "Scythe":
-        line(parent, "Provisional progression", 15).modulate = Color("#ebbe8e")
-        var paths := HBoxContainer.new()
-        parent.add_child(paths)
-        for path in Art.ScytheTree.ORIGIN_NODES:
-            action(paths, path, select_origin_preview.bind(path), personnel_origin_preview == path)
-        parent.add_child(Art.ScytheTree.new(personnel_origin_preview))
+    line(parent, "%s class path" % kit, 24)
+    var tree: Dictionary = PlayerClasses.data(kit)
+    var build: Dictionary = campaign.roster[id]["class_build"]
+    var origin: int = int(build["origin"])
+    var current_level: int = int(build["level"])
+    line(parent, str(tree["role"]).capitalize(), 15).modulate = Color("#a6b9b0")
+    var origins: Array = tree["origins"].map(func(branch: Dictionary) -> String:
+        return str(branch["name"]))
+    var icons: Array[Texture2D] = []
+    for index in range(origins.size()):
+        var preview: Dictionary = build.duplicate()
+        preview["origin"] = index
+        icons.append(OriginAvatars.texture(OriginAvatars.variant(kit, preview)))
+    var build_controls := HBoxContainer.new()
+    build_controls.add_theme_constant_override("separation", 12)
+    parent.add_child(build_controls)
+    class_picker(build_controls, "Origin", origins, origin, change_class_build.bind(id, "origin"), icons)
+    var levels: Array = ["Earned"]
+    levels.append_array(range(1, 10))
+    class_picker(build_controls, "Dev level", levels, campaign.roster[id].get("playtest_level", 0),
+        change_class_build.bind(id, "level"))
+    var xp: int = campaign.roster[id].get("xp", 0)
+    var earned_level: int = campaign.earned_level(id)
+    var progress := "%d XP  •  Level %d" % [xp, earned_level]
+    if earned_level < State.LEVEL_XP.size():
+        progress += "  •  %d XP to Level %d" % [State.LEVEL_XP[earned_level] - xp, earned_level + 1]
     else:
-        line(parent, "Progression in development", 15).modulate = Color("#ebbe8e")
-    parent.add_child(HSeparator.new())
-    line(parent, "Prototype abilities", 19)
-    for description in kit_profiles[kit]["ability_text"]:
-        var detail := line(parent, description, 15)
-        detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    if kit == "Anvil":
-        var breach := line(parent, "Breach · 1 AP · Charge through cover and shove an enemy on contact.", 15)
-        breach.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        progress += "  •  Trial level cap"
+    if campaign.roster[id].has("playtest_level"):
+        progress += "  •  Manual level %d (deployment XP paused)" % current_level
+    line(parent, progress, 14).modulate = Color("#a6b9b0")
+    line(parent, "■ Active    ● Passive    ·    Hover for details", 14).modulate = Color("#a6b9b0")
+    var graph := Art.ClassTree.new(Color(tree["color"]))
+    var unlocked: Dictionary = PlayerClasses.unlocked(kit, build)
+    for level in range(1, 10):
+        var options: Array = PlayerClasses.nodes_at(kit, origin, level)
+        var is_choice: bool = level > 1 and options.size() > 1
+        var displayed: Array = []
+        for node: Dictionary in options:
+            var detail := node.duplicate()
+            if node["type"] == "A" and not ClassCombat.supports_review_action(node["name"]):
+                detail["rule"] = "Combat implementation pending."
+            displayed.append(detail)
+        var earned: bool = level <= current_level
+        graph.add_level(displayed, unlocked, earned,
+            change_class_build.bind(id, "choice", level) if is_choice else Callable())
+    parent.add_child(graph)
 
-func select_origin_preview(path: String) -> void:
-    personnel_origin_preview = path
-
-func show_personnel_gear(parent: VBoxContainer, id: int, choices: Array, equipped: Dictionary, slot: int) -> void:
+func show_personnel_gear(parent: VBoxContainer, id: int, slot: int) -> void:
+    var consumable: int = campaign.roster[id]["consumable"]
     parent.add_child(HSeparator.new())
     var entry := HBoxContainer.new()
     entry.add_theme_constant_override("separation", 12)
     parent.add_child(entry)
-    var item: Dictionary = Loadouts.ITEMS[slot][choices[slot]]
-    entry.add_child(Art.EquipmentIcon.new(slot, item["name"] != "Empty"))
+    entry.add_child(Art.EquipmentIcon.new(slot, slot == 0 or consumable == 0))
     var details := VBoxContainer.new()
     details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     details.add_theme_constant_override("separation", 4)
     entry.add_child(details)
-    line(details, "Consumable" if slot == 3 else Loadouts.SLOTS[slot], 15).modulate = Color("#ebbe8e")
-    add_gear_picker(details, id, choices, slot, false)
-    var effect: String = item["detail"]
-    if slot == 0 and choices[slot] == 0:
-        effect = "%d damage · %d range · 3 rounds" % [equipped["damage"], equipped["range"]]
-    elif slot == 1 and Loadouts.blocks_melee(equipped["id"], choices[0]):
-        effect = "Melee unavailable with a two-handed weapon"
-    elif slot == 2:
-        effect = "%d armour" % equipped["max_armour"]
-    elif slot == 3 and choices[slot] == 0:
-        effect += " · %d in stock" % campaign.medkits
-    var description := line(details, effect, 15)
-    description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    description.modulate = Color("#a6b9b0")
+    if slot == 0:
+        line(details, Loadouts.SUPERSUIT, 17).modulate = Color("#ebbe8e")
+        line(details, Loadouts.SUPERSUIT_DETAIL, 15).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        return
+    line(details, "Consumable", 15).modulate = Color("#ebbe8e")
+    add_consumable_picker(details, id, consumable, false)
+    if consumable == 0:
+        line(details, "%s · %d in stock" % [Loadouts.MEDKIT_DETAIL, campaign.medkits], 15).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
-
-func show_gear_slots(parent: VBoxContainer, id: int, choices: Array, preparing: bool) -> void:
-    for slot in range(Loadouts.SLOTS.size()):
-        var name_text: String = "Consumable" if slot == 3 else Loadouts.SLOTS[slot]
-        line(parent, name_text)
-        add_gear_picker(parent, id, choices, slot, preparing)
-
-func add_gear_picker(parent: VBoxContainer, id: int, choices: Array, slot: int, preparing: bool) -> void:
-    var kit: String = campaign.roster[id]["kit"]
-    var kit_index: int = campaign.classes.find(kit)
+func add_consumable_picker(parent: VBoxContainer, id: int, consumable: int, preparing: bool) -> void:
     var options := OptionButton.new()
-    for option in range(Loadouts.ITEMS[slot].size()):
-        var item: Dictionary = Loadouts.ITEMS[slot][option]
-        var label: String = item["name"]
-        if slot == 0 and option == 0:
-            label = kit_profiles[kit]["basic_attack"]
-        options.add_item(label, option)
-        options.set_item_disabled(option, not gear_option_available(kit_index, choices, slot, option))
-    options.select(choices[slot])
-    options.item_selected.connect(change_gear.bind(id, slot, preparing))
+    for option in Loadouts.CONSUMABLES:
+        options.add_item(option)
+    options.set_item_disabled(0, campaign.medkits == 0)
+    options.select(consumable)
+    options.item_selected.connect(change_consumable.bind(id, preparing))
     parent.add_child(options)
 
-func gear_option_available(kit_index: int, choices: Array, slot: int, option: int) -> bool:
-    if slot == 0 and option == 1 and campaign.armoury.is_empty():
-        return false
-    if slot == 3 and option == 0 and campaign.medkits == 0:
-        return false
-    return Loadouts.can_equip(kit_index, choices, slot, option)
-
-func change_gear(option: int, id: int, slot: int, preparing: bool) -> void:
-    var choices: Array = draft_gear[id] if preparing else campaign.roster[id]["loadout"]
-    var kit_index: int = campaign.classes.find(campaign.roster[id]["kit"])
-    if gear_option_available(kit_index, choices, slot, option):
-        Loadouts.select_item(kit_index, choices, slot, option)
+func change_consumable(option: int, id: int, preparing: bool) -> void:
+    if preparing:
+        draft_gear[id] = option
+    else:
+        campaign.roster[id]["consumable"] = option
     refresh.call_deferred()
 
 func select_class(index: int) -> void:
@@ -482,55 +677,89 @@ func train_recruit() -> void:
     campaign.start_recruit(recruit_class if not recruit_class.is_empty() else campaign.classes[0])
 
 func show_workshop() -> void:
-    line(body, "Consumables in stock", 24)
-    line(body, "Medkit ×%d" % campaign.medkits)
-    line(body, "Purchase consumables", 23)
-    for id in State.RECIPES:
-        var entry := row()
-        var recipe: Dictionary = State.RECIPES[id]
-        line(entry, "%s ×%d  ·  %d Supplies" % [recipe["label"], recipe["quantity"], recipe["cost"]]).custom_minimum_size.x = 310
-        action(entry, "Purchase", campaign.produce.bind(id), campaign.supplies < int(recipe["cost"]))
-    line(body, "Equipment inventory", 23)
-    var filters := row()
-    for index in range(3):
-        action(filters, ["Ranged", "Melee", "Armour"][index], select_gear_filter.bind(index), gear_filter == index)
-    for item in Loadouts.ITEMS[gear_filter]:
-        if item["name"] == "Empty":
-            continue
-        if item["name"] == "Service Rifle":
-            line(body, "%s · %s · %d captured" % [item["name"], item["detail"], campaign.armoury.size()])
-        else:
-            line(body, "%s · %s · Issued stock" % [item["name"], item["detail"]])
+    var columns := row()
+    columns.add_theme_constant_override("separation", 32)
+    var purchases := column(columns, 0)
+    var inventory := column(columns, 0)
+    purchases.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    inventory.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-func select_gear_filter(index: int) -> void:
-    gear_filter = index
+    var inset := MarginContainer.new()
+    inset.add_theme_constant_override("margin_top", 56)
+    purchases.add_child(inset)
+    line(inset, "Purchase consumables", 23)
+    for id in State.RECIPES:
+        var entry := HBoxContainer.new()
+        entry.add_theme_constant_override("separation", 16)
+        purchases.add_child(entry)
+        var recipe: Dictionary = State.RECIPES[id]
+        line(entry, "%s ×%d  ·  %d Supplies" % [recipe["label"], recipe["quantity"], recipe["cost"]]).custom_minimum_size.x = 275
+        action(entry, "Purchase", campaign.produce.bind(id), campaign.supplies < int(recipe["cost"]))
+
+    wrapped_line(inventory, "%s · %s" % [Loadouts.SUPERSUIT, Loadouts.SUPERSUIT_DETAIL])
+    wrapped_line(inventory, "%s · %s · %d in stock" % [Loadouts.MEDKIT_NAME, Loadouts.MEDKIT_DETAIL, campaign.medkits])
 
 func show_research() -> void:
-    var filters := row()
-    for name_text in BRANCHES:
-        action(filters, name_text, select_branch.bind(name_text), branch == name_text)
     var columns := row()
-    var projects := column(columns, 535)
-    var unlocks := column(columns, 365)
-    line(projects, "Projects", 23)
-    line(unlocks, "Unlocked " + branch, 23)
-    var has_unlock: bool = false
-    for id in State.PROJECTS:
-        var project: Dictionary = State.PROJECTS[id]
-        if project["branch"] != branch:
-            continue
-        line(projects, "%s  ·  %d Supplies  ·  %d days" % [project["label"], project["cost"], project["days"]])
-        var block: String = campaign.research_block(id)
-        action(projects, "Start research" if block.is_empty() else block, campaign.start_research.bind(id), not block.is_empty())
-        if campaign.unlocks.has(project["unlock"]):
-            has_unlock = true
-            line(unlocks, project["label"])
-            line(unlocks, "Equip in squad preparation. Press G in combat." if id == "emergency_reload" else "Available during squad preparation.")
-    if not has_unlock:
-        line(unlocks, "None yet")
+    columns.add_theme_constant_override("separation", 32)
+    for branch_id in RESEARCH_TITLES:
+        var board := bunker_panel(columns, 0, true)
+        board.add_theme_constant_override("separation", 16)
+        line(board, RESEARCH_TITLES[branch_id], 23).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+        var project_ids: Array[String] = []
+        for id in State.PROJECTS:
+            if State.PROJECTS[id]["branch"] == branch_id:
+                project_ids.append(id)
+        for group in range(2):
+            var lanes := HBoxContainer.new()
+            lanes.add_theme_constant_override("separation", 12)
+            board.add_child(lanes)
+            for lane_index in range(4):
+                var lane := column(lanes, 0)
+                lane.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+                lane.add_theme_constant_override("separation", 0)
+                var project_index: int = group * 4 + lane_index
+                if project_index < project_ids.size():
+                    show_research_project(lane, project_ids[project_index])
+                else:
+                    show_research_placeholder(lane)
+                for tier in range(2):
+                    var link := ColorRect.new()
+                    link.color = Color("#536761")
+                    link.custom_minimum_size = Vector2(2, 19)
+                    link.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+                    link.mouse_filter = Control.MOUSE_FILTER_IGNORE
+                    lane.add_child(link)
+                    show_research_placeholder(lane)
+        for index in range(8, project_ids.size()):
+            show_research_project(board, project_ids[index])
+    line(body, "Outlined slots are reserved for future projects.", 15).modulate = Color("#a6b9b0")
 
-func select_branch(name_text: String) -> void:
-    branch = name_text
+func show_research_project(parent: VBoxContainer, id: String) -> void:
+    var project: Dictionary = State.PROJECTS[id]
+    var block: String = campaign.research_block(id)
+    var status: String = "Start research" if block.is_empty() else block
+    var details: String = "%s\n%d Supplies · %d days" % [project["label"], project["cost"], project["days"]]
+    var card_status: String = "Slot occupied" if block == "Research slot occupied" else status
+    var card := action(parent, details + "\n" + card_status, campaign.start_research.bind(id), not block.is_empty())
+    card.custom_minimum_size.y = 72
+    card.clip_text = true
+    card.add_theme_font_size_override("font_size", 13)
+    card.add_theme_color_override("font_disabled_color", Color("#c4d4ca"))
+    card.tooltip_text = details + "\n" + status
+    if campaign.unlocks.has(project["unlock"]):
+        card.tooltip_text += "\nEquip in squad preparation. Press G in combat." if id == "emergency_reload" else "\nAvailable from Intel Op in the mission briefing."
+
+func show_research_placeholder(parent: VBoxContainer) -> void:
+    var slot := Panel.new()
+    slot.custom_minimum_size.y = 72
+    slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    var outline := StyleBoxFlat.new()
+    outline.bg_color = Color("#1a2727")
+    outline.border_color = Color("#536761")
+    outline.set_border_width_all(1)
+    slot.add_theme_stylebox_override("panel", outline)
+    parent.add_child(slot)
 
 func column(parent: HBoxContainer, width: int) -> VBoxContainer:
     var result := VBoxContainer.new()

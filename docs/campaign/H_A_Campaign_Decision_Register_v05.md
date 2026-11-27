@@ -1,8 +1,12 @@
 # HAMMER & ASH: UPRISING — CAMPAIGN DECISION REGISTER v0.5
 
+> Historical audit of workshop choices. See the [current campaign specification](../design/CAMPAIGN.md) and [open decisions](../design/OPEN_DECISIONS.md#campaign-and-headquarters).
+
 **Date:** 23 November 2026\
 **Scope:** Every numbered campaign workshop decision, plus important later unnumbered commitments.\
-**Authority:** This register supplements, not replaces, `H_A_Campaign_Design_Master_v05.md`.\
+**Companion record:** `H_A_Campaign_Design_Master_v05.md`.\
+
+**24 November reconciliation.** The numbered audit records the campaign workshop decisions at v0.5. Decision 32 now uses the Supersuit as the single persistent player equipment piece. Workshop production stays consumables-only. Suit acquisition and upgrades remain open. Decision 3's eight-district map is playable in the trial. Confirm which districts can be liberated and how Moscow counts before implementing the four-liberation and five-lockout rules. Decision 33's three research branches remain the campaign design, with two boards visible in Build 10. [Open Questions](../OPEN_QUESTIONS.md).
 
 ## Interpretation
 
@@ -14,7 +18,7 @@
 
 ## Numbered decision audit
 
-| No. | System | Current authoritative decision | Status | Master section |
+| No. | System | Workshop decision | Status at transfer | Master section |
 |---:|---|---|---|---|
 | 1 | Campaign progression | Hybrid: open regional choice + authored milestones | **Confirmed** | §1 |
 | 2 | Campaign length | 15–30 hours; higher difficulties may run longer (supersedes 15–25) | **Confirmed** | §1 |
