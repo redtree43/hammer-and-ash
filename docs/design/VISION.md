@@ -14,4 +14,8 @@ Use Godot and GDScript, a fixed-view 2D battlefield on a logical square grid, an
 
 On 25 November 2026, the creator asked in the combat prototype UI discussion for a cleaner, battlefield-first presentation closer to the intended game. Give the map more room, show selected-operative details in one place, and keep developer options in a collapsed menu during play. The tactical rules remain governed by the [combat specification](COMBAT.md).
 
+On 27 November 2026, the creator asked in the Build 10 playtest discussion for a substantial upgrade to combat graphics and to attack and ability animation. Use stronger battlefield materials and visible action playback that distinguishes movement, weapon fire, close attacks, and support abilities. Keep the grid, cover and unit feedback readable during play. [Build 10 visual pass](../IMPLEMENTATION_NOTES.md#27-november-combat-presentation-pass)
+
+On 27 November 2026, the creator marked up the Smelter Relay screenshot in the combat HUD request. Stack the squad selectors along the battlefield's left edge and place yellow action icons along its lower-left edge. Hover an icon or select an ability to show its AP cost and details. Escape cancels an armed ability or goes back from the current screen or overlay. [HUD controls and verification](../IMPLEMENTATION_NOTES.md#27-november-combat-hud-and-escape-verification)
+
 Sources include the 20 November visual amendment, the 21 November master design and the earlier Game Vision. [Vision handoff](../PROJECT_OVERVIEW.md) · [Original design references](../../references/design/)

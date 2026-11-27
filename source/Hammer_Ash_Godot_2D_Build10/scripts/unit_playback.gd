@@ -2,11 +2,11 @@ extends RefCounted
 
 ## Plays resolved actions in order. Board positions can advance ahead of the cutouts.
 const WALK_SECONDS := 0.10
-const LEAP_SECONDS := 0.30
-const LEAP_HEIGHT := 24.0
+const LEAP_SECONDS := 0.36
+const LEAP_HEIGHT := 34.0
 const DISPLACE_SECONDS := 0.12
-const TURN_SECONDS := 0.075
-const ATTACK_SECONDS := 0.22
+const TURN_SECONDS := 0.045
+const IMPACT_FRACTION := 0.38
 const INITIAL_FACING := Vector2i.RIGHT
 
 var facing: Dictionary[int, Vector2i] = {}
@@ -16,6 +16,7 @@ var events: Array[Dictionary] = []
 var current: Dictionary = {}
 var elapsed := 0.0
 var lift := 0.0
+var stride := 0
 
 static func nearest_facing(delta: Vector2, directions: Array[Vector2i]) -> Vector2i:
     var best := Vector2i.ZERO
@@ -35,6 +36,7 @@ func reset() -> void:
     current.clear()
     elapsed = 0.0
     lift = 0.0
+    stride = 0
 
 func busy() -> bool:
     return not current.is_empty() or not events.is_empty()
@@ -46,9 +48,9 @@ func motion(id: int, from: Vector2, to: Vector2, direction: Vector2i, kind: Stri
     events.append({"id": id, "kind": kind, "from": from, "to": to, "facing": direction,
         "duration": duration})
 
-func action(id: int, direction: Vector2i, effect: Callable) -> void:
+func action(id: int, direction: Vector2i, style: StringName, duration: float, effect: Callable) -> void:
     events.append({"id": id, "kind": &"turn", "facing": direction, "duration": TURN_SECONDS})
-    events.append({"id": id, "kind": &"attack", "effect": effect, "duration": ATTACK_SECONDS})
+    events.append({"id": id, "kind": &"attack", "style": style, "impact": effect, "duration": duration})
 
 func after_queued_actions(effect: Callable) -> void:
     if busy():
@@ -58,7 +60,7 @@ func after_queued_actions(effect: Callable) -> void:
 
 func pose(id: int) -> StringName:
     if current.get("id", -1) == id:
-        return current["kind"]
+        return current.get("style", current["kind"])
     return &"idle"
 
 func progress() -> float:
@@ -69,10 +71,13 @@ func advance(delta: float) -> bool:
         return false
     if not current.is_empty():
         elapsed = minf(elapsed + delta, current["duration"])
+        if current.has("impact") and progress() >= IMPACT_FRACTION:
+            current["impact"].call()
+            current.erase("impact")
         if current.has("from"):
             var id: int = current["id"]
             var t: float = progress()
-            var travel: float = floorf(t) if current["kind"] == &"blink" else t
+            var travel: float = float(t >= 0.48) if current["kind"] == &"blink" else t
             ground_positions[id] = Vector2(current["from"]).lerp(current["to"], travel)
             if current["kind"] == &"leap":
                 lift = LEAP_HEIGHT * 4.0 * t * (1.0 - t)
@@ -96,5 +101,7 @@ func advance(delta: float) -> bool:
         if float(next["duration"]) > 0.0:
             current = next
             elapsed = 0.0
+            if current["kind"] == &"walk":
+                stride += 1
             break
     return true

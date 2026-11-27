@@ -1,5 +1,11 @@
 # Campaign and headquarters
 
+## Regional campaign playtest
+
+**27 November 2026, creator's campaign cleanup request in chat.** Open all seven liberation-eligible districts from the USSR map for testing. Each district offers four operations. Moscow and its finale stay locked, and regional bosses are deferred. Use campaign deployment, squad preparation and debrief as the regular route for mission and combat testing. This availability applies to the playtest build. The authored offer, commitment, pressure and liberation rules below govern the eventual strategic campaign.
+
+**27 November 2026, creator's deployment testing request in chat.** Let the player choose each selected operative's level and class-tree abilities during squad preparation. The Build 10 controls start from Personnel settings and support earned level or manual Levels 1–9. In **Gear & build**, set the level, origin, available branch choices and Darwinian starting form. **Reset to Personnel** restores that operative's saved build. The selected build is used throughout the operation and its linked rooms. Any manual level pauses campaign XP for the whole deployment.
+
 ## Confirmed campaign structure
 
 - The campaign combines strategic freedom with authored milestones and a partially randomised offer structure. The target is 15–30 hours, with longer runs possible on higher difficulties. Keep strategic management compact and focused on tactical preparation.
@@ -49,4 +55,4 @@ Decisions 1–21 and 28–34 and unnumbered follow-ups are traced in the [campai
 
 **27 November 2026, creator's approval of the enemy tier and levelling plan in chat.** Pool tier XP from defeated enemies with objective XP across the operation. Each surviving deployed operative receives the full pool at successful debrief or on controlled extraction from cleared rooms. The existing Personnel trees unlock at the earned level. Manual level selection remains available for development.
 
-**Trial tuning.** New operatives start at Level 1. Level 2 requires 18 cumulative XP and Level 3 requires 45. Each completed authored objective pays 4 XP, with a further 5 for neutralising the Iron Giant pod before activation to match the mini-boss kill reward. Failed operations, stand-alone fixtures and deployments using a manual level pay zero campaign XP. Downed operatives who survive receive the same XP as other survivors. The trial caps earned levels at 3 and continues tracking total XP.
+**Trial tuning.** New operatives start at Level 1. Level 2 requires 18 cumulative XP and Level 3 requires 45. Each completed generator or prisoner objective pays 4 XP. Failed operations, the regression fixture and deployments using a manual level pay zero campaign XP. Downed operatives who survive receive the same XP as other survivors. The trial caps earned levels at 3 and continues tracking total XP.

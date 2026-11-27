@@ -1,17 +1,85 @@
 # Resistance Bunker playtest
 
-Run `source/Hammer_Ash_Godot_2D_Build10/project.godot` in Godot and press **F5**. The game opens on **USSR** in the bunker. Press **M** in the bunker to open the test mission selector, then choose a fixture with **1–9** or **0** and press **Enter**. Press **F9** from the selector to return to the bunker.
+Run `source/Hammer_Ash_Godot_2D_Build10/project.godot` in Godot and press **F5**. The game opens on **USSR** in the bunker. Open a district, select a site and choose **Deploy** to prepare the squad. For the original regression chain, use **M → 1 → Enter** from the bunker. **F9** returns from the regression selector or a campaign report.
 
 | Area | Playtest |
 | --- | --- |
-| USSR | Click a district on the Russia map or in the district list. In the **Central Federal District**, click an Assassination, Sabotage, Rescue or Defence pin to open its briefing. **Deploy** opens squad preparation, **Intel Op** opens Facility Recon, and **Back** returns to the district map. The other seven districts open with no missions available. |
-| Squad loadout | Select five ready operatives. **Gear** shows their Supersuit and base attack and lets you choose one consumable. Medkit selections share Workshop stock. |
+| USSR | Click any of the seven open districts on the map or in the list. Choose a patrol, relay, rescue or sweep from its map pin or mission list. **Deploy** opens squad preparation and **Intel Op** opens Facility Recon. Moscow is locked. |
+| Squad loadout | Select five ready operatives. **Gear & build** opens an operative's equipment and class tree. Choose a consumable, an origin, **Earned** or a manual level from 1–9, and the unlocked ability choices. **Reset to Personnel** restores the operative's build defaults. Medkit selections share Workshop stock. |
 | Personnel | Choose an operative with the roster picker and sort by Type or Name. The portrait is on the left, the class tree is in the centre, and the issued Supersuit, default consumable and current stats are on the right. Hover any ability node for its details. **Dev level → Earned** uses the operative’s earned level. Levels 1–9 are available for manual builds. A deployment with a manual level pauses campaign XP. |
-| Workshop | Purchase individual Medkits or a batch. Inventory shows the issued Supersuit and live Medkit stock. Sabotage success grants 6 Supplies and 2 Intel. |
+| Workshop | Purchase individual Medkits or a batch. Inventory shows the issued Supersuit and live Medkit stock. Relay success grants 6 Supplies and 2 Intel. Rescue success grants a Needle recruit and 4 Supplies. |
 | Research | Browse **Stratagems** and **Intelligence Operations** side by side. Click an available project card to start research and use **Debug: Advance Day** to complete it after two days. Each board has 24 slots from the layout reference, with one live project per board. Select Emergency Reload in squad preparation. Buy Facility Recon from the mission briefing or squad preparation after completing its research. |
 | Combat | Use **G** to refill the selected ranged operative's charges once per operation after preparing Emergency Reload. It costs 3 Intel on use and spends no AP. Facility Recon costs 2 Intel and previews that operation's existing objectives and events. **F9** returns to the bunker from the report. |
 
-Campaign state lasts for the running session. Use **Enter** after clearing an Assassination room to advance or **E** to extract. Normal objectives, enemy schedules, combat rules and item effects use the existing Build 10 code. Personnel and combat derive stats from the same player baseline.
+Campaign state lasts for the running session. Use **Enter** after clearing a sweep room to advance or **E** to extract. Generator and rescue objectives secure their trial rewards on mission success. Personnel and combat derive stats from the same player baseline.
+
+## 27 November checkpoint verification
+
+Godot 4.7.2 on Windows passed 1,129 headless class checks across 384 builds, 420 briefing checks across all 28 sites, and 37 deployment checks through the Southern Federal District’s Floodplain Sweep. The original-chain driver passed 21 headless checks using **M → 1 → Enter**, staged fights and normal room transitions. It verified wounded HP carry-over and both the baseline and three-extra-hound Room 3 lineups. The rendered checks in the sections below describe their recorded runs.
+
+## 27 November deployment build verification
+
+Squad preparation uses the [regional playtest deployment rules](design/CAMPAIGN.md#regional-campaign-playtest). Operatives start with their Personnel builds. Preparation can override level, origin, unlocked ability choices and the Darwinian starting form for one operation. The chosen build carries through linked rooms. Any manual level pauses campaign XP for the squad.
+
+Godot 4.7.2 on Windows passed 37 deployment checks headlessly and in standalone GL Compatibility at 1460 × 900. The run used **USSR → Southern Federal District → Floodplain Sweep**, deployed a Level 9 Scorpion alongside Level 3 and Level 1 operatives, and verified the chosen capstone on the combat HUD, build and HP carry-over through **Enter**, reset to Personnel and the XP pause. The headless briefing suite passed 420 checks across all 28 sites, and the class matrix passed 1,129 checks across 384 builds. The rendered fixture 1 regression passed 21 checks for both radio outcomes and HP carry-over with staged fights.
+
+The editor imported the active project, then reported a safe-save error. Window activation timed out on both attempts, so the rendered runs launched from the command line. Manual small-window readability remains open.
+
+## 27 November combat HUD and Escape verification
+
+The [presentation specification](design/VISION.md#confirmed-presentation-baseline) records the placement from the creator's Smelter Relay markup. The unit cards stack on the left, and yellow action icons start at the lower left. The panel below shows the hovered or armed action's AP cost and details while the right panel shows target and movement previews. Escape dismisses the active overlay, cancels targeting or returns to the prior HQ screen.
+
+Godot 4.7.2 on Windows passed 57 input-driven checks in a rendered standalone run. The run deployed to Ural's Smelter Relay through USSR and checked squad selection, hover details, Overwatch and class cancellation, and Escape through the briefing, loadout and overlays. Fixture 1 opened through **M → 1 → Enter**. With staged fights and normal room transitions, HP carried forward on both radio branches and the alert added exactly three hounds. The class matrix passed 1,129 checks across 384 builds. The editor reported a safe-save error, so this verification used the standalone run. Small-window and advanced-build readability remain open for playtesting.
+
+## 27 November combat presentation pass
+
+[Vision and presentation](design/VISION.md#confirmed-presentation-baseline) governs the visual pass. Ground tiles use cached pixel textures and operation-specific palettes. Walls, shared cover and objective props have raised silhouettes. Movement, elevation, hazard and Overwatch indicators remain on the tactical grid. Animated hazards and the Iskra drone use the same camera projection as the board.
+
+The action queue drives facing, footfalls, leaps, blinks, lunges, recoil and hit reactions. Ranged, melee and support effects use shared visual families with distinct timing and shapes. Resolved attacks still use their existing AP, damage and cover rules. The preview harness rendered sampled effects at fixed time steps. It also deployed to Ural’s Smelter Relay through the USSR screens and used the combat HUD and tile clicks to fire Breach Shell at a staged cover edge.
+
+Godot 4.7.2 on Windows loaded the bunker through **F5**. The class matrix passed 1,129 checks across 384 builds. The Iskra HUD run passed 24 checks across relay and sweep deployments for Artillery, Assault and Guardian. Fixture 1 passed 21 input-driven checks with staged fights, including linked-room HP carry-over and both radio outcomes. The GL Compatibility runs used ANGLE, which logged shader initialization messages. Full manual pacing and readability across the remaining layouts are playtest items. [Presentation review](design/OPEN_DECISIONS.md#presentation-production-and-evidence)
+
+## Full campaign balance verification
+
+On 27 November 2026, Godot 4.7.2 imported and launched with **F5**. The campaign driver completed all 28 sites through normal controls, including each of the twelve origins as lead in two full sweeps at Levels 3 and 9. Enemy movement and class-action room completion regressions passed. The rendered Ural relay repeat completed under ANGLE despite shader initialization messages. The balance record contains the baseline counts and limitations. [Full campaign playtest](BUILD_10_PLAYTEST.md#27-november-full-campaign-balance-playtest)
+
+## Full-cover verification
+
+On 27 November 2026, Godot 4.7.2 imported Build 10 and launched it from the editor with **F5**. A shared directional cover check governs ordinary direct ranged targeting and execution, including Overwatch and drone shots. Shot previews, AI target selection, and the legality check for Taunt use the same protection. Destroying the edge reopens the protected lane immediately. Half cover and explicit bypass rules retain their own resolution.
+
+The headless class matrix passed 1,128 checks across 384 builds. The **M → 1 → Enter** fixture passed 23 checks including linked rooms and both radio outcomes. The campaign rerun cleared all 56 operations and 114 rooms, with 58 linked transitions. The rendered GL Compatibility repeat cleared both Ural relay passes and logged ANGLE shader initialization messages. [Combat rule](design/COMBAT.md#confirmed-rules-and-working-baselines) · [Matched results and remaining balance checks](BUILD_10_PLAYTEST.md#27-november-full-cover-campaign-retest)
+
+### Shot-cost follow-up
+
+The 27 November follow-up allows an otherwise legal shot into full cover to resolve for zero damage at its normal AP and ammo cost. Targeting warns before committing. Enemy direct-fire planning prefers shots that can hit, while an eligible Overwatch shot into a covered tile spends its shot budget. Named ranged powers and drone orders spend their normal resources and the blocked hit applies no status.
+
+Godot 4.7.2 launched through **F5**. The class matrix passed 1,129 checks across 384 builds, including the normal board click, Needle Beam, and Overwatch against operatives and drones. The rendered original chain passed 21 checks including both radio outcomes. The four-site difficulty comparison used three uniform squad levels and cleared all 12 operations. [Level and formation check](BUILD_10_PLAYTEST.md#27-november-shot-cost-and-level-check)
+
+## Sweep formation verification
+
+On 27 November 2026, Godot 4.7.2 on Windows ran all seven sweep lineups in the active project and in a copy with the earlier formations. The paired manual-level runs matched squad members, class builds and approach-room outcomes. All 70 operations cleared, with 140 linked transitions and no carry mismatch. The editor launched the trial through **F5**. The class matrix passed 1,129 checks over 384 builds, and the rendered original chain passed 21 checks including both radio outcomes. [Sweep formation comparison](BUILD_10_PLAYTEST.md#27-november-sweep-formation-comparison)
+
+### Northwestern and Volga squad retest
+
+Godot 4.7.2 on Windows reran the stronger lineups at both sites with fire-support and close-control squads at five levels. All 20 main runs cleared through normal tactical inputs, with 40 linked-room transitions and no carry mismatch. Build 10 launched from the editor with **F5**. Two additional Level 5 runs in OpenGL Compatibility reproduced the headless casualty and HP outcomes. [Retest and minimum-level recommendations](BUILD_10_PLAYTEST.md#27-november-northwestern-and-volga-squad-retest)
+
+The 27 November briefing follow-up added the approved advisory minimums. A rendered Godot 4.7.2 run at 1460 × 900 passed 35 checks. It displayed both recommendations, deployed five Level 1 operatives through each briefing and checked the generic Southern sweep briefing. The original chain passed 21 checks, including both radio outcomes. [Briefing decision](design/MISSIONS.md#regional-playtest-operations)
+
+### Remaining five sweep briefings
+
+Godot 4.7.2 on Windows ran 50 new sweeps at the five requested levels. Forty-nine cleared, and all 100 room transitions preserved squad state. Build 10 launched through **F5**. A rendered 1460 × 900 check passed all 110 assertions. It verified the recommendations and deployed five Level 1 operatives at each of the seven sweep sites. The original chain passed all 21 checks, including both radio outcomes. [Retest and recommendations](BUILD_10_PLAYTEST.md#27-november-remaining-five-sweep-retests)
+
+### Patrol, relay and rescue briefings
+
+Godot 4.7.2 on Windows completed 210 runs across all 21 one-room sites, with two compositions at each of the five manual levels. All runs cleared. The relay and rescue results verified objective completion. Build 10 launched through **F5**. A rendered 1460 × 900 check passed all 420 assertions, including briefing text and normal Level 1 deployment at all 28 campaign sites. The original chain passed all 21 checks, including both radio outcomes. [Results and recommendations](BUILD_10_PLAYTEST.md#27-november-patrol-relay-and-rescue-retest)
+
+## Regional campaign verification
+
+On 27 November 2026, Godot 4.7.2 on Windows opened the imported build through **F5**. The USSR screen showed seven available districts and locked Moscow. The Northwestern district displayed four selectable map pins and four briefing entries.
+
+A separate rendered GL Compatibility run using ANGLE passed 1,638 checks. It exercised all 28 deployments from HQ, all 42 rooms and the opening enemy turn of every operation. The run checked spawn locations, objective access, high cover, all 24 approved enemies and the 14 rooms with high ground. A Hawk Wings Needle walked onto an authored relay platform via a board click and gained High Perch at the start of the next player round.
+
+Staged clears exercised generator attacks, adjacent prisoner interactions, rewards, XP and debriefs, return to HQ, linked-room HP carry-over and controlled extraction. The original **M → 1 → Enter** regression retained HP through both radio branches and fielded zero or three extra hounds in Room 3. The existing class matrix passed 1,048 checks after moving its linked-room coverage to the Southern sweep. Full mission playthroughs and balance tuning across roster levels remain open. [Regional operations](design/MISSIONS.md#regional-playtest-operations)
 
 ## 27 November checkpoint verification
 
@@ -26,6 +94,30 @@ Godot 4.7.2 on Windows imported the project. The 242-check Personnel run covered
 On 27 November 2026, Godot 4.7.2 on Windows imported the active project and launched via **F5**. Personnel showed Jaguar with 12 HP, 0 armour, 4 basic damage and 5 tiles of movement after Rosette Claws. Personnel now accepts reviewed origins without a separate identity description. The [creator’s baseline](design/CLASSES_AND_ENEMIES.md#level-1-base-stats) applies to bunker operatives. Regression fixtures continue to use authored kits. The issued Supersuit has no separate stat modifier. [Variant rules](design/COMBAT.md#equipment)
 
 The headless class matrix passed 942 checks across all twelve origins, including 48 linked-room transitions. A separate 26-check input-driven Rescue run compared Personnel with deployed stats, checked ranged previews at eight and nine tiles, and used board clicks to verify damage and a four-tile standard move. The 33-check fixture regression opened **M → 1–6**, then used staged targets, normal attacks and **Enter** to clear both original-chain branches. It confirmed HP carry-over and zero or three alert hounds in Room 3. Full mission balance with the new stats remains open.
+
+## 27 November Scythe, Anvil and Needle revisions
+
+The new abilities are available through Personnel and the combat action bar. Rake previews selected tiles. Venom Jet and Gleaming Armour use a directional cone. Throw previews its flight path and stops at the first enemy or destructible cover collision. Strike and Drop takes separate choices for the Hawk landing and adjacent enemy landing. Anvil can use Lend Armour starting at Level 1. Both new low-cover effects protect from every direction and use the regular ranged damage reduction.
+
+Godot 4.7.2 imported Build 10 and launched from the editor with **F5**. The class matrix passed 1,048 headless and rendered assertions across all twelve origins and 384 builds, including 48 staged linked-room transitions. New effect checks exercised the melee reaction cap, three-tile Rake, Throw collisions, Linebreaker, Colossal Combo’s strike order, mantle cover and expiry, owner-only designation, Blind for three turns, Sweep Beam cover destruction and both manual Hawk flight landings. High Perch passed with a staged elevation tile. The current maps remain flat by creator decision.
+
+The rendered fixture suite passed all 33 checks with **M → 1–6** and both radio outcomes. Wounded HP carried forward and the missed radio added three hounds. The ANGLE runs reported shader initialization errors at startup and completed their assertions. Full encounter balance with the revised nodes remains open. [Creator decisions](design/CLASSES_AND_ENEMIES.md#27-november-class-update)
+
+## 27 November Iskra playtest
+
+Godot 4.7.2 on Windows imported Build 10 and launched with **F5**. The class matrix passed 1,080 checks across 384 builds and twelve origins, including 48 staged linked-room transitions. The Iskra checks exercised Assault’s flanking disruption and chain targeting, Guardian’s directed cover and ally protection, remote breaching, drone Overwatch, drone wounds and destruction across rooms, and Emergency Rebuild. Artillery checks covered Anchor and Quick-Lock, heavy fire and Heat limits, basic cannon fire at full Heat, cover destruction and follow-up shots, Flak Curtain entry, Incendiary Shell and both capstones.
+
+An additional 24 input-driven checks deployed Assault and Guardian into **Freight Yard Sweep** and Artillery into **Dockside Relay** through the USSR campaign UI. The checks used the combat action bar and board clicks with staged targets. Both drone chassis stayed destroyed after a normal **Enter** transition. The active **M → 1** regression fixture passed 23 checks, including wounded HP carry-over and both radio outcomes of zero or three hounds.
+
+The class matrix and HUD checks passed headlessly and in rendered GL Compatibility with ANGLE. The rendered runs logged shader initialization errors at startup and completed their assertions. Full encounter balance and repeated mission outcomes remain open. [Approved Iskra redesign](design/CLASSES_AND_ENEMIES.md#27-november-iskra-redesign)
+
+## 27 November Glaz and Alkhimik verification
+
+Godot 4.7.2 on Windows imported Build 10 and launched with **F5**. The class matrix passed 1,109 checks in headless and rendered GL Compatibility runs across all twelve origins, 384 builds and 48 staged room transitions. The rendered run reported ANGLE shader initialization errors at startup and completed the checks.
+
+The four origins passed 25 additional HUD checks. The driver deployed each from the USSR map into **Freight Yard Sweep**, exercised combat via the action bar and board clicks, and advanced through **Enter** after staged room clears. Glaz’s optional suppression and push actions appeared after their basic attacks. Darwinian’s Shift action appeared in the HUD and the selected form carried forward. Hyde’s Hurl Aside damaged both units in a collision. Entering the next room restored Jekyll and applied the recovery AP penalty.
+
+The active **M → 1** fixture passed 23 checks, including both radio outcomes and wounded HP carry-over. These verification runs used scripted combat setups. Full encounter balance remains open. [Design rules](design/CLASSES_AND_ENEMIES.md#27-november-glaz-and-alkhimik-implementation)
 
 ## Class review implementation preview
 
@@ -75,7 +167,7 @@ Godot 4.7.2 on Windows passed 32 focused checks headlessly and in a rendered GL 
 The following notes describe the earlier V3 playtest baseline.
 
 1. Open **Personnel**, choose an operative, then set **Origin** and **Playtest level** above the tree. At Levels 4 and 5, click either node to choose it once that level is unlocked. Active abilities use square-cornered nodes and passive abilities use rounded nodes. Locked nodes and unselected alternatives are grey and remain inspectable on hover. Recruits start at Level 1.
-2. Open **USSR → Central Federal District**, choose any operation and select five operatives. Choose a Darwinian Alkhimik's starting form in **Personnel** or their **Gear** panel during squad preparation. The deployment records each selected build for the linked mission.
+2. Open **USSR**, choose a regional operation and select five operatives. Choose a Darwinian Alkhimik's starting form in **Personnel** or their **Gear** panel during squad preparation. The deployment records each selected build for the operation.
 3. In combat, select an operative. The square action buttons sit above End Turn. Hover a button to see the ability name, cost and effect, then click it and select its target on the board. Multi-step actions prompt for each tile. **Esc** cancels targeting. A passive that grants a free step adds **Follow-up Step** to the action bar.
 
 Iskra loses one Heat at the end of each player turn. Delayed Mortar and Iron Rain land at the start of the enemy phase. Healing-origin Alkhimik shares four Treatment charges across all linked rooms for that operative. Ordinary Medkits use their own gear charges. Armour destruction and the existing wound ceiling carry between rooms in bunker operations. **M** opens the original fixtures and their regression rules.
@@ -127,3 +219,15 @@ The original chain retained seven final-room enemies after radio destruction and
 A staged Godot 4.7.2 run passed headlessly and in rendered GL Compatibility (ANGLE). It opened the four mixed trials through M, the number keys and Enter, verified all 24 tier and kill XP values across nine rooms, checked room kill XP and the summoned Matryoshka drone, opened fixtures 1–6, and verified linked HP carry-over and both original-chain radio lineups. The rendered driver logged shader initialization errors and completed the checks. This pass launched directly. Editor F5 and manual difficulty and XP pacing playthroughs remain to be checked.
 
 27 November 2026. Godot 4.7.2 passed 34 progression and fixture assertions in headless mode and rendered GL Compatibility (ANGLE). Staged play exercised early Assassination extraction, full linked progression, failed escape, Rescue, both Iron Giant outcomes, Matryoshka's summoned drone, manual level overrides, repeated debrief protection, fixtures 1-6 and both radio branches. The rendered inspector, tier mix and Personnel XP display were reviewed. The existing class matrix passed 942 checks across 384 builds. F5 was sent to the imported editor, and the verified rendered run launched directly. Full playthroughs and tuning the curve beyond Level 3 remain open.
+
+### Progression balance verification
+
+27 November 2026. The [progression balance trials](design/CLASSES_AND_ENEMIES.md#enemy-balance-across-progression) rebalance the existing tiers and give the four mixed trials separate progression targets. Bunker Rescue uses a Grenadier in place of its second Mid enemy. The original fixtures retain their regression profiles.
+
+Godot 4.7.2 launched from the editor with F5 and displayed the updated mission selector. A separate staged run passed 99 checks headlessly and in rendered GL Compatibility (ANGLE). It used M and the number keys, selected a squad through the loadout, and ran an enemy phase in each of nine trial rooms at Levels 1, 4, 6 and 9. It verified all 24 archetypes, final-room command synergy, linked HP carry-over, Medkit and Emergency Reload consumption within the trial, campaign isolation, F9 exit, fixtures 1–6 and both original-chain radio lineups. The rendered run logged shader initialization errors and completed the checks. The headless class matrix passed 1,048 checks over 384 builds. Full combat clears, alternate squad compositions, and balance with future Supersuit and stratagem options remain to be tested.
+
+## Overwatch cone verification
+
+On 27 November 2026, Godot 4.7.2 on Windows launched Build 10 through **F5**. A rendered GL Compatibility run with ANGLE passed 25 focused checks using **M**, fixture selections **1** and **6**, **O**, **Esc**, battlefield clicks and staged reaction setups. Checks covered cone width and direction, blocked shots, movement lock, repeated shots, AP and ammo limits, a large target crossing the cone, AI aiming, expiry and the sentry interrupting Charge. A rendered fixture regression passed 33 checks, including wounded HP carry-over and both radio branches with zero or three hounds in Room 3. The headless class matrix passed 1,015 checks. Full encounter balance and enemy aim selection across maps remain open. [Overwatch rules](design/COMBAT.md#overwatch)
+
+The 27 November route-preview and AI follow-up launched through **F5** in Godot 4.7.2 and passed 14 focused checks in rendered GL Compatibility. The Cordon movement preview displayed two expected shots and resolving that route fired two. Staged checks isolated AP, ammo, wall occlusion, a sealed room and an open approach. Fixture 6 still stopped Charge at the first step that drew fire. Two scripted passes cleared all nine mixed-trial rooms, and each of the 18 enemy cones contained only tiles visible to its shooter. Both original-chain radio branches passed the 33-check rendered regression again, and the headless class matrix passed 1,015 checks. Longer-horizon lane selection and overlapping high-damage cones remain open.

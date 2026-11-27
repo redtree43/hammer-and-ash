@@ -13,6 +13,6 @@ Start with [docs/design/](docs/design/README.md), the sole source of truth for i
 | [Development Status](docs/DEVELOPMENT_STATUS.md) | Current behavior, gaps, priorities and migration evidence |
 | [Resistance Bunker](docs/IMPLEMENTATION_NOTES.md) | Playtest controls for the current prototype |
 | [Build 10 controls](source/Hammer_Ash_Godot_2D_Build10/README_FIRST.txt) | Setup, mission selection and combat controls |
-| [Build 10 fixtures](docs/MISSIONS.md#build-10-test-fixtures) | Legacy regression, mixed enemy trials and bunker scenario rules |
+| [Regional playtest operations](docs/design/MISSIONS.md#regional-playtest-operations) | Campaign mission patterns, availability and the retained regression chain |
 
 Earlier handoffs and the campaign v0.5 transfer remain in `docs/` as evidence and prototype context. `prototypes/` holds the original archives. `references/design/` and `references/images/` hold the original documents and images. `source/` holds the active Godot project. [SHA256SUMS.txt](references/SHA256SUMS.txt) records the original migration hashes, including those for the extracted Build 10 baseline. The active source has evolved since that snapshot.

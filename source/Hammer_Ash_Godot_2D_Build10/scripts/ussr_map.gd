@@ -1,6 +1,7 @@
 extends Control
 
 const Geography = preload("res://maps/russia_districts.json")
+const Operations = preload("res://scripts/campaign_operations.gd")
 const DISTRICTS: Array[Dictionary] = [
     {"id": "central", "name": "Central Federal District", "colour": Color("#bb9666")},
     {"id": "northwestern", "name": "Northwestern Federal District", "colour": Color("#688f86")},
@@ -85,8 +86,9 @@ func highlight(index: int) -> void:
     if hovered == index:
         return
     hovered = index
-    tooltip_text = DISTRICTS[index]["name"] if index >= 0 else ""
-    mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if index >= 0 else Control.CURSOR_ARROW
+    var locked: bool = index >= 0 and DISTRICTS[index]["id"] == Operations.MOSCOW_DISTRICT
+    tooltip_text = "Moscow · Locked" if locked else (DISTRICTS[index]["name"] if index >= 0 else "")
+    mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if index >= 0 and not locked else Control.CURSOR_ARROW
     queue_redraw()
 
 func district_at(position_on_map: Vector2) -> int:

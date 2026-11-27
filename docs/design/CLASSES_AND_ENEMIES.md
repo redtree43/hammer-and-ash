@@ -10,8 +10,8 @@ Six classes have distinct tactical roles. Each class has shared skills and two e
 | Anvil | Frontline bruiser | Steel Skin / Psionic Armour |
 | Glaz | Battlefield distorter | Telepathy / Telekinesis |
 | Needle | Priority-target eliminator | Eye Powers / Hawk Wings |
-| Iskra | Power-armour specialist | Drone Command / Artillery Suit |
-| Alkhimik | Adaptive generalist and field medic | Darwinian / Healing |
+| Iskra | Remote support and heavy-fire specialist | Drone Command / Artillery Suit |
+| Alkhimik | Adaptive generalist and field medic | Darwinian / Jekyll / Hyde |
 
 ## Level 1 base stats
 
@@ -40,11 +40,11 @@ Individual class and Supersuit stat bonuses are defined by their own rules. [Mov
 | Iskra | | Drone Command, Artillery Suit |
 | Alkhimik | Darwinian Frog and Jellyfish, Healing (Hyde) | Darwinian Skunk, Healing (Jekyll) |
 
-Changing Darwinian form immediately changes the active base attack. In Build 10, Healing also switches its base attack on transformation, and Sightline, Arc Pistol and Suit Cannon use rechargeable charges. Operatives with a melee base attack can approach an enemy and strike for 1 AP total. The attack table fixes the intended melee/ranged identity. Ability and form details are tracked for review. [Combat rules](COMBAT.md#confirmed-rules-and-working-baselines) · [Open decisions](OPEN_DECISIONS.md#classes-equipment-and-enemies)
+Changing Darwinian or Healing form immediately changes the active base attack. In Build 10, Sightline, Arc Pistol and Suit Cannon use rechargeable charges. Origin and form modifiers can change the shared Level 1 damage and reach, as in the [Iskra redesign](#27-november-iskra-redesign) and the [Darwinian update](#27-november-glaz-and-alkhimik-implementation). Operatives with a melee base attack can approach an enemy and strike for 1 AP total. The attack table fixes the intended melee/ranged identity. Ability and form details are tracked for review. [Combat rules](COMBAT.md#confirmed-rules-and-working-baselines) · [Open decisions](OPEN_DECISIONS.md#classes-equipment-and-enemies)
 
 ## Confirmed redesign direction
 
-**25 November 2026, creator's Jaguar reference and eleven-origin design brief.** Jaguar is the reference for the intended Scythe identity and tree structure. Wolverine remains available in the legacy Scythe fixture. The [eleven companion trees](ORIGIN_TREES_REVIEW.html) are proposals for creator review. The Jaguar sheet grants both nodes at level 1, independent choices at levels 2, 3, 5, 6 and 9, a shared passive at 4, a shared active at 7 and an origin passive at 8.
+**25 November 2026, creator's Jaguar reference and eleven-origin design brief.** Jaguar is the reference for the intended Scythe identity and tree structure. Wolverine appeared in the retired Scythe test range. The [eleven companion trees](ORIGIN_TREES_REVIEW.html) are proposals for creator review. The Jaguar sheet grants both nodes at level 1, independent choices at levels 2, 3, 5, 6 and 9, a shared passive at 4, a shared active at 7 and an origin passive at 8.
 
 | Origin | Creator direction from the brief |
 | --- | --- |
@@ -58,7 +58,7 @@ Changing Darwinian form immediately changes the active base attack. In Build 10,
 
 ### Scorpion and Anvil revisions
 
-**26 November 2026, creator’s class-tree review in chat.** The following changes govern the current [Scorpion and Anvil review trees](ORIGIN_TREES_REVIEW.html#tree0).
+**26 November 2026, creator’s class-tree review in chat.** The following changes established the [26 November Scorpion and Anvil review trees](ORIGIN_TREES_REVIEW.html#tree0). The [27 November class update](#27-november-class-update) supersedes the affected nodes.
 
 - **Scorpion.** Charge adds two tiles of movement for the activation turn per AP spent and has a two-turn cooldown. Moulting Skin refills current armour immediately after an incoming hit depletes it, once per room, after HP spillover if still standing. Burrow Defense replaces Living Carapace. Once per operation, an attack that would down Scorpion leaves them at 1 HP and sends them underground, immune to damage for the rest of the round. They emerge at the start of the next player turn at 1 HP with status effects cleared. Burrowing Strike remains the other capstone.
 - **Shared Anvil nodes.** Taunt replaces Breakthrough. It forces one enemy within four tiles to attack the Anvil for one turn when an attack is legal. Protecting Interceptor replaces Impact Stance. Anvil reacts when an enemy moves within a visible overwatch area, moves to intercept if able, attacks and stops the enemy’s movement. Linebreaker charges through cover, can knock enemies back two tiles and deals light damage.
@@ -67,7 +67,9 @@ Changing Darwinian form immediately changes the active base attack. In Build 10,
 
 See [Open decisions](OPEN_DECISIONS.md#classes-equipment-and-enemies) for timing and interactions that still need review. The [class handoff](../CLASSES_AND_ENEMIES.md#scorpion-and-anvil-design-revisions) records the earlier designs. The playable V3 trees are described in [Implementation Notes](../IMPLEMENTATION_NOTES.md#v3-player-classes).
 
-### Drone Command and Healing reworks
+### 26 November Drone Command and Healing reworks
+
+The [Iskra redesign](#27-november-iskra-redesign) supersedes the earlier Drone Command playtest below.
 
 **26 November 2026, creator’s class-tree review in chat.** Drone Command always deploys alongside one destructible drone. Its light-power-armour operator supports the drone and can improve or specialise it through the tree, while retaining suit abilities for fights after its loss. Destruction carries through all remaining rooms or missions in that operation. A high-level restoration ability is a candidate.
 
@@ -91,7 +93,7 @@ Healing now follows a Dr Jekyll and Mr Hyde dynamic. Jekyll treats the squad. Hy
 
 ### Needle revisions
 
-**26 November 2026, creator’s Needle class review in chat.** Designate Quarry applies Vulnerable to one enemy. Each attack hit on that enemy adds 2 direct HP damage, regardless of who attacks. Eye Powers chooses between greater damage and range at Level 6 and gains immunity to Blinded and cover-ignoring attacks at Level 8. Pinhole Sun applies Burning. Prismatic Burst hits a single enemy and immobilises it with Freeze for one turn. Hawk Wings applies Slow with Stooping Strike, gains immunity to Slow and immobilisation through High Perch, and adds armour piercing and Bleeding to Wingover. Level 6 bonus sizes and Slow strength remain draft tuning. [Eye Powers tree](ORIGIN_TREES_REVIEW.html#tree3) · [Hawk Wings tree](ORIGIN_TREES_REVIEW.html#tree4)
+**26 November 2026, creator’s Needle class review in chat.** The [27 November class update](#27-november-class-update) supersedes the affected nodes. Designate Quarry applies Vulnerable to one enemy. Each attack hit on that enemy adds 2 direct HP damage, regardless of who attacks. Eye Powers chooses between greater damage and range at Level 6 and gains immunity to Blinded and cover-ignoring attacks at Level 8. Pinhole Sun applies Burning. Prismatic Burst hits a single enemy and immobilises it with Freeze for one turn. Hawk Wings applies Slow with Stooping Strike, gains immunity to Slow and immobilisation through High Perch, and adds armour piercing and Bleeding to Wingover. Level 6 bonus sizes and Slow strength remain draft tuning. [Eye Powers tree](ORIGIN_TREES_REVIEW.html#tree3) · [Hawk Wings tree](ORIGIN_TREES_REVIEW.html#tree4)
 
 ### Glaz revisions
 
@@ -116,6 +118,53 @@ Mantle Recall replaces Afterimage. It recalls a selected ally’s remaining mant
 The creator accepted a three-tile Interceptor radius, a two-tile radius for the area taunt and blind, and up to three tiles of Linebreaker movement with two-tile knockback as provisional playtest tuning.
 
 **26 November 2026, creator’s branch playtest decisions in chat.** Pressure Front keeps its provisional two-tile radius, deals 3 damage, spends all current armour and skips the next refresh. Shelter Reflex expires at the start of Anvil’s next turn. A second Needle designating a Vulnerable target refreshes its single allowance to three hits. The newest designation owns that target's mark.
+
+### 27 November class update
+
+The creator approved the following changes and clarified targeting, cover, designation ownership and High Perch in chat on 27 November 2026. The [Build 10 class-tree data](../../source/Hammer_Ash_Godot_2D_Build10/data/player_class_review.json) contains the full progression and current tooltips.
+
+| Class or origin | Updated nodes |
+| --- | --- |
+| Scythe | **Threatening Presence** raises the round limit for walking-away melee reactions to two. Each eligible departure triggers at most one hit. |
+| Jaguar | **Bounding Pounce** leaps up to four tiles for 1 AP. **Rake** targets up to three distinct adjacent tiles for 1 AP. **Crush Bite** costs 1 AP and shreds four armour capacity before the hit. **Open the Seam** costs 1 AP. |
+| Scorpion | **Venom Jet** sprays three rows one, two and three tiles wide. **Moulting Skin** clears Burning and Irradiated at the end of the enemy phase if either is present, once per room. |
+| Anvil | **Linebreaker** travels up to four tiles, deals five structural damage to crossed destructible cover, and hits each enemy encountered once for one damage and up to two tiles of knockback. |
+| Steel Skin | **Throw** costs 1 AP. An adjacent eligible enemy can be thrown up to three tiles. An enemy collision deals two damage to both units. A destructible low or high cover collision destroys that edge and deals two damage to the thrown unit. **Gleaming Armour** blinds enemies in a three-row cone one, two and three tiles wide. **Colossal Combo** makes three basic-damage hits for 2 AP with a two-turn cooldown. The first hit shreds two armour capacity and the final hit knocks a survivor back up to two tiles. |
+| Psionic Armour | **Living Mantle** grants Lend Armour at Level 1. For 1 AP transfer up to three current armour to an ally within four tiles until Anvil’s next turn. Unused points return. **Defence is the Best Offense** replaces the Level 3 Lend Armour choice and grants two temporary armour and +1 attack damage until Anvil’s next turn for 1 AP and a two-turn cooldown. **Encasing Armour** deals six damage for 1 AP. **Pressure Front** costs 1 AP, spends all current armour, deals that much damage to enemies within two tiles and skips the next refresh. **Returning Mantle** gives the protected ally low cover from every direction for either mantle ability. **Returning Defence** grants Anvil one temporary armour on the next player turn when either mantle expires. **Mental Fortress** adds one armour capacity and persistent low cover from every direction. |
+| Needle | **Designate Target** replaces Designate Quarry. Only the Needle who owns the active designation receives the +2 direct HP damage or spends one of its next three hits. A new designation refreshes the limit and transfers ownership. |
+| Eye Powers | **Focal Lens** keeps the long-range +1 and drops the close-range penalty. **Long Focus** adds two basic attack range. **Short-Sighted** replaces Afterglow and gives +2 damage to direct Eye attacks within four tiles. **Split Focus** deals four damage per target. **Corneal Lance** applies one turn of Blind instead of Slow. **Sweep Beam** costs 1 AP. **Steady Gaze** gives basic attacks +2 damage. **Fiery Gaze** replaces Peripheral Vision and gives basic attacks Burning. **Rangefinder** lets Sweep Beam destroy destructible cover and gives Corneal Lance three turns of Blind. **The Void’s Gaze** renames Prismatic Burst and retains the single-target Freeze. **Pinhole Sun** deals eight armour-piercing damage and loses Burning. |
+| Hawk Wings | **Spread Your Wings** renames Long Primaries and retains the +1 to Fly range. **Silent Landing** automatically skips the first eligible walking-away melee reaction after landing. **Banking Turn** flies up to three tiles. **Raking Pass** flies up to three tiles and deals four damage to enemies beneath the route for 1 AP and a two-turn cooldown. **Strike and Drop** hits an adjacent foe, then flies up to three tiles and drops the surviving foe on a player-selected legal tile adjacent to the landing. **High Perch** grants +2 damage on the first attack of a round started on high ground. Relay stations and final sweep yards provide authored high ground. |
+
+### 27 November Iskra redesign
+
+The creator approved both redesigned origins in chat on 27 November 2026. They kept one destructible drone and one heavy-fire suit, then confirmed that enemy Overwatch can destroy the drone mid-order, that Flak Curtain reaches six tiles and is blocked by walls, and that Incendiary Shell lights all three affected tiles, including occupied tiles. The [playable trees](../../source/Hammer_Ash_Godot_2D_Build10/data/player_class_review.json) contain the current branch values and descriptions.
+
+| Level | Drone Command | Artillery Suit |
+| --- | --- | --- |
+| 1 | **Paired Deployment** gives +1 armour and one drone with 4 HP and 1 armour. **Scout Run** costs 1 AP from the operator, moves up to two tiles and can fire a 2-damage Arc Bolt within four tiles. | **Siege Mount** gives +2 armour, **Anchor**, **Vent** and **Breach Shell**. Breach Shell costs 2 AP and 2 Heat with CD2. It strikes an edge four to eight tiles away for five structural damage and hits units on either side for two. |
+| 2 | **Assault Chassis** gives **Pincer Run**. Move up to three tiles, fire for three damage within four and cancel the target’s active Overwatch if the drone fires from a different cover-facing side than the operator. **Guardian Chassis** adds one drone armour and gives **Shield Run**. Move up to three tiles and project three full-cover edges in a chosen direction. Both orders cost 1 AP with CD2. | **Quick-Lock** allows Anchor after exactly one standard move once per room. **Cooling Fins** makes Vent remove three Heat. |
+| 3 | **Field Service** repairs two drone HP and resets its chassis cooldown for 1 AP once per room. **Recovery Winch** swaps the drone with a visible single-tile ally within three tiles of it, gives the ally two temporary armour and uses the drone’s order. It costs 1 AP with CD2. | **Mortar Cup** deals three damage in a cross centred four to seven tiles away. **Walking Barrage** deals four damage on three consecutive visible tiles within eight. Both cost 2 AP and 2 Heat with CD2. |
+| 5 | **Hardpoint Upgrade** gives Pincer Run an optional second target within two tiles of the first for two damage, or Shield Run an optional adjacent ally who gains two temporary armour. **Shock Mine** costs 1 AP with CD2, can originate from the operator or drone, and hits the first enemy to enter for two damage and Shocked. | **Flak Curtain** arms a marked three-tile-wide lane up to six tiles away. Walls block it. The first enemy entering triggers a three-damage cross blast, with friendly fire. **Incendiary Shell** deals two damage along three tiles within six and leaves fire hazards on all three. Survivors on those tiles become Burning. Both cost 2 AP and 2 Heat with CD2. |
+| 6 | **Hardened Frame** adds two maximum drone HP. **Tandem Drive** grants up to two free drone movement steps after the operator’s standard move, once per turn. | **Feed Mechanism** makes Vent restore a cannon charge. **Hot Breech** adds one damage per target to the first heavy shot fired at two or more Heat each turn. |
+| 8 | **Remote Breach** adds a drone origin to Breach Kit, with the same cost and cooldown and no order spent. | **Breach Follow-Up** makes the next basic cannon attack that turn against a unit bordering cover an Iskra heavy shot just destroyed charge-free. The attack still costs 1 AP. |
+| 9 | **Emergency Rebuild** restores the destroyed drone adjacent to the operator at half its upgraded HP, rounded up, for 2 AP once per operation. Orders resume next turn. **Overclock Link** bypasses the chassis cooldown and sets CD2. Assault moves up to four tiles and chains for 4/3/2/1 damage. Guardian moves up to three tiles, projects two distinct cover lines and can give two nearby allies two temporary armour each. It costs 2 AP once per room and uses the turn’s drone order. | **Siege Salvo** costs 2 AP and 3 Heat once per room. It destroys destructible cover in a cross centred four to eight tiles away, then deals six damage at the centre and four on its cardinal neighbours. **Rolling Thunder** costs 2 AP and 2 Heat once per room. Move up to three steps under normal reactions, then deal four damage on a straight four-tile firing line and hold position. |
+
+Both origins gain **Breach Kit** at Level 1, **Shock Mounts** at Level 4 and **Emergency Cells** at Level 7. Breach Kit deals three structural damage to a visible cover edge within three tiles for 1 AP with CD2. Shock Mounts reduces the first Overwatch hit against the operator in a round by one. Emergency Cells restores up to two basic weapon charges and gives two temporary armour for 1 AP once per room.
+
+Drone Command’s Arc Pistol has three base damage at six tiles. Drone orders use the operator’s AP and one drone order per turn from any distance in the room. Enemy Overwatch uses the normal AP and ammunition cost per shot against the drone along its route. A lethal hit cancels the rest of the order. Recovery Winch swaps positions as forced movement. Shield Run ends when the drone moves, is destroyed, or reaches the next player turn. Drone HP and destruction carry across rooms.
+
+Artillery Suit’s cannon has four base damage at six tiles and spends a charge without adding Heat. Anchor is free before voluntary movement. It locks voluntary movement until the next player turn, and forced movement breaks the mount and cancels an armed Flak Curtain. All heavy shots require Anchor except Rolling Thunder. Heat caps at four, cools by one at the start of the player turn, and Vent costs 1 AP to remove two. Blast and line attacks can hit allies. [Combat rules](COMBAT.md)
+
+### 27 November Glaz and Alkhimik implementation
+
+The creator requested completion of the playable Glaz and Alkhimik origins on 27 November 2026. The [Build 10 trees](../../source/Hammer_Ash_Godot_2D_Build10/data/player_class_review.json) retain the current trial values. The [open decisions](OPEN_DECISIONS.md#classes-equipment-and-enemies) track balance and final tuning.
+
+- **Telepathy.** Surface Thought offers a free suppression action after a qualifying Synaptic Prick. Reaction checks include melee departure strikes. Feedback Spike’s extra damage requires the same Glaz to have removed an available reaction this turn. Aphasia disables heals and buffs for the affected turn, while normal movement and attacks remain available.
+- **Telekinesis.** Impulse offers a free follow-up after a Force Bolt hit when the target can be pushed. Vector Pull offers one- and two-tile targeting modes.
+- **Shared Glaz.** Safe Passage bypasses melee departure reactions and still resolves Overwatch and hazards. Residual Distortion grants a free targeted step. If triggered in the enemy phase, the step is available at the start of the next player turn.
+- **Darwinian.** Frog and Jellyfish use two-damage melee basics. Skunk uses a two-damage Spray with four-tile reach. Musk Trail affects a foe on entry or at enemy phase start, once per cast per foe. Jellyfish’s Passing Trait reduces the first forced move by one tile. Skunk’s Passing Trait adds reach to the next ranged basic attack that player turn. Shed Skin clears one status in the order Burning, Venom, then Blinded.
+- **Jekyll / Hyde.** Quarantine Field and Field Hospital use the centre tile and four cardinal neighbours. Hurl Aside resolves unit collisions. Adrenal Rescue can skip melee departure reactions and applies terrain hazards on landing. Adrenal Rebound applies when returning to Jekyll on the battlefield or after clearing a room as Hyde.
+- **Shared Alkhimik.** Field Formula, Clinical Eye and Reserve Dose have the same rules in all five forms. Reserve Dose’s damage bonus applies once to a basic attack on the player turn it is used.
 
 ## Confirmed enemy design direction
 
@@ -154,4 +203,12 @@ Use moderate counters based on understandable mechanics and composition. Swarms 
 | Mid | Captain, Pravda Man, Man of Steel, Kapitalist, Clergy, Hammer, Sickle, Vanguard, Red Star |
 | High | Matryoshka, Nevalyashka, Combine, Noble, Individualist, Proletariat, Siberian, New Soviet Man, New Soviet Woman |
 
-Iron Giant is a Mini-boss. Matryoshka's nested drone retains its Low threat tier with zero separate kill XP. Use the inspector and Development's Enemy tier mix to review assignments.
+Matryoshka's nested drone retains its Low threat tier with zero separate kill XP. Use the inspector and Development's Enemy tier mix to review assignments.
+
+**27 November 2026, creator's campaign cleanup request in chat.** Field the 24 explicitly defined enemy archetypes in the regional campaign. Retire prototype-only enemies from regular play and defer bosses, including the Iron Giant. The original regression chain retains its historical spawns for reproducing its radio and carry-over outcomes.
+
+### Enemy balance across progression
+
+**27 November 2026, creator's rebalancing request in chat.** Balance for squad growth through levels, equipment and stratagems. Judge a unit alongside its possible escorts, screens and supports. Allow different encounter frequencies and a range of individual threat levels within a tier. A strong specialist can appear alone with weaker escorts before later operations combine several specialists.
+
+**Build 10 playtest tuning.** Use regional operations to compare low-threat screens, support-backed anchors and scarce High-tier specialists across squad levels. Northwestern patrol placements combine line infantry and a drone screen. Ural operations emphasise armoured machines, southern and Siberian rescues test pack support, and the final Far Eastern sweep pairs New Soviet Woman's command with New Soviet Man's formation bonus. Unit stats, deployment frequency and encounter budgets are provisional. [Regional playtest operations](MISSIONS.md#regional-playtest-operations)

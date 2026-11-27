@@ -2,6 +2,7 @@ extends RefCounted
 
 const Loadouts = preload("res://scripts/starter_loadouts.gd")
 const PlayerClasses = preload("res://scripts/player_classes.gd")
+const Operations = preload("res://scripts/campaign_operations.gd")
 
 const SQUAD_SIZE: int = 5
 const RECRUIT_COST: int = 6
@@ -24,14 +25,8 @@ const RECIPES: Dictionary = {
     "basic_medkit": {"label": "Medkit", "cost": 2, "quantity": 1},
     "batch_medkit": {"label": "Medkit batch", "cost": 3, "quantity": 2},
 }
-const OPERATIONS: Dictionary = {
-    "assassination": {"label": "Assassination", "brief": "Reach and eliminate the fleeing officer.", "recon": "Orlov starts his escape in the final room on Round 3. Cover the east exit."},
-    "sabotage": {"label": "Sabotage", "brief": "Destroy the generator and neutralise the prototype.", "recon": "The prototype activates at the end of player Round 3 if the pod is still active. A nearby terminal can disable it."},
-    "rescue": {"label": "Rescue", "brief": "Free the two prisoners and clear the guards.", "recon": "Five guards cover two cells. Release both prisoners and clear the guards to secure the rescue."},
-    "defence": {"label": "Defence", "brief": "Protect the safehouse from enemy waves.", "recon": "Enemy waves arrive on Rounds 1, 3, 5 and 7. Protect the safehouse through Round 8."},
-}
 const REWARDS: Dictionary = {
-    "sabotage_complete": {"label": "Secured 6 Supplies and 2 Intel.", "supplies": 6, "intel": 2},
+    "relay_complete": {"label": "Secured 6 Supplies and 2 Intel.", "supplies": 6, "intel": 2},
     "rescue_complete": {"label": "Secured a recruit and 4 Supplies.", "recruit": "Needle", "supplies": 4},
 }
 
@@ -75,13 +70,15 @@ func earned_level(id: int) -> int:
             level += 1
     return level
 
-func set_playtest_level(id: int, level: int) -> void:
+func set_playtest_level(id: int, level: int, profile: Dictionary = {}) -> void:
+    if profile.is_empty():
+        profile = roster[id]
     if level == 0:
-        roster[id].erase("playtest_level")
-        roster[id]["class_build"]["level"] = earned_level(id)
+        profile.erase("playtest_level")
+        profile["class_build"]["level"] = earned_level(id)
     else:
-        roster[id]["playtest_level"] = level
-        roster[id]["class_build"]["level"] = level
+        profile["playtest_level"] = level
+        profile["class_build"]["level"] = level
 
 func operative_name(id: int) -> String:
     return "%s %02d" % [roster[id]["kit"], id]
@@ -135,7 +132,7 @@ func produce(id: String) -> bool:
     return true
 
 func buy_recon(operation: String) -> bool:
-    if not mission.is_empty() or not OPERATIONS.has(operation) or not prepared_recon.is_empty():
+    if not mission.is_empty() or not Operations.has_operation(operation) or not prepared_recon.is_empty():
         return false
     if not unlocks.has("recon") or intel < RECON_COST:
         return false
@@ -144,7 +141,9 @@ func buy_recon(operation: String) -> bool:
     return true
 
 func can_deploy(operation: String, squad: Array[int], gear: Dictionary) -> bool:
-    if not mission.is_empty() or not OPERATIONS.has(operation) or squad.size() != SQUAD_SIZE:
+    if not mission.is_empty() or squad.size() != SQUAD_SIZE:
+        return false
+    if not Operations.has_operation(operation):
         return false
     var seen: Dictionary = {}
     var kits: int = 0
@@ -159,7 +158,8 @@ func can_deploy(operation: String, squad: Array[int], gear: Dictionary) -> bool:
             kits += 1
     return kits <= medkits
 
-func deploy(operation: String, squad: Array[int], gear: Dictionary, prepare_reload: bool = false) -> bool:
+func deploy(operation: String, squad: Array[int], gear: Dictionary, prepare_reload: bool = false,
+        draft_profiles: Dictionary = {}) -> bool:
     if not can_deploy(operation, squad, gear) or (prepare_reload and not unlocks.has("reload")):
         return false
     if prepared_recon == operation:
@@ -168,11 +168,12 @@ func deploy(operation: String, squad: Array[int], gear: Dictionary, prepare_relo
     var builds: Dictionary = {}
     var playtest := false
     for id in squad:
-        playtest = playtest or roster[id].has("playtest_level")
-        builds[id] = roster[id]["class_build"].duplicate(true)
+        var profile: Dictionary = draft_profiles.get(id, roster[id])
+        playtest = playtest or profile.has("playtest_level")
+        builds[id] = profile["class_build"].duplicate(true)
         if gear[id] == 0:
             packed.append(id)
-    mission = {"id": next_operation, "squad": squad.duplicate(), "gear": gear.duplicate(true),
+    mission = {"id": next_operation, "operation": operation, "squad": squad.duplicate(), "gear": gear.duplicate(true),
         "packed": packed, "emergency_reload": prepare_reload, "class_builds": builds, "playtest": playtest}
     next_operation += 1
     debrief.clear()

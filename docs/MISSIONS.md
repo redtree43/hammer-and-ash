@@ -1,6 +1,6 @@
 # Missions
 
-> Earlier mission handoff with worked examples and fixture rules. The current specification is [Mission structure and objectives](design/MISSIONS.md).
+> Earlier mission handoff with worked examples and fixture rules. The active build deploys through the [regional campaign operations](design/MISSIONS.md#regional-playtest-operations).
 
 ## Confirmed mission structure
 
@@ -46,6 +46,8 @@ The guide proposes a lead PMO plus an optional additional PMO, usually zero to t
 
 ## Build 10 test fixtures
 
+The original chain remains playable from HQ via **M → 1 → Enter**. Entries 2–0 below describe retired tests and their historical controls. Campaign deployments now use the [regional operations](design/MISSIONS.md#regional-playtest-operations).
+
 | Selector | Implemented test |
 | --- | --- |
 | 1. Original chain | Three linear rooms. Kennel/hounds, KGB cordon, elite response. Defeat hostiles to clear. In Room 2 destroy the 2 HP radio before the end of player Round 3. An intact radio at room clear or a missed deadline queues three extra hounds for Room 3. A timely disable preserves the baseline lineup. A pending first down resolves at half HP on transition. The healing cap and second-down loss carry across rooms. |
@@ -61,8 +63,6 @@ The guide proposes a lead PMO plus an optional additional PMO, usually zero to t
 
 The mixed trials show room XP for comparison. Campaign XP is awarded through bunker operations. [Enemy tiers and XP verification](IMPLEMENTATION_NOTES.md#enemy-tier-and-xp-trial-verification)
 
-The current prototype presents Assassination, Sabotage, Rescue and Defence as mission pins under **USSR → Central Federal District**. The selector also includes the original chain, the Scythe test range and the four mixed trials. Assassination retains its three rooms and bunker deployments support between-room extraction there. Authored branching and regional effects remain future work. See [Development Status](DEVELOPMENT_STATUS.md) for verified behaviors.
-
-Deploy **Sabotage** from the test selector and press **F4** to restart in the 28×20 annex. It extends the facility to the east and south and moves the pod, terminal, and two guard posts. Press **F4** again to return to the 22×16 facility. The bunker operation uses the facility layout.
+The earlier bunker trial put Assassination, Sabotage, Rescue and Defence in Central. The Sabotage fixture also had a 28×20 annex selected with **F4**. Its verification is preserved in the [Sabotage visual playtest](BUILD_10_PLAYTEST.md#sabotage-visual-pass).
 
 Primary sources are the [Mission Objectives Master Guide](../references/design/Hammer_and_Ash_Mission_Objectives_Master_Guide.docx), 21 November master and combat documents, mission conversation excerpts, and Build 10 README, changelog, and source.

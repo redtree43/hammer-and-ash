@@ -1,103 +1,63 @@
-HAMMER & ASH: UPRISING — BUILD 10 / MODULAR MISSION OBJECTIVES
-Godot 4.7-compatible project / no external art assets required.
+HAMMER & ASH: UPRISING — BUILD 10 REGIONAL CAMPAIGN PLAYTEST
+Godot 4.7 / GL Compatibility / no external art assets required.
 
-INSTALL
-1. Import this folder's project.godot in Godot Project Manager.
-2. Open the project and press F5.
-3. The Resistance Bunker opens. Use USSR to deploy a bunker operation.
-4. Press M for the regression and mixed-enemy fixtures. Click a card or
-   press 1–9 or 0, then press Enter to deploy.
+START A CAMPAIGN OPERATION
+1. Import this folder's project.godot in Godot Project Manager and press F5.
+2. In the Resistance Bunker, use USSR to choose one of seven open districts.
+   Moscow is locked. Each open district has four missions.
+3. Select a mission from its map pin or district list. Open Deploy, select
+   five ready operatives, then use Gear & build to edit each loadout.
+   For testing, choose Earned or a Dev level from 1–9, choose an origin,
+   and click the unlocked ability choices. Reset to Personnel restores
+   that operative's usual build. Deploy again to lock in the squad.
+   Build edits apply to this operation. Manual levels pause campaign XP.
 
-LOADOUT AND BASE ATTACKS
-- Each operative receives a Supersuit and can pack one consumable.
-- In bunker operations, click a target to use the selected operative's
-  melee or ranged base attack. J aims melee and K aims the Medkit.
-- Click an enemy with a melee attack selected to approach and strike
-  for 1 AP total. Hover the enemy to see the route and damage preview.
-  In regression fixtures, press J to select the operative's melee strike.
-- X recharges Sightline, Arc Pistol or Suit Cannon, or reloads fixture firearms.
+REGIONAL OPERATIONS
+- Patrol: clear the hostile patrol.
+- Relay: destroy the generator with basic attacks and clear its defenders.
+- Rescue: free both prisoners by interacting from an adjacent tile (1 AP)
+  and clear the guards.
+- Sweep: clear three linked rooms. Press Enter after clearing an
+  intermediate room to advance or E to extract. HP, spent consumables and
+  down counts carry forward. AP, current armour, charges and cooldowns reset.
+- Relay stations and final sweep yards mark high ground with gold chevrons.
+  Needle's High Perch activates when her turn begins on one of those tiles.
+  Elevation-based range, line of sight and movement rules are still in review.
+- F9 returns to HQ from the mission report. Campaign state is kept for
+  the running session.
 
-BUILD 10 MISSION SELECTOR (M to reopen anytime)
-1 ORIGINAL CHAIN: three rooms, persistent injuries, timed radio TX secondary
-   and conditional hounds in Room 3. Regression test of Build 09.3.
-2 ASSASSINATION: three linked rooms. Final room has Officer Orlov (9 HP,
-   1 armour) and four escorts. From the enemy phase after player turn 3,
-   Orlov tries to reach the marked east EXIT. Kill him before he escapes;
-   if he escapes, you can still clear guards but the mission FAILS.
-3 SABOTAGE: one KGB facility. Destroy 6-HP power generator [G] AND
-   disable/destroy 6-HP prototype pod [P]. The adjacent terminal [T]
-   disables the prototype for 1 AP. Attack machines with basic guns or
-   adjacent melee. If unfinished at end of player round 3, the prototype
-   activates into the 2x2 Iron Giant with 13 HP, 3 armour and 3 AP.
-   Kill it, destroy the generator and clear the guards to finish.
-4 RESCUE: one KGB detention facility. Free both prisoners marked [1] and
-   [2] with a 1-AP adjacent interaction and eliminate guards. Freed
-   prisoners are secured automatically after the room; no escort action.
-5 DEFENCE: one map, 20-HP safehouse [HQ], hold for 8 FULL enemy rounds.
-   Waves spawn on the START of player rounds 1, 3, 5, and 7. The next
-   wave's east entry lane is highlighted one round early. Enemy AI can
-   damage the safehouse directly. Remaining enemies do NOT prevent success
-   if the safehouse and some player operatives survive through round 8.
-6 SCYTHE TEST RANGE: choose Wolverine, Arachnid, Blink or Standard.
-   Select the Charge, melee (Wolverine's Claws), or Short Blink action.
+COMBAT CONTROLS
+- Click a squad selector on the left or an operative on the battlefield.
+  The 1–5 keys select directly, and Tab selects the next ready operative.
+- Use the yellow icons at the lower left or click tiles to move, attack or
+  interact. Hover an icon or arm an ability to see its cost and details below.
+  Click a reachable enemy with a melee operative to approach and strike
+  for 1 AP total. Hover a target for its stats and the action preview.
+- X reloads or recharges. J selects melee. K selects the Medkit.
+  G uses Emergency Reload if prepared. O aims Overwatch, then click to set
+  the cone. Space ends the turn. Esc cancels armed targeting, dismisses
+  overlays, or goes back through the HQ briefing and loadout screens.
+- F toggles base attack lines. H toggles enemy threat. L opens the damage
+  ledger. P opens room activity after a mission, and V opens the final report.
+  Development also includes the combat log, enemy tier mix and facing arrows.
+- Mouse wheel zooms. WASD or middle drag pans. Q and E rotate the board
+  90 degrees during combat. Home fits the room at its current orientation.
+- Each operative wears a Supersuit and can pack one consumable. The loadout
+  is locked on deployment. Enemy firearms and eligible player ranged
+  weapons use three rounds or charges and refill at room entry.
+- Light and high cover have 2 and 5 structural HP. Ordinary gunfire does
+  not damage cover. Explosions and eligible special attacks can break it.
+  Full cover blocks direct ranged hits from its protected side. A committed
+  shot still spends AP and ammo or charge. Impervious cover is indestructible.
+  Walls block line of sight and prevent firing.
 
-TEST CONTROLS
-[M] Mission selector. Use 1–9 or 0, then Enter.
-[R] Restart selected mission from its beginning.
-[Mouse wheel] Zoom around the pointer. [WASD] or [Middle drag] pan.
-[Q] Rotate left 90 degrees. [E] Rotate right 90 degrees. The camera keeps its tilt.
-[Home] Fit the room at the current orientation. New rooms reset the view.
-Click a unit or objective's ground tile to select or target it.
-[F4] Restart fixture 3 and switch between the 22x16 facility and the
-  28x20 annex. The bunker Sabotage operation uses the facility.
-[F6]/[F7]/[F8] Developer jump to room 1/2/3 of the active THREE-ROOM
-  mission. When playing a single-room test these shortcuts load rooms of
-  the original chain for regression. Jumps give a fresh squad.
-[1]–[5] Select units while fighting; [Tab] next operative.
-[Space] End turn. Use the labelled action buttons beside the squad bar.
-Hover a button for details. [Esc] cancels targeting.
-Hover a battlefield target for its stats and your action preview.
-The Development dropdown contains test missions, restart, the ledger,
-combat log, overlays and AI options. Unit facing arrows are off by default.
-Cutouts slide on each resolved walk step, hop on leaps and turn before an effect.
-For a quick check, use M / 6 / Enter to open the Scythe Test Range. Select
-Anvil and move from (1,5) to (4,6) for a bent route with a diagonal. Use
-Scythe's opening Charge on the Armoured Guard to check Overwatch.
-For a leap, use Needle's Hawk Wings origin and Wing Hop in a bunker operation.
-[B] Anvil Breach in legacy fixtures;
-[O] Overwatch; [F] green base-attack lines; [H] threat;
-[L] damage ledger; [P] squad activity after mission; [V] final report.
-[Enter] Continue to next room after clearing a linked room.
-[E] Extract between cleared Assassination rooms in the bunker operation.
-[G] Use Emergency Reload if prepared. [F9] Return to the bunker from
-  the report or mission selector.
+ORIGINAL CHAIN REGRESSION
+- From HQ use M, 1, then Enter to open the original three-room fixture.
+  R restarts the fixture. F6–F8 jump to a room with a fresh squad.
+  B aims Anvil Breach. F9 returns to HQ from the regression selector.
+- Use Enter between cleared rooms to exercise squad carry-over.
+  The Room 2 radio adds three hounds to Room 3 if it sends its alert.
 
-COMMON RULES RETAINED FROM BUILD 09.3
-- Deploy five operatives. Legacy special-ability costs use 1 AP test
-  tuning. Bunker review-tree abilities use their own playtest costs.
-- Shared-edge cover: light 2 structure HP, reinforced 5, impervious
-  indestructible, walls obstruct line of sight.
-- Regular gunfire does not destroy cover; explosives and permitted class
-  attacks do. Fuel and waste barrels are directly targetable.
-- Environmental hazards, knockback, 3-round hazard durations, persistent
-  status effects, health carry-over, armour/AP/cooldown reset between rooms.
-- Damage ledger and individual room activity reports.
-
-MODULAR ARCHITECTURE
-Mission selection is separate from reusable objective configurations:
-  mission_objectives: target conditions (kill/destroy/free/protect)
-  mission_objects: interactive or destructible objects and their health
-  mission_events: phase + round triggers mapped to reusable actions
-  mission_flags: persistent consequences and objective state
-The scenarios are intentionally small test configurations, not final
-campaign levels or final enemy/ability balance. Recruitable allies,
-nonlethal capture, campaign consequences, advanced escorting and alternate
-extract timing are later objective variations.
-
-VALIDATION
-See ../../docs/BUILD_10_PLAYTEST.md for Godot 4.7.2 Windows results and
-remaining checks. VALIDATION_10.txt records the original packaging pass.
-
-Mixed enemy trials (26 November): M opens the selector. Press 7 for Cordon patrol, 8 for Foundry shift, 9 for The choir or 0 for Vanguard trials. Press Enter to deploy. Hover an enemy to inspect its weapon, family, signature and counter. Enter advances a cleared room.
-
-Enemy tiers and earned levels (27 November): Hover an enemy for tier and kill XP. Development > Enemy tier mix shows counts for the room. Deploy from the bunker to earn XP on success or controlled extraction. Open Personnel to see earned levels and XP progress. The Dev level picker supports manual builds, and a deployment with a manual level pauses XP.
+VERIFICATION
+See ../../docs/IMPLEMENTATION_NOTES.md for current checks and playtest gaps.
+VALIDATION_10.txt records the original packaging pass.

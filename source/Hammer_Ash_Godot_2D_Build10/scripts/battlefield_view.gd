@@ -134,7 +134,11 @@ func tile_rect(cell: Vector2i, footprint: Vector2i = Vector2i.ONE) -> Rect2:
 
 func draw_board_sides(canvas: CanvasItem) -> void:
     var corners: PackedVector2Array = projected_corners(tile_rect(Vector2i.ZERO, dimensions))
-    draw_front_faces(canvas, corners, 14.0, Color("#465968"))
+    var rim: PackedVector2Array = corners.duplicate()
+    for index in range(4):
+        rim[index] += Vector2(0, 13)
+    draw_front_faces(canvas, rim, 5.0, Color("#182228"))
+    draw_front_faces(canvas, corners, 13.0, Color("#4a5860"))
 
 func projected_corners(rect: Rect2) -> PackedVector2Array:
     var corners := [rect.position, Vector2(rect.end.x, rect.position.y),
@@ -172,7 +176,29 @@ func draw_wall(canvas: CanvasItem, rect: Rect2, color: Color, joined_sides: Arra
     for index in range(top.size()):
         top[index] += rise
     draw_front_faces(canvas, top, WALL_HEIGHT, color, joined_sides)
+    var center: Vector2 = (top[0] + top[2]) * 0.5
+    for i in range(4):
+        var a: Vector2 = top[i]
+        var b: Vector2 = top[(i + 1) % 4]
+        if ((a + b) * 0.5 - center).y <= 0.001 or joined_sides[i]:
+            continue
+        var base: Vector2 = a + Vector2(0, WALL_HEIGHT)
+        var edge: Vector2 = b - a
+        canvas.draw_line(base + Vector2(0, -4), base + edge + Vector2(0, -4), color.darkened(0.58), 2.0)
+        for fraction in [0.12, 0.88]:
+            var rib: Vector2 = a + edge * fraction
+            canvas.draw_line(rib + Vector2(0, 2), rib + Vector2(0, WALL_HEIGHT - 5), color.darkened(0.46), 2.0)
+        var recess: Vector2 = a + edge * 0.27
+        for height in [7, 10, 13]:
+            var slot: Vector2 = recess + Vector2(0, height)
+            canvas.draw_line(slot, slot + edge * 0.46, color.darkened(0.65), 1.5)
     canvas.draw_colored_polygon(top, color)
+    var panel := PackedVector2Array()
+    for corner in top:
+        panel.append(center.lerp(corner, 0.74))
+    canvas.draw_colored_polygon(panel, color.darkened(0.12))
+    canvas.draw_line(panel[0], panel[1], color.lightened(0.21), 1.5)
+    canvas.draw_line(panel[0], panel[3], color.lightened(0.12), 1.0)
     top.append(top[0])
     canvas.draw_polyline(top, color.darkened(0.34), 1.2)
 

@@ -12,23 +12,49 @@ const SELF_ACTIONS := ["Overdrive", "Chitin Dodge", "Force Shell", "Iron Lock", 
     "Emergency Overdrive", "Darwinian Shift", "Catalytic Cascade", "Apex Reconfiguration", "Regenerative Wave"]
 const MODES := {"Force Hand": ["Push", "Pull"], "Power Routing": ["Mobility", "Overcharge"],
     "Adaptive Catalyst": ["Mobility", "Barrier"], "Darwinian Shift": FORMS,
-    "Shed Skin": FORMS, "Rapid Metamorph": FORMS, "Perfect Adaptation": FORMS, "Lateral Slip": ["Left", "Right"],
+    "Shed Skin": FORMS, "Rapid Metamorph": FORMS, "Perfect Adaptation": FORMS, "Lateral Slip": ["Left", "Right"], "Vector Pull": ["1 Tile", "2 Tiles"],
     "Charge": ["1 AP", "2 AP", "3 AP"], "Mosaic Body": ["Frog / Jellyfish", "Frog / Skunk", "Jellyfish / Frog", "Jellyfish / Skunk", "Skunk / Frog", "Skunk / Jellyfish"]}
-const REVIEW_HEAT := {"Mortar Cup": 2, "Breaker Slug": 1, "Arc Canister": 2, "Siege Salvo": 3, "Walking Barrage": 2}
+const REVIEW_HEAT := {"Breach Shell": 2, "Mortar Cup": 2, "Walking Barrage": 2, "Flak Curtain": 2,
+    "Incendiary Shell": 2, "Siege Salvo": 3, "Rolling Thunder": 2}
+const DRONE_ORDERS := ["Scout Run", "Pincer Run", "Shield Run", "Recovery Winch", "Overclock Link"]
+const GENERATED_ACTION_DETAILS := {
+    "Follow-up Step": "Take the free movement step granted by your previous action.",
+    "Suppress Reaction": "Disrupt reactions on the enemy just hit by your basic attack.",
+    "Impulse Push": "Push the enemy just hit by your basic attack away from you.",
+    "Treat Patient": "Treat a standing ally in your Field Hospital who has yet to receive treatment.",
+    "Lend Armour": "Transfer up to 3 current armour to another standing ally in range.",
+    "Tandem Move": "Move the drone up to two steps after the operator moves.",
+    "Tailwind Flight": "Fly to a legal landing within two tiles after defeating your quarry.",
+    "Bedside Cover": "Give 1 barrier to an adjacent ally below half their healing ceiling.",
+    "Hyde Follow-through": "Step into the tile vacated by the enemy you struck.",
+    "Counterweight Slide": "Move a standing ally within three tiles to a legal adjacent tile.",
+    "Transform": "Switch from Jekyll to Hyde.",
+    "Revert": "Return to Jekyll before the automatic reversion.",
+    "Fly": "Fly to a legal landing within five tiles, or six with Spread Your Wings.",
+    "Anchor": "Mount the artillery suit for heavy fire and hold position until the next squad turn.",
+    "Vent": "Remove 2 Heat, or 3 with Cooling Fins.",
+    "Breach Shell": "Spend 2 Heat to hit a cover edge four to eight tiles away for 5 structural damage. Units on either side take 2 damage.",
+    "Scout Run": "Move the drone up to two tiles and optionally fire an Arc Bolt for 2 damage within four tiles.",
+    "Pincer Run": "Move the drone up to three tiles and fire for 3 damage within four tiles. Flanking can cancel Overwatch.",
+    "Shield Run": "Move the drone up to three tiles and project three full-cover edges in a chosen direction.",
+    "Tongue Vault": "Leap to a legal landing, then optionally pull a nearby enemy one tile toward you.",
+    "Nettle Lock": "Strike an adjacent enemy and slow them.",
+    "Musk Trail": "Lay a trail that damages and blinds enemies who enter it.",
+}
 const TARGET_STEPS := {"Compel Step": 2, "Lift Ally": 2, "Raptor Descent": 2, "Iron Rain": 3,
-    "Wingover": 2, "Banking Turn": 2, "Safe Passage": 2, "Rolling Barricade": 2,
-    "Rake": 2, "Split Focus": 2, "Phantom Threat": 2, "Spatial Exchange": 2, "Hook and Drop": 2,
-    "Hurl Debris": 3, "Rosette Rush": 5, "Overclock Link": 6, "Mosaic Body": 2,
-    "Chain Arc": 3, "Tongue Vault": 2, "Breach Relay": 2, "Adrenal Rescue": 2,
+    "Wingover": 2, "Banking Turn": 2, "Safe Passage": 2, "Breach Kit": 2, "Breach Shell": 2, "Rolling Thunder": 2,
+    "Rake": 3, "Split Focus": 2, "Phantom Threat": 2, "Spatial Exchange": 2, "Strike and Drop": 3,
+    "Hurl Debris": 3, "Rosette Rush": 5, "Overclock Link": 5, "Mosaic Body": 2,
+    "Scout Run": 2, "Pincer Run": 3, "Shield Run": 3, "Tongue Vault": 2, "Breach Relay": 2, "Adrenal Rescue": 2,
     "Passing Trait": 2, "Rampage": 3, "Field Hospital": 4, "Sanctuary": 99,
     "Throw": 2, "Wrecking Ball": 2, "Counterweight Slide": 2}
 const REVIEW_RANGED := {
-    "Needle Beam": [7, 4], "Corneal Lance": [5, 2], "Pinhole Sun": [8, 6],
-    "Prismatic Burst": [7, 4], "Induction Tap": [3, 1], "Breaker Slug": [6, 3],
-    "Feedback Spike": [5, 4], "Compression": [4, 4], "Encasing Armour": [4, 4],
+    "Needle Beam": [7, 4], "Corneal Lance": [5, 2], "Pinhole Sun": [8, 8],
+    "The Void's Gaze": [7, 4],
+    "Feedback Spike": [5, 4], "Compression": [4, 4], "Encasing Armour": [4, 6],
 }
 const REVIEW_TARGETS := {
-    "Designate Quarry": 8, "Distort Aim": 4, "Aphasia": 5, "Panic Spike": 5,
+    "Designate Target": 8, "Distort Aim": 4, "Aphasia": 5, "Panic Spike": 5,
     "Thought Arrest": 4, "Crowd Panic": 5, "Vector Pull": 5, "Lateral Slip": 4,
     "Throw": 1, "Drop Hammer": 1, "Claw Grab": 1, "Hooked Pincers": 2,
     "Carapace Slam": 1, "Colossal Combo": 1, "Stooping Strike": 1,
@@ -37,19 +63,19 @@ const REVIEW_TARGETS := {
 # These nodes use the same target validation for board previews and resolution.
 const REVIEW_ACTIONS := [
     "Field Formula", "Reserve Dose", "Finish the Job", "Taunt", "Thundering Taunt",
-    "Gleaming Armour", "Mortar Cup", "Arc Canister", "Siege Salvo",
-    "Vent", "Pressure Front", "Empty the Shell", "Field Rewire", "Lend Armour",
+    "Gleaming Armour", "Mortar Cup", "Breach Kit", "Breach Shell", "Siege Salvo", "Anchor", "Flak Curtain", "Incendiary Shell", "Rolling Thunder",
+    "Vent", "Pressure Front", "Empty the Shell", "Emergency Cells", "Lend Armour", "Defence is the Best Offense",
     "Shelter Reflex", "Adrenal Rescue", "Quarantine Field", "Rampage", "Field Hospital",
-    "Transform", "Break the Vial", "Fly", "Chain Arc", "Drone Move", "Drone Arc Bolt",
+    "Transform", "Break the Vial", "Fly", "Scout Run", "Pincer Run", "Shield Run",
     "Field Service", "Emergency Rebuild", "Tongue Vault", "Nettle Lock", "Musk Trail",
     "Darwinian Shift", "Charge", "Breach Relay", "Shed Skin", "Safe Passage",
-    "Rolling Barricade", "Revert", "Express Trait", "Wingover", "Peregrine Dive",
-    "Banking Turn", "Bounding Pounce", "Walking Barrage", "Blowdown", "Burrowing Strike",
+    "Revert", "Express Trait", "Wingover", "Peregrine Dive",
+    "Banking Turn", "Bounding Pounce", "Walking Barrage", "Burrowing Strike",
     "Rake", "Split Focus", "Sweep Beam", "Venom Jet", "Linebreaker", "Plastic Skin", "Sanctuary",
-    "Hook and Drop", "Raking Pass", "Phantom Threat", "Spatial Exchange", "Wrecking Ball",
-    "Magnetic Tow", "Rescue Winch", "Shock Mine", "Passing Trait",
+    "Strike and Drop", "Raking Pass", "Phantom Threat", "Spatial Exchange", "Wrecking Ball",
+    "Recovery Winch", "Shock Mine", "Passing Trait",
     "Hurl Debris", "Rapid Metamorph", "Perfect Adaptation", "Rosette Rush", "Overclock Link", "Mosaic Body",
-    "Treat Patient", "Tandem Move", "Tailwind Flight", "Bedside Cover", "Hyde Follow-through", "Mantle Recall", "Counterweight Slide",
+    "Suppress Reaction", "Impulse Push", "Treat Patient", "Tandem Move", "Tailwind Flight", "Bedside Cover", "Hyde Follow-through", "Counterweight Slide",
 ]
 const STATUS_LABELS := {"root": "Rooted", "poison": "Poisoned", "reaction_off": "Reactions disabled",
     "brace": "Braced", "panic": "Panicked", "mind_lock": "Mind Locked"}
@@ -114,7 +140,7 @@ func setup_unit(index: int, build: Dictionary, carry: Dictionary) -> void:
     operative["class_state"] = {"ready": {}, "used": {}, "room_uses": {}, "mission_uses": carry.get("mission_uses", {}),
         "treatment": int(carry.get("treatment", Classes.TREATMENTS)), "heat": 0, "mark": -1,
         "form": "Jekyll" if knows(index, "Dual Nature") else carry.get("form", build["form"]),
-        "recovery": bool(carry.get("recovery", false)), "drone_hp": int(carry.get("drone_hp", 4)),
+        "recovery": bool(carry.get("recovery", false)), "drone_hp": int(carry.get("drone_hp", drone_max_hp(index))),
         "moved": 0, "spare_ap": 0, "mark_open": false,
         "apex_until": 0, "withdraw": -1, "transfer": -1}
     operative["base_move"] = int(operative["move"])
@@ -127,6 +153,8 @@ func setup_unit(index: int, build: Dictionary, carry: Dictionary) -> void:
     refresh_base_attack(index)
     if state(index)["recovery"]:
         operative["ap"] = maxi(0, int(operative["ap"]) - 1)
+        if carry.get("form") == "Hyde" and knows(index, "Adrenal Rebound"):
+            barrier(index, 2)
         state(index)["recovery"] = false
         state(index)["recovery_turn"] = battle.turn_number
 
@@ -134,6 +162,8 @@ func refresh_base_attack(index: int) -> void:
     var operative: Dictionary = unit(index)
     var attack: Dictionary = Classes.base_attack(operative["kit_name"], operative["class_build"],
         state(index)["form"], operative["ranged_damage"], operative["ranged_range"])
+    if operative["reaction_type"] == "overwatch" and operative.get("basic_attack") != attack["name"]:
+        cancel_reaction(index)
     operative["basic_attack"] = attack["name"]
     operative["basic_melee"] = attack["melee"]
     operative["damage"] = attack["damage"]
@@ -141,9 +171,6 @@ func refresh_base_attack(index: int) -> void:
     if state(index).get("form_mastery", false) and state(index)["form"] == "Skunk":
         operative["range"] += 1
     operative["magazine_capacity"] = battle.DEFAULT_MAGAZINE_CAPACITY if attack["charged"] else 0
-    if attack["melee"] and operative["reaction_type"] == "overwatch":
-        operative["reaction_available"] = false
-        operative["reaction_type"] = ""
 
 func deploy_devices() -> void:
     for index in range(5):
@@ -153,7 +180,7 @@ func deploy_devices() -> void:
             var cell: Vector2i = pos(index) + step
             if battle.tile_is_open(cell):
                 drones[index] = {"pos": cell, "hp": state(index)["drone_hp"],
-                    "armour": 1 + int(knows(index, "Guardian Chassis")), "intercept": false}
+                    "armour": drone_max_armour(index), "intercept": false}
                 break
 
 func save_carry(index: int, carry: Dictionary) -> void:
@@ -185,6 +212,12 @@ func organic(index: int) -> bool:
 func anchored(index: int) -> bool:
     return int(unit(index).get("weight", 2)) >= 3 or bool(unit(index).get("mission_target", false)) or unit(index).get("kind") == "boss"
 
+func drone_max_hp(index: int) -> int:
+    return 4 + 2 * int(knows(index, "Hardened Frame"))
+
+func drone_max_armour(index: int) -> int:
+    return 1 + int(knows(index, "Guardian Chassis"))
+
 func drone_live(index: int) -> bool:
     return drones.has(index) and int(drones[index]["hp"]) > 0
 
@@ -202,15 +235,17 @@ func actions(index: int) -> Array[Dictionary]:
         var node: Dictionary = unit(index)["skills"][skill]
         if node["type"] != "A" or not supports_review_action(skill):
             continue
-        for option in MODES.get(skill, [""]):
+        var options: Array = ["", "Drone"] if skill == "Breach Kit" and knows(index, "Remote Breach") and drone_live(index) else MODES.get(skill, [""])
+        for option in options:
             result.append({"skill": skill, "mode": option, "ap": action_cost(index, skill, option, node)})
-    for skill in ["Transform", "Revert", "Fly", "Vent", "Drone Move", "Drone Arc Bolt", "Chain Arc", "Rolling Barricade",
-            "Treat Patient", "Mantle Recall", "Tandem Move", "Tailwind Flight", "Bedside Cover", "Hyde Follow-through", "Counterweight Slide",
-            "Tongue Vault", "Nettle Lock", "Musk Trail", "Darwinian Shift"]:
-        if review_extra(index, skill).is_empty() or unit(index)["skills"].has(skill):
+    for skill in ["Transform", "Revert", "Fly", "Vent", "Anchor", "Breach Shell", "Scout Run", "Pincer Run", "Shield Run",
+            "Treat Patient", "Lend Armour", "Suppress Reaction", "Impulse Push", "Tandem Move", "Tailwind Flight",
+            "Bedside Cover", "Hyde Follow-through", "Counterweight Slide", "Tongue Vault", "Nettle Lock", "Musk Trail", "Darwinian Shift"]:
+        var node := review_extra(index, skill)
+        if node.is_empty() or unit(index)["skills"].get(skill, {}).get("type") == "A":
             continue
         for option in MODES.get(skill, [""]):
-            result.append({"skill": skill, "mode": option, "ap": review_extra(index, skill)["ap"]})
+            result.append({"skill": skill, "mode": option, "ap": action_cost(index, skill, option, node)})
     if free_step(index) > 0:
         result.append({"skill": "Follow-up Step", "mode": "", "ap": 0})
     return result
@@ -220,12 +255,16 @@ static func supports_review_action(skill: String) -> bool:
 
 func review_extra(index: int, skill: String) -> Dictionary:
     match skill:
+        "Suppress Reaction", "Impulse Push":
+            var pending: int = effects(index).get(skill, -1)
+            if living(pending):
+                return {"type": "A", "ap": 0, "limit": "T1"}
         "Treat Patient":
             if knows(index, "Field Hospital") and not hospital_candidates(index).is_empty():
                 return {"type": "A", "ap": 0, "limit": ""}
-        "Mantle Recall":
-            if knows(index, skill) and not state(index).get("mantles", {}).is_empty():
-                return {"type": "A", "ap": 0, "limit": ""}
+        "Lend Armour":
+            if knows(index, "Living Mantle"):
+                return {"type": "A", "ap": 1, "limit": ""}
         "Tandem Move", "Tailwind Flight", "Bedside Cover", "Hyde Follow-through", "Counterweight Slide":
             if effects(index).get(skill, false):
                 return {"type": "A", "ap": 0, "limit": "T1"}
@@ -238,12 +277,13 @@ func review_extra(index: int, skill: String) -> Dictionary:
         "Fly":
             if knows(index, "Hawk Wings"):
                 return {"type": "A", "ap": 1, "limit": "T1"}
-        "Vent":
-            if knows(index, "Boiler Plate"):
-                return {"type": "A", "ap": 1, "limit": ""}
-        "Drone Move", "Drone Arc Bolt", "Chain Arc", "Rolling Barricade":
-            if knows(index, "Paired Deployment") and (skill != "Chain Arc" or knows(index, "Assault Chassis")) and (skill != "Rolling Barricade" or knows(index, "Guardian Chassis")):
-                return {"type": "A", "ap": 2 if skill == "Chain Arc" else 1, "limit": "CD2" if skill in ["Chain Arc", "Rolling Barricade"] else "T1"}
+        "Anchor", "Vent", "Breach Shell":
+            if knows(index, "Siege Mount"):
+                return {"type": "A", "ap": {"Anchor": 0, "Vent": 1, "Breach Shell": 2}[skill], "limit": "CD2" if skill == "Breach Shell" else ""}
+        "Scout Run", "Pincer Run", "Shield Run":
+            var unlock: String = {"Scout Run": "Paired Deployment", "Pincer Run": "Assault Chassis", "Shield Run": "Guardian Chassis"}[skill]
+            if knows(index, unlock):
+                return {"type": "A", "ap": 1, "limit": "" if skill == "Scout Run" else "CD2"}
         "Tongue Vault", "Nettle Lock", "Musk Trail":
             var signature: String = {"Frog": "Tongue Vault", "Jellyfish": "Nettle Lock", "Skunk": "Musk Trail"}.get(state(index)["form"], "")
             if knows(index, "Darwinian Shift") and signature == skill:
@@ -256,6 +296,10 @@ func review_extra(index: int, skill: String) -> Dictionary:
 func review_node(index: int, skill: String) -> Dictionary:
     var extra: Dictionary = review_extra(index, skill)
     return unit(index).get("skills", {}).get(skill, {}) if extra.is_empty() else extra
+
+func action_detail(index: int, skill: String) -> String:
+    var node: Dictionary = unit(index).get("skills", {}).get(skill, {})
+    return node.get("mechanic", GENERATED_ACTION_DETAILS.get(skill, ""))
 
 func action_cost(index: int, skill: String, option: String, node: Dictionary) -> int:
     if skill == "Charge":
@@ -283,8 +327,8 @@ func arm_action(index: int, skill: String, option: String) -> void:
     actor = index
     ability = skill
     mode = option
-    if ability in SELF_ACTIONS or ability in ["Charge", "Transform", "Revert", "Vent", "Pressure Front", "Empty the Shell", "Blowdown",
-            "Thundering Taunt", "Gleaming Armour", "Emergency Rebuild", "Shed Skin", "Plastic Skin"]:
+    if ability in SELF_ACTIONS or ability in ["Charge", "Transform", "Revert", "Vent", "Anchor", "Emergency Cells", "Pressure Front", "Empty the Shell",
+            "Thundering Taunt", "Defence is the Best Offense", "Emergency Rebuild", "Shed Skin", "Plastic Skin"]:
         submit(pos(actor))
     else:
         battle.status_message = aim_text()
@@ -303,17 +347,33 @@ func aim_text() -> String:
             return "Overclock Link · choose the drone landing."
         if knows(actor, "Guardian Chassis"):
             if picks.size() < 3:
-                return "Overclock Link · choose a cardinal facing. Repeat the first facing to use only one line."
+                return "Overclock Link · choose a cardinal facing. Use a different facing for the second line."
             return "Overclock Link · select up to two adjacent squadmates, or click the drone landing to finish."
         return "Overclock Link · choose a target. Click the last enemy again to end the chain."
-    if ability == "Chain Arc" and not picks.is_empty():
-        return "Chain Arc · choose a different enemy within two tiles of the last one, or click the last enemy again to fire."
+    if ability in ["Breach Kit", "Breach Shell"]:
+        return "%s · %s" % [ability, "choose a tile beside the cover edge." if picks.is_empty() else "choose the tile on the other side of the edge."]
+    if ability in ["Scout Run", "Pincer Run", "Shield Run"]:
+        if picks.is_empty():
+            return "%s · choose the drone's landing, or click the drone to hold." % ability
+        if ability == "Shield Run":
+            return "Shield Run · " + ("choose a cardinal facing." if picks.size() == 1 else "choose one adjacent ally, or click the drone landing to finish.")
+        if ability == "Scout Run":
+            return "Scout Run · choose a target, or click the landing again to move only."
+        return "Pincer Run · " + ("choose a target." if picks.size() == 1 else "choose a second enemy within two tiles, or click the first target again.")
+    if ability == "Rolling Thunder":
+        return "Rolling Thunder · " + ("choose your landing within three steps, or your own tile to hold." if picks.is_empty() else "choose a direction for the four-tile firing line.")
+    if ability == "Tandem Move":
+        return "Tandem Move · choose a drone landing within two tiles."
     if ability == "Field Hospital" and not picks.is_empty():
         return "Field Hospital · choose up to three patients, or click the ward centre again to open it."
     if ability == "Sanctuary":
         return "Sanctuary · click an ally once per assigned armour point (%d remaining)." % (int(unit(actor)["armour"]) - picks.size())
     if ability == "Tongue Vault" and not picks.is_empty():
         return "Tongue Vault · select a foe to pull, or click the landing again to hop only."
+    if ability == "Rake":
+        return "Rake · choose up to three adjacent tiles. Repeat the last tile to finish early."
+    if ability == "Strike and Drop" and picks.size() == 2:
+        return "Strike and Drop · choose a legal drop tile adjacent to your landing."
     if TARGET_STEPS.has(ability):
         if ability == "Iron Rain":
             return "Iron Rain · choose blast centre %d of 3." % (picks.size() + 1)
@@ -334,10 +394,19 @@ func unavailable(index: int, skill: String, option: String) -> String:
         return "Combat implementation pending."
     if node["limit"] == "T1" and not once(index, skill, false):
         return "Already used this turn."
-    if skill in ["Drone Move", "Drone Arc Bolt", "Chain Arc", "Rolling Barricade", "Field Service", "Overclock Link"] and not drone_live(index):
+    if (skill in DRONE_ORDERS or skill in ["Field Service", "Tandem Move"] or (skill == "Breach Kit" and option == "Drone")) and not drone_live(index):
         return "Requires a surviving drone."
-    if skill in ["Drone Move", "Drone Arc Bolt", "Chain Arc", "Rolling Barricade", "Rescue Winch", "Overclock Link"] and not once(index, "Drone order", false):
+    if skill == "Breach Kit" and option == "Drone" and not knows(index, "Remote Breach"):
+        return "Requires Remote Breach."
+    if skill in DRONE_ORDERS and not once(index, "Drone order", false):
         return "The drone has already acted this turn."
+    if skill == "Anchor":
+        if effects(index).get("anchored", false):
+            return "The suit is already anchored."
+        if int(info["moved"]) > 0 and not quick_lock_ready(index):
+            return "Anchor before moving, or use Quick-Lock."
+    if REVIEW_HEAT.has(skill) and skill != "Rolling Thunder" and not effects(index).get("anchored", false):
+        return "Anchor before firing heavy weapons."
     if skill in ["Transform", "Break the Vial"] and info["form"] != "Hyde":
         if info["room_uses"].has("Transform") or int(info.get("recovery_turn", -1)) == battle.turn_number:
             return "Hyde is unavailable this turn."
@@ -349,8 +418,6 @@ func unavailable(index: int, skill: String, option: String) -> String:
         return "Requires a destroyed drone."
     if skill == "Vent" and int(info["heat"]) == 0:
         return "The suit is already cool."
-    if skill == "Blowdown" and int(info["heat"]) < 2:
-        return "Requires at least two heat."
     if skill in ["Empty the Shell", "Sanctuary"] and int(unit(index)["armour"]) < 2:
         return "Requires at least two current armour."
     if REVIEW_HEAT.has(skill) and int(info["heat"]) + int(REVIEW_HEAT[skill]) > 4:
@@ -358,7 +425,7 @@ func unavailable(index: int, skill: String, option: String) -> String:
     if skill in ["Darwinian Shift", "Shed Skin", "Rapid Metamorph", "Perfect Adaptation"] and not once(index, "form change", false):
         return "Already shifted this turn."
     var cost := action_cost(index, skill, option, node)
-    if int(unit(index)["ap"]) < cost and not (skill == "Designate Quarry" and effects(index).has("free_quarry")):
+    if int(unit(index)["ap"]) < cost and not (skill == "Designate Target" and effects(index).has("free_quarry")):
         return "Needs %d AP." % cost
     if int(info["ready"].get(skill, 0)) > battle.turn_number:
         return "Ready on turn %d." % int(info["ready"][skill])
@@ -400,7 +467,7 @@ func commit(index: int, skill: String, option: String = "") -> void:
     if skill != "Follow-up Step":
         var node: Dictionary = review_node(index, skill)
         var limit: String = node["limit"]
-        var free_quarry: bool = skill == "Designate Quarry" and effects(index).erase("free_quarry")
+        var free_quarry: bool = skill == "Designate Target" and effects(index).erase("free_quarry")
         var cost := action_cost(index, skill, option, node)
         unit(index)["ap"] -= 0 if free_quarry else cost
         if skill == "Darwinian Shift" and cost == 0:
@@ -418,7 +485,7 @@ func commit(index: int, skill: String, option: String = "") -> void:
                 once(index, "Cooling Circuit")
             info["heat"] = mini(3, int(info["heat"]) + int(HEAT_COST.get(skill, 0)))
         if REVIEW_HEAT.has(skill):
-            info["hot_breech"] = knows(index, "Hot Breech") and int(info["heat"]) == 2
+            info["heavy_bonus"] = int(knows(index, "Hot Breech") and int(info["heat"]) >= 2 and once(index, "Hot Breech"))
             info["heat"] += REVIEW_HEAT[skill]
         once(index, skill)
         battle.record_ability_use(index, skill, true)
@@ -448,10 +515,11 @@ func submit(tile: Vector2i) -> void:
     battle.resolving_class_action = true
     resolve(index, skill, option, planned, plan)
     battle.resolving_class_action = false
+    battle.assess_winner()
 
 func target_steps(index: int, skill: String, option: String) -> int:
-    if skill == "Overclock Link":
-        return 5
+    if skill in ["Pincer Run", "Shield Run"] and not knows(index, "Hardpoint Upgrade"):
+        return 2
     if skill == "Passing Trait" and state(index)["form"] != "Frog":
         return 1
     if skill == "Rapid Metamorph" and option == "Frog":
@@ -459,15 +527,18 @@ func target_steps(index: int, skill: String, option: String) -> int:
     if skill == "Mosaic Body" and "Frog" in option:
         return 3
     return int(TARGET_STEPS.get(skill, 1))
-    battle.assess_winner()
 
 func summary(index: int) -> String:
     var info: Dictionary = state(index)
     var build: Dictionary = unit(index)["class_build"]
     var branch: Dictionary = Classes.data(unit(index)["kit_name"])["origins"][int(build["origin"])]
     var result: String = "L%d · %s" % [int(build["level"]), str(branch["name"]).capitalize()]
-    if knows(index, "Power Routing"):
-        result += " · Heat %d/3" % int(info["heat"])
+    if knows(index, "Siege Mount"):
+        result += " · Heat %d/4" % int(info["heat"])
+        if effects(index).get("anchored", false):
+            result += " · Anchored"
+    if knows(index, "Paired Deployment"):
+        result += " · Drone %d/%d HP" % [int(drones.get(index, {}).get("hp", 0)), drone_max_hp(index)]
     if knows(index, "Cell Mender"):
         result += " · Treatment %d/4" % int(info["treatment"])
     if knows(index, "Darwinian Shift"):
@@ -477,9 +548,15 @@ func summary(index: int) -> String:
     return result
 
 func draw_drone(owner: int, center: Vector2) -> void:
-    battle.draw_circle(center, 10, Color("#314658"))
-    battle.draw_circle(center, 8, Color("#7ac3d5"), false, 2)
-    battle.draw_label(str(drones[owner]["hp"]), center + Vector2(-3, 4), 11)
+    var guardian: bool = knows(owner, "Guardian Chassis")
+    var color := Color("#9cdbe9") if guardian else Color("#ffc581")
+    var bob: float = sin(battle.atmosphere_time * 8.0 + owner) * 2.0
+    var body: Vector2 = center - Vector2(0, 12 + bob)
+    var sprite: Texture2D = battle.unit_sprites["drone"]
+    battle.sabotage_visuals.draw_shadow(battle, center, 21.0)
+    battle.draw_texture_rect(sprite, Rect2(body - Vector2(12, 10), Vector2(24, 22)), false, Color.WHITE.lerp(color, 0.3))
+    battle.draw_rect(Rect2(body + Vector2(-3, -2), Vector2(6, 2)), color)
+    battle.draw_label(str(drones[owner]["hp"]), center + Vector2(-3, 7), 10, color)
 
 func draw_board_zones() -> void:
     for entry in ordnance:
@@ -488,7 +565,8 @@ func draw_board_zones() -> void:
         draw_tiles(zone["tiles"], Color("#a59ad8"))
     for owner: int in drones:
         if drone_live(owner):
-            draw_tiles(drones[owner].get("barricade", {}).get("tiles", []), Color("#7ac3d5"))
+            for line in ["barricade", "barricade_second"]:
+                draw_shield_line(drones[owner].get(line, {}))
 
 func draw_board_targeting() -> String:
     if actor < 0 or ability.is_empty():
@@ -501,7 +579,32 @@ func draw_board_targeting() -> String:
     preview.append(tile)
     var plan: Dictionary = plan_action(actor, ability, mode, preview)
     draw_tiles(plan.get("tiles", [tile]), Color("#db817c") if plan.has("error") else Color("#8edac4"))
-    return plan.get("error", aim_text())
+    if not plan.has("error") and ability in ["Strike and Drop", "Raking Pass"]:
+        if plan.has("landing"):
+            draw_tiles([plan["landing"]], Color("#e9bc68"))
+        if plan.has("drop"):
+            draw_tiles([plan["drop"]], Color("#8edac4"))
+    for line: Dictionary in plan.get("cover_lines", []):
+        draw_shield_line(line)
+    var hint: String = plan.get("error", plan.get("warning", aim_text()))
+    if not plan.has("error") and plan.has("drone_path"):
+        var shots := expected_drone_overwatch(actor, plan["drone_path"])
+        if shots > 0:
+            hint += " · %d expected Overwatch %s" % [shots, "shot" if shots == 1 else "shots"]
+    return hint
+
+func draw_shield_line(line: Dictionary) -> void:
+    for tile: Vector2i in line.get("tiles", []):
+        var rect: Rect2 = battle.battlefield.tile_rect(tile)
+        var face: String = line["face"]
+        var start := rect.position
+        var end := rect.end
+        match face:
+            "N": end.y = start.y
+            "S": start.y = end.y
+            "W": end.x = start.x
+            "E": start.x = end.x
+        battle.draw_line(start, end, Color("#7ac3d5"), 4.0)
 
 func draw_tiles(tiles: Array, color: Color) -> void:
     for tile in tiles:
@@ -526,16 +629,18 @@ func neighbours(index: int, tile: Vector2i) -> bool:
     return distance(nearest, tile) == 1
 
 func legal_walk(index: int, tile: Vector2i, reach: int) -> bool:
-    return tile != pos(index) and battle.reachable(pos(index), reach, index).has(tile)
+    return not battle.voluntary_movement_locked(index) and tile != pos(index) and battle.reachable(pos(index), reach, index).has(tile)
 
 func can_vault(index: int, source: Vector2i, tile: Vector2i, reach: int) -> bool:
-    return source != tile and steps_between(source, tile) <= reach and battle.has_line_of_sight(source, tile) \
+    return not battle.voluntary_movement_locked(index) and source != tile and steps_between(source, tile) <= reach and battle.has_line_of_sight(source, tile) \
         and battle.footprint_is_open(unit(index), tile)
 
-func attack_landing(index: int, target: int, reach: int, flight: bool) -> Vector2i:
+func attack_landing(index: int, target: int, reach: int, flight: bool, occupied_limit: int = -1) -> Vector2i:
     var source: Vector2i = pos(index)
     if not flight and neighbours(target, source):
         return source
+    if battle.voluntary_movement_locked(index):
+        return INVALID
     var search: Dictionary = battle.reachable(source, reach, index) if not flight else {}
     var footprint: Rect2i = battle.unit_footprint(unit(target), pos(target)).grow(1)
     var best: Vector2i = INVALID
@@ -549,6 +654,8 @@ func attack_landing(index: int, target: int, reach: int, flight: bool) -> Vector
             if length >= score or length > reach:
                 continue
             if flight and (length < 2 or not can_vault(index, source, tile, reach)):
+                continue
+            if occupied_limit >= 0 and in_tiles(line_tiles(source, tile)).size() > occupied_limit:
                 continue
             if not flight and not battle.has_line_of_sight(source, tile):
                 continue
@@ -565,6 +672,9 @@ func area(center: Vector2i, radius: int, square: bool = true) -> Array[Vector2i]
                     and not battle.walls.has(tile) and battle.has_line_of_sight(center, tile):
                 cells.append(tile)
     return cells
+
+func cross_tiles(center: Vector2i) -> Array[Vector2i]:
+    return area(center, 1).filter(func(cell: Vector2i) -> bool: return battle.grid_distance(center, cell) <= 1)
 
 func direction(a: Vector2i, b: Vector2i) -> Vector2i:
     var delta: Vector2i = b - a
@@ -783,7 +893,7 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
     var source: Vector2i = plan.get("source_override", pos(index))
     var tile := tiles[0]
     var target: int = plan["target"]
-    if not battle.is_in_bounds(tile) or battle.walls.has(tile):
+    if not battle.is_in_bounds(tile) or (battle.walls.has(tile) and skill not in ["Venom Jet", "Gleaming Armour", "Flak Curtain", "Breach Kit", "Breach Shell"]):
         return error("Choose a clear battlefield tile.")
     if skill in ["Rapid Metamorph", "Perfect Adaptation"]:
         if option == state(index)["form"]:
@@ -797,19 +907,30 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
         var reach: int = REVIEW_RANGED[skill][0] if REVIEW_RANGED.has(skill) else REVIEW_TARGETS[skill]
         if skill in ["Vector Pull", "Lateral Slip"]:
             reach += int(knows(index, "Long Lever"))
-        if skill in ["Needle Beam", "Corneal Lance", "Pinhole Sun", "Prismatic Burst"]:
-            reach += int(knows(index, "Peripheral Vision"))
         if (not enemy and not (ally and skill in ["Vector Pull", "Lateral Slip"])) or not visible(source, tile, reach):
             return error("Choose a target within %d tiles and line of sight." % reach)
         if skill in ["Aphasia", "Panic Spike", "Thought Arrest", "Crowd Panic", "Feedback Spike"] and not organic(target):
             return error("Choose an organic target.")
+        if REVIEW_RANGED.has(skill):
+            var cover_block: String = battle.ranged_cover_block_reason(source, tile)
+            if cover_block == battle.FULL_COVER_BLOCK:
+                plan["warning"] = cover_block
+            elif not cover_block.is_empty():
+                return error(cover_block)
         if skill in ["Vector Pull", "Lateral Slip", "Throw", "Hooked Pincers"] and anchored(target):
             return error("This target is too heavy to move.")
+        if skill in ["Vector Pull", "Lateral Slip"]:
+            var from := pos(target)
+            var vector := direction(tile, source)
+            if skill == "Lateral Slip":
+                vector = Vector2i(-vector.y, vector.x) * (-1 if option == "Right" else 1)
+            if not battle.can_take_move_step(unit(target), from, from + vector):
+                return error("Choose a target with a clear displacement path.")
         if skill == "Throw" and tiles.size() > 1:
             var landing: Vector2i = tiles[1]
-            if distance(pos(target), landing) > 3 or landing == pos(target) or not battle.has_line_of_sight(pos(target), landing) or not battle.footprint_is_open(unit(target), landing):
-                return error("Choose an open landing up to three tiles from the enemy.")
-            plan["landing"] = landing
+            if distance(pos(target), landing) > 3 or landing == pos(target):
+                return error("Choose a landing or collision up to three tiles from the enemy.")
+            return plan_throw(index, target, landing, plan)
         return plan
     match skill:
         "Breach Relay", "Rampage":
@@ -822,6 +943,8 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                 if landing == source:
                     plan["ready"] = true
                     return plan
+                if battle.voluntary_movement_locked(index):
+                    return error(battle.movement_lock_reason(index))
                 if skill == "Breach Relay" and living(swap) and unit(swap)["team"] == "player" and distance(source, landing) == 1:
                     if not can_swap(index, swap, index):
                         return error("Both squadmates must fit.")
@@ -843,9 +966,6 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
         "Treat Patient":
             if target not in hospital_candidates(index):
                 return error("Choose an untreated standing ally in your ward.")
-        "Mantle Recall":
-            if target != index and (not living(target) or not state(index).get("mantles", {}).has(target)):
-                return error("Choose an ally holding your mantle, or select yourself to cancel the recall.")
         "Bedside Cover":
             if not ally or target == index or distance(source, tile) != 1 or not below_half_healing(target):
                 return error("Choose a wounded adjacent ally below half their healing ceiling.")
@@ -856,19 +976,21 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
             if tile != effects(index).get("hydefollow_tile", INVALID) or not legal_walk(index, tile, 1):
                 return error("Choose the vacated tile.")
         "Tandem Move":
-            if not drone_live(index) or not drone_path(drones[index]["pos"], tile, 2):
-                return error("Choose a tile the drone can reach in two steps.")
+            var origin: Vector2i = drones[index]["pos"]
+            var path := drone_route(origin, tile, 2)
+            if path.is_empty():
+                return error("Choose a different tile the drone can reach in two steps.")
+            plan["drone_path"] = path
+            plan["tiles"] = path
         "Field Formula", "Reserve Dose":
             if (not ally and (not enemy or skill == "Reserve Dose")) or distance(source, tile) > 1:
                 return error("Choose yourself or an adjacent eligible target.")
             if skill == "Field Formula" and ally and not wounded(target):
                 return error("This ally is already at their healing ceiling.")
-        "Lend Armour", "Shelter Reflex", "Field Rewire", "Adrenal Rescue":
-            var reach: int = {"Lend Armour": 5, "Shelter Reflex": 1, "Field Rewire": 3, "Adrenal Rescue": 4}[skill]
+        "Lend Armour", "Shelter Reflex", "Adrenal Rescue":
+            var reach: int = {"Lend Armour": 4, "Shelter Reflex": 1, "Adrenal Rescue": 4}[skill]
             if skill in ["Lend Armour", "Shelter Reflex"] and knows(index, "Long Mantle"):
                 reach += 1
-            if skill == "Field Rewire" and drone_live(index) and drones[index]["pos"] == tile:
-                return plan if visible(source, tile, reach) else error("The drone is out of range.")
             if not ally or not visible(source, tile, reach):
                 return error("Choose a standing ally in range.")
             if skill == "Lend Armour" and (target == index or int(unit(index)["armour"]) == 0):
@@ -889,10 +1011,15 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
             elif skill == "Finish the Job":
                 if not battle.has_attack_ammo(index) or not visible(source, tile, int(unit(index)["range"])):
                     return error("Needs a charge and a target in range.")
+                var cover_block: String = battle.ranged_cover_block_reason(source, tile)
+                if cover_block == battle.FULL_COVER_BLOCK:
+                    plan["warning"] = cover_block
+                elif not cover_block.is_empty():
+                    return error(cover_block)
             elif not neighbours(target, source):
                 return error("Choose an adjacent enemy.")
         "Fly", "Tongue Vault":
-            var reach: int = 3 + int(state(index).get("form_mastery", false)) if skill == "Tongue Vault" else 5 + int(knows(index, "Long Primaries"))
+            var reach: int = 3 + int(state(index)["form"] == "Frog" and state(index).get("form_mastery", false)) if skill == "Tongue Vault" else 5 + int(knows(index, "Spread Your Wings"))
             if not can_vault(index, source, tile, reach):
                 return error("Choose a legal landing in range.")
             if skill == "Tongue Vault" and tiles.size() > 1 and tiles[1] != tile:
@@ -903,13 +1030,13 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
         "Nettle Lock", "Wingover", "Banking Turn":
             if not enemy or not neighbours(target, source):
                 return error("Choose an adjacent enemy.")
-            if tiles.size() > 1 and not can_vault(index, source, tiles[1], 5 if skill == "Wingover" else 2):
+            if tiles.size() > 1 and not can_vault(index, source, tiles[1], 5 if skill == "Wingover" else 3):
                 return error("Choose a legal flight destination.")
         "Bounding Pounce", "Burrowing Strike", "Peregrine Dive":
             if not enemy or (skill == "Peregrine Dive" and int(state(index)["mark"]) != target):
                 return error("Choose a standing enemy%s." % (" marked as quarry" if skill == "Peregrine Dive" else ""))
-            var reach: int = {"Bounding Pounce": 3, "Burrowing Strike": 4, "Peregrine Dive": 6}[skill]
-            var landing := attack_landing(index, target, reach, true)
+            var reach: int = {"Bounding Pounce": 4, "Burrowing Strike": 4, "Peregrine Dive": 6}[skill]
+            var landing := attack_landing(index, target, reach, true, 1 if skill == "Bounding Pounce" else -1)
             if landing == INVALID:
                 return error("No legal landing beside this enemy.")
             plan["landing"] = landing
@@ -920,6 +1047,11 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                 plan["landing"] = tiles[1]
                 return plan
             return error("Select yourself or an adjacent ally, then a destination within three steps.")
+        "Suppress Reaction", "Impulse Push":
+            if not enemy or target != effects(index).get(skill, -1):
+                return error("Choose the enemy hit by your basic attack.")
+            if skill == "Impulse Push" and not battle.can_take_move_step(unit(target), pos(target), pos(target) + direction(source, pos(target))):
+                return error("This enemy has no legal push destination.")
         "Counterweight Slide":
             if not ally or target == index or distance(source, tile) > 3:
                 return error("Choose a standing ally within three tiles.")
@@ -937,7 +1069,7 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                     if battle.unit_footprint(unit(victims.back()), pos(victims.back())).has_point(pick):
                         plan["ready"] = true
                         break
-                    if pick != from and not battle.reachable(from, 2, index).has(pick):
+                    if pick != from and (battle.voluntary_movement_locked(index) or not battle.reachable(from, 2, index).has(pick)):
                         return error("Choose an open landing within two legal steps.")
                     from = pick
                     continue
@@ -950,32 +1082,45 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                 landings.append(from)
             plan["victims"] = victims
             plan["landings"] = landings
-        "Overclock Link":
-            var drone_source: Vector2i = drones[index]["pos"]
-            if tile != drone_source and not drone_path(drone_source, tile, 3):
-                return error("Choose a landing within three drone steps.")
+        "Scout Run", "Pincer Run", "Shield Run", "Overclock Link":
+            return plan_drone_run(index, skill, tiles, plan)
+        "Breach Kit", "Breach Shell":
+            if skill == "Breach Kit" and option == "Drone":
+                if not drone_live(index):
+                    return error("Requires a surviving drone.")
+                source = drones[index]["pos"]
+            return plan_breach(source, skill, tiles, plan)
+        "Flak Curtain":
+            var aim := tile - source
+            if aim == Vector2i.ZERO:
+                return error("Choose a direction for the flak lane.")
+            var facing := Vector2i(signi(aim.x), 0) if absi(aim.x) >= absi(aim.y) else Vector2i(0, signi(aim.y))
+            var lateral := Vector2i(-facing.y, facing.x)
+            plan["tiles"] = []
+            for depth in range(1, 7):
+                for offset in range(-1, 2):
+                    var cell := source + depth * facing + offset * lateral
+                    if battle.is_in_bounds(cell) and not battle.walls.has(cell) and visible(source, cell, 6):
+                        plan["tiles"].append(cell)
+            if plan["tiles"].is_empty():
+                return error("No visible tiles in the flak lane.")
+        "Rolling Thunder":
+            if tile != source and not legal_walk(index, tile, 3):
+                return error("Choose a legal landing up to three steps away, or hold position.")
+            plan["landing"] = tile
             if tiles.size() > 1:
-                if not knows(index, "Guardian Chassis"):
-                    return plan_arc(tile, tiles.slice(1), plan)
-                var first := plan_review(index, "Rolling Barricade", "", tiles.slice(0, 2), plan, enemy, ally)
-                if first.has("error") or tiles.size() == 2:
-                    return first
-                if tiles[2] != tiles[1]:
-                    var second := plan_review(index, "Rolling Barricade", "", [tile, tiles[2]], {"target": -1, "tiles": []}, enemy, ally)
-                    if second.has("error"):
-                        return second
-                    plan["barricade_second"] = second["barricade"]
-                    plan["tiles"].append_array(second["tiles"])
-                var protected: Array[int] = []
-                for pick in tiles.slice(3):
-                    if pick == tile:
-                        plan["ready"] = true
+                var aim: Vector2i = tiles[1] - tile
+                if aim == Vector2i.ZERO or (aim.x != 0 and aim.y != 0 and absi(aim.x) != absi(aim.y)):
+                    return error("Choose a straight firing direction from the landing.")
+                plan["tiles"] = []
+                var facing := direction(tile, tiles[1])
+                for step in range(1, 5):
+                    var cell := tile + step * facing
+                    if not battle.is_in_bounds(cell) or battle.walls.has(cell):
                         break
-                    var patient: int = battle.find_unit_at(pick)
-                    if not living(patient) or unit(patient)["team"] != "player" or distance(pick, tile) != 1 or patient in protected:
-                        return error("Choose an adjacent squadmate, or select the drone landing to finish.")
-                    protected.append(patient)
-                plan["protected"] = protected
+                    plan["tiles"].append(cell)
+                if plan["tiles"].is_empty():
+                    return error("The firing line is blocked.")
         "Mosaic Body":
             var signatures: Array[String] = []
             var selections: Array[Array] = []
@@ -1008,36 +1153,71 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                     projected = pick
             plan["signatures"] = signatures
             plan["signature_selections"] = selections
-        "Rake", "Split Focus", "Phantom Threat", "Spatial Exchange", "Hook and Drop":
-            var first_reach: int = {"Split Focus": 6 + int(knows(index, "Peripheral Vision")),
+        "Rake":
+            var cells: Array[Vector2i] = []
+            for pick in tiles:
+                if not cells.is_empty() and pick == cells.back():
+                    plan["ready"] = true
+                    break
+                if distance(source, pick) != 1 or pick in cells or not battle.has_line_of_sight(source, pick):
+                    return error("Choose a different adjacent tile, or repeat the last tile to strike.")
+                cells.append(pick)
+            plan["tiles"] = cells
+        "Strike and Drop":
+            if not enemy or not neighbours(target, source) or anchored(target) \
+                    or battle.unit_footprint(unit(target), pos(target)).size != Vector2i.ONE:
+                return error("Choose an adjacent enemy you can carry.")
+            if tiles.size() >= 2:
+                var landing: Vector2i = tiles[1]
+                if not can_vault(index, source, landing, 3):
+                    return error("Choose a legal flight landing within three tiles.")
+                plan["landing"] = landing
+                if tiles.size() == 3:
+                    var drop: Vector2i = tiles[2]
+                    var ignored: int = unit(index if drop == source else target)["id"]
+                    if distance(landing, drop) != 1 or not battle.has_line_of_sight(landing, drop) or not battle.tile_is_open(drop, ignored):
+                        return error("Choose a free drop tile adjacent to the landing.")
+                    plan["drop"] = drop
+        "Split Focus", "Phantom Threat", "Spatial Exchange":
+            var first_reach: int = {"Split Focus": 6,
                 "Phantom Threat": 5, "Spatial Exchange": 4}.get(skill, 1)
             if not enemy or not visible(source, tile, first_reach):
                 return error("Choose an enemy in range.")
             if skill == "Phantom Threat" and not organic(target):
                 return error("Choose an organic enemy.")
-            if skill in ["Spatial Exchange", "Hook and Drop"] and anchored(target):
+            if skill == "Split Focus":
+                var cover_block: String = battle.ranged_cover_block_reason(source, tile)
+                if cover_block == battle.FULL_COVER_BLOCK:
+                    plan["warning"] = cover_block
+                elif not cover_block.is_empty():
+                    return error(cover_block)
+            if skill == "Spatial Exchange" and anchored(target):
                 return error("This target is too heavy.")
             if tiles.size() == 2:
                 var second: int = battle.find_unit_at(tiles[1])
-                if skill == "Hook and Drop":
-                    if distance(source, tiles[1]) != 1 or not battle.footprint_is_open(unit(target), tiles[1]):
-                        return error("Choose a clear tile adjacent to you.")
-                    plan["landing"] = tiles[1]
-                    return plan
                 if not living(second) or second == target:
                     return error("Choose a second standing unit.")
                 var expected_team := "player" if skill in ["Phantom Threat", "Spatial Exchange"] else "enemy"
                 if unit(second)["team"] != expected_team:
                     return error("Choose a %s unit." % expected_team)
-                var reach: int = 8 if skill == "Phantom Threat" else first_reach
+                var reach: int = maxi(battle.board_w, battle.board_h) if skill == "Phantom Threat" else first_reach
                 if not visible(source, tiles[1], reach) or (skill == "Split Focus" and distance(tile, tiles[1]) != 1):
                     return error("The second target is out of position.")
+                if skill == "Split Focus":
+                    var cover_block: String = battle.ranged_cover_block_reason(source, tiles[1])
+                    if cover_block == battle.FULL_COVER_BLOCK:
+                        plan["warning"] = cover_block
+                    elif not cover_block.is_empty():
+                        return error(cover_block)
+                    plan["second_tile"] = tiles[1]
                 if skill == "Spatial Exchange" and not can_swap(index, target, second):
                     return error("Both units need a valid landing.")
                 plan["second"] = second
         "Linebreaker":
-            if tile == source or distance(source, tile) > 3:
-                return error("Choose a tile up to three spaces ahead.")
+            if battle.voluntary_movement_locked(index):
+                return error(battle.movement_lock_reason(index))
+            if tile == source or distance(source, tile) > 4:
+                return error("Choose a tile up to four spaces ahead.")
             var offset := tile - source
             if offset.x != 0 and offset.y != 0 and absi(offset.x) != absi(offset.y):
                 return error("Choose a straight charge line.")
@@ -1060,29 +1240,27 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                 if tiles[1] != pos(target) and not legal_walk(target, tiles[1], 2):
                     return error("Choose a legal destination within two steps.")
                 plan["landing"] = tiles[1]
-        "Venom Jet", "Sweep Beam":
-            if skill == "Sweep Beam":
-                plan["tiles"] = review_line(source, tile, 6 + int(knows(index, "Peripheral Vision")))
-            else:
-                var facing := direction(source, tile)
-                if facing == Vector2i.ZERO:
-                    return error("Choose a direction to spray.")
-                plan["tiles"] = []
-                for offset in range(1, 4):
-                    var cell := source + facing * offset
-                    if not battle.is_in_bounds(cell) or battle.walls.has(cell):
-                        break
+        "Venom Jet", "Gleaming Armour":
+            plan["tiles"] = []
+            for cell: Vector2i in battle.grid_cone(source, tile, 3, 3):
+                if not battle.walls.has(cell) and visible(source, cell, 3):
                     plan["tiles"].append(cell)
             if plan["tiles"].is_empty():
-                return error("No legal tiles in this line.")
-        "Raking Pass", "Wrecking Ball":
+                return error("Choose a direction with visible tiles.")
+        "Sweep Beam":
+            plan["tiles"] = review_line(source, tile, 6)
+            if plan["tiles"].is_empty():
+                return error("Choose the centre of three visible tiles within six.")
+        "Raking Pass":
+            if not can_vault(index, source, tile, 3):
+                return error("Choose a legal landing within three tiles.")
+            plan["landing"] = tile
+            plan["tiles"] = line_tiles(source, tile)
+            plan["tiles"].pop_back()
+        "Wrecking Ball":
             if not enemy or not visible(source, tile, 4):
                 return error("Choose an enemy within four tiles.")
-            if skill == "Raking Pass":
-                plan["landing"] = tile + direction(source, tile)
-                if not can_vault(index, source, plan["landing"], 4):
-                    return error("Needs a clear flight landing beyond the enemy.")
-            elif anchored(target):
+            if anchored(target):
                 return error("This target is too heavy.")
             elif tiles.size() > 1:
                 var offset: Vector2i = tiles[1] - tile
@@ -1090,18 +1268,14 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                     return error("Choose a straight throwing direction up to three tiles away.")
                 plan["facing"] = direction(tile, tiles[1])
                 plan["length"] = distance(tile, tiles[1])
-        "Magnetic Tow", "Rescue Winch", "Shock Mine":
-            if skill == "Shock Mine":
-                if not battle.tile_is_open(tile) or (not visible(source, tile, 2) and
-                        (not drone_live(index) or not visible(drones[index]["pos"], tile, 2))):
-                    return error("Choose an open tile within two tiles of Iskra or its drone.")
-            else:
-                if not drone_live(index):
-                    return error("Requires a surviving drone.")
-                var drone_source: Vector2i = drones[index]["pos"]
-                if not visible(drone_source, tile, 3) or (skill == "Magnetic Tow" and (not enemy or anchored(target))) \
-                        or (skill == "Rescue Winch" and (not ally or battle.unit_footprint(unit(target), tile).size != Vector2i.ONE)):
-                    return error("Choose an eligible target within three tiles of the drone.")
+        "Shock Mine":
+            if not battle.tile_is_open(tile) or (not visible(source, tile, 2) and
+                    (not drone_live(index) or not visible(drones[index]["pos"], tile, 2))):
+                return error("Choose an open tile within two tiles of Iskra or its drone.")
+        "Recovery Winch":
+            if not drone_live(index) or not ally or battle.unit_footprint(unit(target), pos(target)).size != Vector2i.ONE \
+                    or not visible(drones[index]["pos"], tile, 3):
+                return error("Choose a standing one-tile ally visible within three tiles of the drone.")
         "Express Trait":
             var selected_form: String = plan.get("form", state(index)["form"])
             if selected_form == "Jellyfish":
@@ -1118,38 +1292,26 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                 plan["tiles"] = review_line(source, tile, 5)
                 if plan["tiles"].is_empty():
                     return error("Choose the centre of three visible tiles within five.")
-        "Drone Move", "Emergency Rebuild", "Rolling Barricade":
-            if skill == "Emergency Rebuild":
-                for step: Vector2i in battle.MOVE_DIRECTIONS:
-                    if battle.tile_is_open(source + step):
-                        plan["landing"] = source + step
-                        return plan
-                return error("No open tile beside the operator.")
-            var drone_source: Vector2i = drones[index]["pos"]
-            if tile != drone_source and not drone_path(drone_source, tile, 3 if skill == "Rolling Barricade" else 2):
-                return error("Choose a reachable drone position.")
-            if skill == "Rolling Barricade" and tiles.size() > 1:
-                var offset := tiles[1] - tile
-                if absi(offset.x) + absi(offset.y) != 1:
-                    return error("Choose an adjacent cardinal tile for the barricade facing.")
-                var tangent := Vector2i(-offset.y, offset.x)
-                plan["barricade"] = {"face": battle.attacked_side(tiles[1], tile), "tiles": [tile - tangent, tile, tile + tangent]}
-                plan["tiles"] = plan["barricade"]["tiles"]
-        "Chain Arc":
-            return plan_arc(drones[index]["pos"], tiles, plan)
-        "Drone Arc Bolt", "Field Service":
-            var origin: Vector2i = drones[index]["pos"]
-            if skill == "Field Service":
-                if tile != origin or distance(source, origin) > 1:
-                    return error("Choose your adjacent drone.")
-            elif not enemy or not visible(origin, tile, 4):
-                return error("Choose an enemy within four tiles of the drone.")
-        "Mortar Cup", "Arc Canister", "Siege Salvo", "Field Hospital", "Quarantine Field", "Musk Trail", "Walking Barrage":
-            var reach: int = {"Mortar Cup": 7, "Arc Canister": 6, "Siege Salvo": 8}.get(skill, 4)
-            var minimum: int = {"Mortar Cup": 4, "Arc Canister": 3, "Siege Salvo": 4}.get(skill, 0)
+        "Emergency Rebuild":
+            for step: Vector2i in battle.MOVE_DIRECTIONS:
+                if battle.tile_is_open(source + step):
+                    plan["landing"] = source + step
+                    return plan
+            return error("No open tile beside the operator.")
+        "Field Service":
+            if not drone_live(index) or tile != drones[index]["pos"] or distance(source, tile) != 1:
+                return error("Choose your adjacent drone.")
+        "Walking Barrage", "Incendiary Shell":
+            var reach := 8 if skill == "Walking Barrage" else 6
+            plan["tiles"] = review_line(source, tile, reach)
+            if plan["tiles"].is_empty() or source in plan["tiles"]:
+                return error("Choose the centre of three visible tiles in a line within %d." % reach)
+        "Mortar Cup", "Siege Salvo", "Field Hospital", "Quarantine Field", "Musk Trail":
+            var reach: int = {"Mortar Cup": 7, "Siege Salvo": 8}.get(skill, 4)
+            var minimum := 4 if skill in ["Mortar Cup", "Siege Salvo"] else 0
             if not visible(source, tile, reach) or distance(source, tile) < minimum:
                 return error("Choose a visible tile in range.")
-            plan["tiles"] = area(tile, 1, skill == "Arc Canister")
+            plan["tiles"] = cross_tiles(tile) if skill in ["Mortar Cup", "Siege Salvo", "Field Hospital", "Quarantine Field"] else area(tile, 1, false)
             if skill == "Field Hospital":
                 var patients: Array[int] = []
                 for pick in tiles.slice(1):
@@ -1161,8 +1323,8 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                         return error("Choose an untreated standing ally inside the ward.")
                     patients.append(patient)
                 plan["patients"] = patients
-            if skill in ["Musk Trail", "Walking Barrage"]:
-                plan["tiles"] = review_line(source, tile, 6 if skill == "Walking Barrage" else reach)
+            if skill == "Musk Trail":
+                plan["tiles"] = review_line(source, tile, reach)
                 if plan["tiles"].is_empty():
                     return error("Choose the centre of three visible tiles in range.")
         "Hurl Debris":
@@ -1178,13 +1340,128 @@ func plan_review(index: int, skill: String, option: String, tiles: Array[Vector2
                 var victim: int = battle.find_unit_at(tiles[2])
                 if not living(victim) or unit(victim)["team"] != "enemy" or not visible(tile, tiles[2], 4):
                     return error("Choose an enemy within four tiles of that cover.")
+                var cover_block: String = battle.ranged_cover_block_reason(tile, tiles[2])
+                if cover_block == battle.FULL_COVER_BLOCK:
+                    plan["warning"] = cover_block
+                elif not cover_block.is_empty():
+                    return error(cover_block)
                 plan["target"] = victim
+                plan["target_tile"] = tiles[2]
         "Shed Skin":
             if option == state(index)["form"]:
                 return error("Choose a different form.")
     return plan
 
-func plan_arc(origin: Vector2i, tiles: Array[Vector2i], plan: Dictionary) -> Dictionary:
+func crossed_cover_edges(from: Vector2i, to: Vector2i) -> Array[String]:
+    var edges: Array[String] = []
+    for step in [Vector2i(to.x - from.x, 0), Vector2i(0, to.y - from.y)]:
+        if step != Vector2i.ZERO:
+            var edge := cover_between(from, from + step)
+            if battle.destructible_edges.has(edge):
+                edges.append(edge)
+    return edges
+
+func plan_throw(index: int, target: int, destination: Vector2i, plan: Dictionary) -> Dictionary:
+    var landing := pos(target)
+    var path: Array[Vector2i] = []
+    for cell in line_tiles(landing, destination):
+        var edges := crossed_cover_edges(landing, cell)
+        path.append(cell)
+        if not edges.is_empty():
+            plan["collision_edge"] = edges.front()
+            break
+        var blocker: int = battle.find_unit_at(cell)
+        if living(blocker) and blocker != target and unit(blocker)["team"] != unit(index)["team"]:
+            plan["collision_unit"] = blocker
+            break
+        if not battle.footprint_is_open(unit(target), cell):
+            return error("The throw is blocked. Choose another landing.")
+        landing = cell
+    plan["landing"] = landing
+    plan["tiles"] = path
+    return plan
+
+func plan_breach(source: Vector2i, skill: String, tiles: Array[Vector2i], plan: Dictionary) -> Dictionary:
+    var first := tiles[0]
+    var reach := 8 if skill == "Breach Shell" else 3
+    var minimum := 4 if skill == "Breach Shell" else 0
+    if tiles.size() == 1:
+        for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+            var candidate: Array[Vector2i] = [first, first + offset]
+            if not plan_breach(source, skill, candidate, {}).has("error"):
+                return plan
+        return error("Choose a tile bordering a visible destructible edge in range.")
+    var second := tiles[1]
+    var face: String = battle.direction_to_face(first, second)
+    if face.is_empty() or not battle.is_in_bounds(second):
+        return error("Choose the adjacent tile across the cover edge.")
+    var edge: String = battle.edge_key(first, face)
+    var near_distance := mini(distance(source, first), distance(source, second))
+    var first_visible: bool = not battle.walls.has(first) and visible(source, first, reach)
+    var second_visible: bool = not battle.walls.has(second) and visible(source, second, reach)
+    if not battle.destructible_edges.has(edge) or near_distance < minimum or not (first_visible or second_visible):
+        return error("Choose a visible destructible cover edge in range.")
+    plan["edge"] = edge
+    plan["tiles"] = [first, second]
+    return plan
+
+func plan_drone_run(index: int, skill: String, tiles: Array[Vector2i], plan: Dictionary) -> Dictionary:
+    if not drone_live(index):
+        return error("Requires a surviving drone.")
+    var origin: Vector2i = drones[index]["pos"]
+    var landing := tiles[0]
+    var guardian := skill == "Shield Run" or (skill == "Overclock Link" and knows(index, "Guardian Chassis"))
+    var reach := 2 if skill == "Scout Run" else (4 if skill == "Overclock Link" and not guardian else 3)
+    var path := drone_route(origin, landing, reach)
+    if landing != origin and path.is_empty():
+        return error("Choose a reachable drone landing within %d tiles." % reach)
+    plan["drone_path"] = path
+    plan["tiles"] = path.duplicate()
+    if tiles.size() == 1:
+        return plan
+    if guardian:
+        return plan_drone_cover(skill, tiles, plan)
+    if skill == "Scout Run" and tiles[1] == landing:
+        if origin == landing:
+            return error("Move the drone or choose a target.")
+        return plan
+    return plan_arc(landing, tiles.slice(1), plan, index if not path.is_empty() else -1)
+
+func plan_drone_cover(skill: String, tiles: Array[Vector2i], plan: Dictionary) -> Dictionary:
+    var landing := tiles[0]
+    var facings := 2 if skill == "Overclock Link" else 1
+    var lines: Array[Dictionary] = []
+    for selected in tiles.slice(1, 1 + facings):
+        var forward: Vector2i = selected - landing
+        if absi(forward.x) + absi(forward.y) != 1:
+            return error("Choose a cardinal facing adjacent to the drone.")
+        var face: String = battle.attacked_side(selected, landing)
+        if not lines.is_empty() and lines[0]["face"] == face:
+            return error("Choose a different facing for the second cover line.")
+        var tangent := Vector2i(-forward.y, forward.x)
+        var cells: Array[Vector2i] = []
+        for cell: Vector2i in [landing - tangent, landing, landing + tangent]:
+            if battle.is_in_bounds(cell) and not battle.walls.has(cell) and battle.is_in_bounds(cell + forward) and not battle.walls.has(cell + forward):
+                cells.append(cell)
+        if cells.is_empty():
+            return error("No open edges in this facing.")
+        lines.append({"face": face, "tiles": cells})
+        plan["tiles"].append_array(cells)
+    plan["cover_lines"] = lines
+    var protected: Array[int] = []
+    for pick in tiles.slice(1 + facings):
+        if pick == landing:
+            plan["ready"] = true
+            break
+        var ally: int = battle.find_unit_at(pick)
+        if not living(ally) or unit(ally)["team"] != "player" or distance(pick, landing) != 1 or ally in protected:
+            return error("Choose a different adjacent squadmate, or repeat the drone landing to finish.")
+        protected.append(ally)
+        plan["tiles"].append(pick)
+    plan["protected"] = protected
+    return plan
+
+func plan_arc(origin: Vector2i, tiles: Array[Vector2i], plan: Dictionary, ignored_drone: int) -> Dictionary:
     var targets: Array[int] = []
     for pick in tiles:
         var foe: int = battle.find_unit_at(pick)
@@ -1193,9 +1470,16 @@ func plan_arc(origin: Vector2i, tiles: Array[Vector2i], plan: Dictionary) -> Dic
             break
         if not living(foe) or unit(foe)["team"] != "enemy" or foe in targets or not visible(origin, pick, 4 if targets.is_empty() else 2):
             return error("Choose a new visible enemy within reach of the last link.")
+        var cover_block: String = battle.ranged_cover_block_reason(origin, pick, 0, ignored_drone)
+        if cover_block == battle.FULL_COVER_BLOCK:
+            plan["warning"] = cover_block
+        elif not cover_block.is_empty():
+            return error(cover_block)
         targets.append(foe)
+        plan["tiles"].append(pick)
         origin = pick
     plan["arc_targets"] = targets
+    plan["arc_target_tiles"] = tiles.slice(0, targets.size())
     return plan
 
 func form_signature(form: String) -> String:
@@ -1232,23 +1516,28 @@ func safe_walk(index: int, destination: Vector2i, reach: int) -> bool:
     return true
 
 func drone_path(origin: Vector2i, destination: Vector2i, reach: int) -> bool:
-    if origin == destination:
-        return true
-    var visited: Dictionary = {origin: true}
+    return origin == destination or not drone_route(origin, destination, reach).is_empty()
+
+func drone_route(origin: Vector2i, destination: Vector2i, reach: int) -> Array[Vector2i]:
+    var parents: Dictionary = {origin: origin}
     var frontier: Array[Vector2i] = [origin]
     for _step in range(reach):
         var next: Array[Vector2i] = []
         for cell in frontier:
             for delta in battle.MOVE_DIRECTIONS:
                 var tile: Vector2i = cell + delta
-                if visited.has(tile) or not battle.can_take_move_step({}, cell, tile):
+                if parents.has(tile) or not battle.can_take_move_step({}, cell, tile):
                     continue
+                parents[tile] = cell
                 if tile == destination:
-                    return true
-                visited[tile] = true
+                    var route: Array[Vector2i] = []
+                    while tile != origin:
+                        route.push_front(tile)
+                        tile = parents[tile]
+                    return route
                 next.append(tile)
         frontier = next
-    return false
+    return []
 
 func wounded(index: int) -> bool:
     return living(index) and int(unit(index)["hp"]) < battle.recoverable_hp(unit(index))
@@ -1285,10 +1574,10 @@ func resolve(index: int, skill: String, option: String, selected: Array[Vector2i
             pass
         "Adaptive Technique":
             if info["form"] != "Frog":
-                battle.play_unit_action(index, battle.board_center(tile), false, Color("#9de2ba"))
+                battle.play_unit_action(index, battle.board_center(tile), false, Color("#9de2ba"), skill)
         "Delayed Mortar", "Iron Rain":
             for aim in selected:
-                battle.play_unit_action(index, battle.board_center(aim))
+                battle.play_unit_action(index, battle.board_center(aim), false, Color.TRANSPARENT, skill)
         _:
             var color := Color("#d2b4f5")
             if skill in ["Quake Slam", "Iron Cataclysm", "Psychic Burst", "Fan Beam", "Shell Collapse",
@@ -1296,7 +1585,7 @@ func resolve(index: int, skill: String, option: String, selected: Array[Vector2i
                 color = Color("#ffca8a")
             elif skill in SELF_ACTIONS or (living(target) and unit(target)["team"] == "player"):
                 color = Color("#9de2ba")
-            battle.play_unit_action(index, battle.board_center(tile), false, color)
+            battle.play_unit_action(index, battle.board_center(tile), false, color, skill)
     match skill:
         "Charge", "Breakthrough", "Deathsting", "Talon Descent", "Raptor Descent":
             var flying: bool = skill in ["Talon Descent", "Raptor Descent"]
@@ -1567,7 +1856,7 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
     var target: int = plan["target"]
     var info := state(index)
     var source := pos(index)
-    if living(target) and unit(target)["team"] == "enemy" and organic(target) and knows(index, "Empathic Echo"):
+    if not REVIEW_RANGED.has(skill) and living(target) and unit(target)["team"] == "enemy" and organic(target) and knows(index, "Empathic Echo"):
         effects(target)["empathic_owner"] = index
     if skill in ["Rapid Metamorph", "Perfect Adaptation"]:
         shift_form(index, option)
@@ -1578,23 +1867,32 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
     if REVIEW_RANGED.has(skill):
         var damage: int = REVIEW_RANGED[skill][1]
         var piercing: bool = skill in ["Needle Beam", "Corneal Lance", "Pinhole Sun"]
-        if skill in ["Induction Tap", "Breaker Slug"] and not organic(target):
-            unit(target)["armour"] = maxi(0, int(unit(target)["armour"]) - 2)
         if skill == "Compression" and battle.walls.has(tile + direction(source, tile)):
             damage += 2
-        if skill == "Feedback Spike" and int(effects(target).get("review_cancel", -1)) == battle.turn_number:
+        if skill == "Feedback Spike" and effects(target).get("reaction_cancelled_by", {}).get(index, -1) == battle.turn_number:
             damage += 2
-        hit(index, target, skill, damage, {"ranged": true, "bypass": int(unit(target)["armour"]) if piercing else 0})
-        if living(target):
+        var landed: bool = hit(index, target, skill, damage, {"ranged": true, "target_tile": tile, "bypass": int(unit(target)["armour"]) if piercing else 0})
+        if landed and living(target):
             match skill:
-                "Corneal Lance": slow(target, 1)
-                "Prismatic Burst", "Encasing Armour": set_root(target)
-                "Pinhole Sun": battle.apply_status(target, "burning")
+                "Corneal Lance": battle.apply_status(target, "blinded", 3 if knows(index, "Rangefinder") else 1)
+                "The Void's Gaze", "Encasing Armour": set_root(target)
         if skill == "Encasing Armour":
             unit(index)["armour"] = 0
         return
     match skill:
-        "Designate Quarry":
+        "Designate Target", "Distort Aim", "Aphasia", "Panic Spike", "Crowd Panic", "Thought Arrest", \
+        "Throw", "Vector Pull", "Lateral Slip", "Spatial Exchange", "Taunt", "Thundering Taunt", \
+        "Phantom Threat", "Suppress Reaction", "Impulse Push", "Musk Trail", "Quarantine Field", "Venom Jet":
+            battle.play_unit_action(index, battle.board_center(tile), false, Color("#c5a7f1"), skill)
+        "Gleaming Armour", "Reserve Dose", "Lend Armour", "Shelter Reflex", "Emergency Cells", \
+        "Adrenal Rescue", "Field Hospital", "Anchor", "Vent", "Safe Passage", "Sanctuary", \
+        "Plastic Skin", "Transform", "Revert", "Darwinian Shift", "Shed Skin", "Field Service", "Emergency Rebuild":
+            battle.play_unit_action(index, battle.board_center(tile), false, Color("#9de2ba"), skill)
+        "Breach Kit", "Breach Shell", "Siege Salvo", "Mortar Cup", "Walking Barrage", "Incendiary Shell", \
+        "Flak Curtain", "Rolling Thunder", "Pressure Front", "Empty the Shell", "Sweep Beam", "Shock Mine":
+            battle.play_unit_action(index, battle.board_center(tile), false, Color.TRANSPARENT, skill)
+    match skill:
+        "Designate Target":
             var old: int = int(info["mark"])
             if living(old) and int(effects(old).get("quarry_owner", -1)) == index:
                 clear_quarry(old)
@@ -1604,24 +1902,32 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
         "Distort Aim":
             effects(target)["distorted_by"] = index
         "Aphasia":
-            effects(target)["mind_lock"] = true
+            effects(target)["aphasia"] = true
         "Panic Spike", "Crowd Panic":
             var targets: Array = in_tiles(area(tile, 1), "enemy") if skill == "Crowd Panic" else [target]
             for foe: int in targets:
                 if not organic(foe):
                     continue
                 suppress(index, foe)
-                effects(foe)["review_cancel"] = battle.turn_number
                 slow(foe, 2)
         "Thought Arrest":
             effects(target)["review_ap_loss"] = 2
         "Throw", "Vector Pull", "Lateral Slip":
             if skill == "Throw":
-                battle.apply_unit_position(target, plan["landing"], &"displace")
-                battle.apply_hazard_entry(target)
+                var edge: String = plan.get("collision_edge", "")
+                var blocker: int = plan.get("collision_unit", -1)
+                if edge != "":
+                    battle.damage_cover_edge(edge, int(battle.destructible_edges[edge]["hp"]), index, skill)
+                if edge != "" or blocker >= 0:
+                    hit(index, target, skill, 2, {"area": true})
+                if blocker >= 0:
+                    hit(index, blocker, skill, 2, {"area": true})
+                if living(target) and pos(target) != plan["landing"]:
+                    battle.apply_unit_position(target, plan["landing"], &"displace")
+                    battle.apply_hazard_entry(target)
                 return
             var vector := direction(tile, source)
-            var length := 2
+            var length := 1 if option == "1 Tile" else 2
             if skill == "Lateral Slip":
                 vector = Vector2i(-vector.y, vector.x) * (-1 if option == "Right" else 1)
                 length = 1
@@ -1631,7 +1937,7 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
             for foe: int in targets:
                 effects(foe)["taunted_by"] = index
         "Gleaming Armour":
-            for foe in in_tiles(area(source, 2), "enemy"):
+            for foe in in_tiles(plan["tiles"], "enemy"):
                 battle.apply_status(foe, "blinded")
         "Field Formula":
             if unit(target)["team"] == "player":
@@ -1645,10 +1951,15 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
         "Reserve Dose":
             if not unit(target)["statuses"].erase("burning"):
                 effects(target).erase("poison")
-            unit(target)["stim_bonus"] += 1
+            effects(target)["reserve_dose"] = 1
+        "Defence is the Best Offense":
+            barrier(index, 2)
+            effects(index)["attack_boost"] = 1
         "Lend Armour", "Shelter Reflex":
             var amount := 3
-            end_mantle(index, target, false)
+            var previous_owner: int = effects(target).get("mantle_owner", -1)
+            if previous_owner >= 0:
+                end_mantle(previous_owner, target, true, false)
             if skill == "Lend Armour":
                 amount = mini(amount, int(unit(index)["armour"]))
                 unit(index)["armour"] -= amount
@@ -1658,13 +1969,11 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
             effects(target)["mantle_owner"] = index
             state(index)["mantles"] = state(index).get("mantles", {})
             state(index)["mantles"][target] = skill
-        "Field Rewire":
-            if target >= 0:
-                unit(target)["armour"] = mini(int(unit(target)["max_armour"]), int(unit(target)["armour"]) + 2)
-            elif drone_live(index):
-                drones[index]["armour"] = 1 + int(knows(index, "Guardian Chassis"))
+        "Emergency Cells":
+            restore_weapon_charges(index, 2)
+            barrier(index, 2)
         "Adrenal Rescue":
-            if relocate(target, plan["landing"], false, false) and living(target):
+            if relocate(target, plan["landing"], false, true, false, true, true) and living(target):
                 heal(index, target, 2, skill)
         "Field Hospital", "Quarantine Field":
             var zone := {"owner": index, "skill": skill, "center": tile, "tiles": plan["tiles"],
@@ -1695,7 +2004,8 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
             var damage: int = {"Break the Vial": 5, "Rampage": 4}.get(skill, int(unit(index)["damage"]) + bonus)
             if not unit(index)["basic_melee"]:
                 battle.spend_shot(index)
-            hit(index, target, skill, damage, {"melee": unit(index)["basic_melee"], "ranged": not unit(index)["basic_melee"]})
+            hit(index, target, skill, damage, {"melee": unit(index)["basic_melee"], "ranged": not unit(index)["basic_melee"],
+                "review_basic": skill == "Finish the Job", "target_tile": tile})
         "Drop Hammer", "Claw Grab", "Hooked Pincers", "Carapace Slam", "Colossal Combo", "Stooping Strike", \
         "Crush Bite", "Open the Seam", "Hurl Aside", "Nettle Lock":
             if skill == "Hooked Pincers" and not neighbours(target, source):
@@ -1706,49 +2016,90 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
                 "Carapace Slam": 2 + mini(3, int(unit(index)["armour"])),
                 "Stooping Strike": 3 + int(once(index, "Fly", false) == false), "Hurl Aside": 3,
                 "Nettle Lock": 2 + int(info.get("form_mastery", false))}.get(skill, int(unit(index)["damage"]))
-            for _strike in range(3 if skill == "Colossal Combo" else 1):
-                hit(index, target, skill, damage, {"melee": true, "break": 2 if skill == "Crush Bite" else 0})
+            for strike in range(3 if skill == "Colossal Combo" else 1):
+                var shred := 4 if skill == "Crush Bite" else (2 if skill == "Colossal Combo" and strike == 0 else 0)
+                hit(index, target, skill, damage, {"melee": true, "pre_break": shred})
             if living(target):
                 match skill:
+                    "Colossal Combo": force_move(index, target, direction(source, tile), 2)
                     "Claw Grab":
                         set_root(target)
                         effects(index)["root"] = true
                     "Stooping Strike": slow(target, 1)
                     "Nettle Lock": slow(target, 2)
-                    "Hurl Aside": force_move(index, target, direction(source, tile), 2)
+                    "Hurl Aside": force_move(index, target, direction(source, tile), 2, false, false, false, 1)
                     "Open the Seam": effects(target)["seam_owner"] = index
-        "Mortar Cup", "Arc Canister", "Siege Salvo", "Walking Barrage":
-            var damage: int = {"Mortar Cup": 3, "Arc Canister": 2, "Siege Salvo": 5, "Walking Barrage": 3}[skill]
-            blast(index, plan["tiles"], damage, skill, 2 if skill == "Siege Salvo" else 0)
-            if skill == "Arc Canister":
-                for foe in in_tiles(plan["tiles"], "enemy"):
-                    if not organic(foe):
-                        battle.apply_status(foe, "shocked")
+        "Breach Kit":
+            battle.damage_cover_edge(plan["edge"], 3, index, skill)
+        "Breach Shell", "Siege Salvo":
+            var cells: Array = plan["tiles"]
+            var edges: Array = [plan["edge"]] if skill == "Breach Shell" else battle.destructible_edges.keys()
+            var follow_up: Array[Vector2i] = []
+            for edge_key: String in edges:
+                var edge: Dictionary = battle.destructible_edges[edge_key]
+                var from: Vector2i = edge["tile"]
+                var to: Vector2i = from + battle.tile_offset_for_face(edge["face"])
+                if from not in cells and to not in cells:
+                    continue
+                battle.damage_cover_edge(edge_key, 5 if skill == "Breach Shell" else int(edge["hp"]), index, skill)
+                if not battle.destructible_edges.has(edge_key):
+                    follow_up.append_array([from, to])
+            if knows(index, "Breach Follow-Up"):
+                effects(index)["breach_follow_up"] = follow_up
+            if skill == "Breach Shell":
+                blast(index, cells, 2 + int(info["heavy_bonus"]), skill, 0)
+            else:
+                blast(index, [tile], 6 + int(info["heavy_bonus"]), skill, 0)
+                blast(index, cells.filter(func(cell: Vector2i) -> bool: return cell != tile), 4 + int(info["heavy_bonus"]), skill, 0,
+                    false, true, [tile])
+        "Mortar Cup", "Walking Barrage", "Incendiary Shell":
+            var damage: int = {"Mortar Cup": 3, "Walking Barrage": 4, "Incendiary Shell": 2}[skill]
+            blast(index, plan["tiles"], damage + int(info["heavy_bonus"]), skill, 0)
+            if skill == "Incendiary Shell":
+                for cell: Vector2i in plan["tiles"]:
+                    if battle.barrel_is_active(cell):
+                        battle.hit_barrel(cell, damage, index, skill)
+                    battle.spawn_hazard(cell, "fire", index)
+                for victim in in_tiles(plan["tiles"]):
+                    battle.apply_status(victim, "burning")
+        "Flak Curtain":
+            zones.append({"owner": index, "skill": skill, "tiles": plan["tiles"], "expires": battle.turn_number + 1,
+                "damage": 3 + int(info["heavy_bonus"])})
+        "Rolling Thunder":
+            if relocate(index, plan["landing"], false, true):
+                effects(index)["anchored"] = true
+                blast(index, plan["tiles"], 4 + int(info["heavy_bonus"]), skill, 0)
         "Pressure Front", "Empty the Shell":
             var armour: int = unit(index)["armour"]
             unit(index)["armour"] = 0
             effects(index)["review_skip_armour"] = true
-            for victim in in_tiles(area(source, 2)):
+            for victim in in_tiles(area(source, 2), "enemy" if skill == "Pressure Front" else ""):
                 if victim != index:
-                    hit(index, victim, skill, mini(6, 2 + armour) if skill == "Empty the Shell" else 3, {"area": true})
+                    hit(index, victim, skill, mini(6, 2 + armour) if skill == "Empty the Shell" else armour, {"area": true})
+        "Anchor":
+            if int(info["moved"]) > 0:
+                info["room_uses"]["Quick-Lock"] = true
+            effects(index)["anchored"] = true
         "Vent":
-            cool(index, 3 if knows(index, "Baffled Exhaust") else 2)
-            if knows(index, "Feed Mechanism") and once(index, "Feed Mechanism"):
-                unit(index)["rounds"] = mini(int(unit(index)["magazine_capacity"]), int(unit(index)["rounds"]) + 1)
-        "Blowdown":
-            var heat: int = info["heat"]
-            info["heat"] = 0
-            for victim in in_tiles(area(source, 2)):
-                if victim != index:
-                    hit(index, victim, skill, heat, {"area": true})
-                    if living(victim) and not organic(victim):
-                        force_move(index, victim, direction(source, pos(victim)), 1)
+            cool(index, 3 if knows(index, "Cooling Fins") else 2)
+            if knows(index, "Feed Mechanism"):
+                restore_weapon_charges(index, 1)
         "Transform":
             enter_hyde(index)
         "Revert":
             revert_hyde(index)
         "Safe Passage":
-            relocate(target, plan["landing"], false, false)
+            relocate(target, plan["landing"], false, true, false, true)
+        "Suppress Reaction", "Impulse Push":
+            effects(index).erase(skill)
+            if skill == "Suppress Reaction":
+                if suppress(index, target):
+                    if knows(index, "Quiet Mind"):
+                        barrier(index, 1)
+                    if knows(index, "Divided Attention"):
+                        slow(target, 1)
+            else:
+                force_move(index, target, direction(source, pos(target)), 2 if knows(index, "Follow Through") else 1, false, false, true)
         "Counterweight Slide":
             battle.apply_unit_position(target, plan["landing"], &"displace")
             battle.apply_hazard_entry(target)
@@ -1758,8 +2109,6 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
                 if zone["skill"] == "Field Hospital" and zone["owner"] == index and pos(target) in zone["tiles"]:
                     treat_in_zone(zone, target)
                     break
-        "Mantle Recall":
-            info["recall_patient"] = -1 if target == index else target
         "Bedside Cover":
             barrier(target, 1)
             effects(index).erase(skill)
@@ -1770,9 +2119,7 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
             relocate(index, tile, true)
             effects(index).erase(skill)
         "Tandem Move":
-            drones[index]["pos"] = tile
-            drones[index].erase("barricade")
-            drones[index].erase("barricade_second")
+            move_drone(index, plan["drone_path"])
             effects(index).erase(skill)
         "Rosette Rush":
             for step in range(plan["victims"].size()):
@@ -1794,49 +2141,47 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
                     break
                 info["ready"][signature] = battle.turn_number + 2
                 resolve_review(index, signature, "", pick, signature_plan)
-        "Overclock Link":
-            drones[index]["pos"] = tile
-            if knows(index, "Guardian Chassis"):
-                resolve_review(index, "Rolling Barricade", "", tile, plan)
-                if plan.has("barricade_second"):
-                    drones[index]["barricade_second"] = plan["barricade_second"]
-                info["ready"]["Rolling Barricade"] = battle.turn_number + 2
-                for ally: int in plan["protected"]:
-                    barrier(ally, 2)
-            else:
-                info["ready"]["Chain Arc"] = battle.turn_number + 2
-                arc_order(index, plan["arc_targets"], skill, 4)
-        "Rake", "Split Focus":
-            for victim: int in [target, plan["second"]]:
-                hit(index, victim, skill, 2, {"melee": skill == "Rake", "ranged": skill == "Split Focus"})
+        "Scout Run", "Pincer Run", "Shield Run", "Overclock Link":
+            resolve_drone_run(index, skill, plan)
+        "Rake":
+            for victim in in_tiles(plan["tiles"], "enemy"):
+                review_strike(index, victim, skill)
+        "Split Focus":
+            hit(index, target, skill, 4, {"ranged": true, "target_tile": tile})
+            hit(index, plan["second"], skill, 4, {"ranged": true, "target_tile": plan["second_tile"]})
         "Phantom Threat":
             effects(target)["phantom_target"] = plan["second"]
         "Spatial Exchange":
             swap_units(target, plan["second"])
         "Hurl Debris":
-            hit(index, target, skill, 4, {"ranged": true, "source": tile})
+            hit(index, target, skill, 4, {"ranged": true, "source": tile, "target_tile": plan["target_tile"]})
             battle.damage_cover_edge(plan["edge"], 99, index, skill)
-        "Hook and Drop":
+        "Strike and Drop":
             hit(index, target, skill, 3, {"melee": true})
-            if living(target):
-                battle.apply_unit_position(target, plan["landing"], &"displace")
-                battle.apply_hazard_entry(target)
+            if relocate(index, plan["landing"], true):
+                note_flight(index)
+                if living(target) and battle.footprint_is_open(unit(target), plan["drop"]):
+                    battle.apply_unit_position(target, plan["drop"], &"displace")
+                    battle.apply_hazard_entry(target)
         "Venom Jet":
             for victim in in_tiles(plan["tiles"]):
                 poison(index, victim)
         "Sweep Beam":
-            blast(index, plan["tiles"], 3 + int(knows(index, "Steady Gaze")), skill, 0)
+            blast(index, plan["tiles"], 3, skill, 0)
+            if knows(index, "Rangefinder"):
+                battle.damage_cover_in_tiles(plan["tiles"], 99, index, skill)
         "Linebreaker":
             var facing := direction(source, tile)
+            var struck: Array[int] = []
             for cell: Vector2i in plan["tiles"]:
                 var previous := pos(index)
-                if cell == previous:
-                    continue
-                var edge := cover_between(previous, cell)
-                if not edge.is_empty() and battle.destructible_edges.has(edge):
-                    battle.damage_cover_edge(edge, 2, index, skill)
+                if not living(index) or battle.walls.has(cell):
+                    break
+                for edge in crossed_cover_edges(previous, cell):
+                    battle.damage_cover_edge(edge, 5, index, skill)
                 var foe: int = battle.find_unit_at(cell)
-                if living(foe) and unit(foe)["team"] == "enemy":
+                if living(foe) and unit(foe)["team"] == "enemy" and foe not in struck:
+                    struck.append(foe)
                     hit(index, foe, skill, 1, {"melee": true})
                     force_move(index, foe, facing, 2)
                 if not battle.can_take_move_step(unit(index), previous, cell) or not relocate(index, cell, false):
@@ -1851,8 +2196,11 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
             unit(index)["armour"] = 0
             effects(index)["review_skip_armour"] = true
         "Raking Pass":
+            var victims := in_tiles(plan["tiles"], "enemy")
             if relocate(index, plan["landing"], true):
-                hit(index, target, skill, 4, {"melee": true})
+                note_flight(index)
+                for victim in victims:
+                    hit(index, victim, skill, 4, {"melee": true, "source": source})
         "Wrecking Ball":
             var facing: Vector2i = plan["facing"]
             hit(index, target, skill, 4, {"area": true})
@@ -1865,26 +2213,26 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
                     break
                 if force_move(index, target, facing, 1) == 0:
                     break
-        "Magnetic Tow":
-            force_move(index, target, direction(tile, drones[index]["pos"]), 1)
-        "Rescue Winch":
+        "Recovery Winch":
             var original: Vector2i = drones[index]["pos"]
-            drones[index]["pos"] = tile
-            drones[index].erase("barricade")
+            move_drone(index, [tile], false)
             battle.apply_unit_position(target, original, &"displace")
             battle.apply_hazard_entry(target)
             if living(target):
                 barrier(target, 2)
             once(index, "Drone order")
         "Shock Mine":
+            for zone in zones.duplicate():
+                if zone["skill"] == skill and zone["owner"] == index:
+                    zones.erase(zone)
             create_zone(index, skill, tile, [tile])
         "Passing Trait":
             match info["form"]:
                 "Frog": relocate(target, plan["landing"], false)
                 "Jellyfish":
                     barrier(target, 2)
-                    effects(target)["shove_guard"] = true
-                "Skunk": effects(target)["range_bonus"] = 2
+                    effects(target)["passing_shove"] = true
+                "Skunk": effects(target)["passing_reach"] = 2
         "Wingover", "Banking Turn":
             var piercing := skill == "Wingover"
             hit(index, target, skill, int(unit(index)["damage"]), {"melee": true,
@@ -1920,7 +2268,8 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
                     blast(index, plan["tiles"], 3, skill, 0)
         "Darwinian Shift", "Shed Skin":
             if skill == "Shed Skin":
-                cleanse(index)
+                if not unit(index)["statuses"].erase("burning") and not effects(index).erase("poison"):
+                    unit(index)["statuses"].erase("blinded")
             shift_form(index, option)
         "Fly", "Tongue Vault":
             if relocate(index, tile, true):
@@ -1932,41 +2281,130 @@ func resolve_review(index: int, skill: String, option: String, tile: Vector2i, p
                     force_move(index, plan["pull"], direction(pos(plan["pull"]), tile), 1)
         "Musk Trail":
             create_zone(index, skill, tile, plan["tiles"])
-        "Drone Move", "Rolling Barricade":
-            once(index, "Drone order")
-            drones[index]["pos"] = tile
-            drones[index].erase("barricade")
-            drones[index].erase("barricade_second")
-            if skill == "Rolling Barricade":
-                drones[index]["barricade"] = plan["barricade"]
-        "Drone Arc Bolt", "Chain Arc":
-            arc_order(index, plan.get("arc_targets", [target]), skill, 3 if skill == "Chain Arc" else 2)
         "Field Service":
-            drones[index]["hp"] = mini(4, int(drones[index]["hp"]) + 2)
-            info["ready"].erase("Chain Arc")
+            drones[index]["hp"] = mini(drone_max_hp(index), int(drones[index]["hp"]) + 2)
+            info["ready"].erase("Shield Run" if knows(index, "Guardian Chassis") else "Pincer Run")
         "Emergency Rebuild":
-            drones[index] = {"pos": plan["landing"], "hp": 2,
-                "armour": 1 + int(knows(index, "Guardian Chassis")), "intercept": false}
+            drones[index] = {"pos": plan["landing"], "hp": ceili(drone_max_hp(index) * 0.5),
+                "armour": drone_max_armour(index), "intercept": false}
             once(index, "Drone order")
+
+func restore_weapon_charges(index: int, charges: int) -> void:
+    unit(index)["rounds"] = mini(int(unit(index)["magazine_capacity"]), int(unit(index)["rounds"]) + charges)
+
+func quick_lock_ready(index: int) -> bool:
+    var info := state(index)
+    return knows(index, "Quick-Lock") and not info["room_uses"].has("Quick-Lock") \
+        and int(info.get("standard_move", 0)) == int(info["moved"])
+
+func breach_follow_up_ready(index: int, target: int) -> bool:
+    if not knows(index, "Breach Follow-Up") or not living(target) or battle.side_to_play != "player":
+        return false
+    var footprint: Rect2i = battle.unit_footprint(unit(target), pos(target))
+    for cell: Vector2i in effects(index).get("breach_follow_up", []):
+        if footprint.has_point(cell):
+            return true
+    return false
+
+func resolve_drone_run(index: int, skill: String, plan: Dictionary) -> void:
+    once(index, "Drone order")
+    if not move_drone(index, plan["drone_path"]):
+        return
+    var guardian: bool = plan.has("cover_lines")
+    if skill == "Overclock Link":
+        state(index)["ready"]["Shield Run" if guardian else "Pincer Run"] = battle.turn_number + 2
+    if guardian:
+        drones[index]["barricade"] = plan["cover_lines"][0]
+        battle.queue_burst(battle.board_center(drones[index]["pos"]), 24.0, Color("#80ccff"), &"shield")
+        if plan["cover_lines"].size() == 2:
+            drones[index]["barricade_second"] = plan["cover_lines"][1]
+        for ally: int in plan["protected"]:
+            barrier(ally, 2)
+        return
+    var origin: Vector2i = drones[index]["pos"]
+    var damage: int = {"Scout Run": 2, "Pincer Run": 3, "Overclock Link": 4}[skill]
+    var arc_targets: Array = plan.get("arc_targets", [])
+    for arc in range(arc_targets.size()):
+        var target: int = arc_targets[arc]
+        if not living(target):
+            break
+        var target_tile: Vector2i = plan["arc_target_tiles"][arc]
+        if not hit(index, target, skill, damage, {"ranged": true, "source": origin, "target_tile": target_tile, "drone": true}):
+            break
+        if arc == 0 and skill in ["Pincer Run", "Overclock Link"] and living(target) and unit(target)["reaction_type"] == "overwatch" \
+                and battle.attacked_side(origin, target_tile) != battle.attacked_side(pos(index), target_tile):
+            cancel_reaction(target)
+            battle.add_log("%s's drone cancels %s's Overwatch." % [unit(index)["name"], unit(target)["name"]])
+        origin = target_tile
+        damage -= 1
+
+func expected_drone_overwatch(index: int, path: Array) -> int:
+    var budgets := {}
+    var remaining: int = int(drones[index]["hp"]) + int(drones[index]["armour"])
+    var shots := 0
+    for cell: Vector2i in path:
+        for watcher in drone_watchers(cell, index):
+            var budget: int = budgets.get(watcher, battle.overwatch_shots(watcher))
+            if budget <= 0:
+                continue
+            budgets[watcher] = budget - 1
+            shots += 1
+            remaining -= drone_shot_damage(watcher, cell)
+            if remaining <= 0:
+                return shots
+    return shots
+
+func move_drone(index: int, path: Array, overwatch: bool = true) -> bool:
+    if path.is_empty():
+        return drone_live(index)
+    var drone: Dictionary = drones[index]
+    drone.erase("barricade")
+    drone.erase("barricade_second")
+    for cell: Vector2i in path:
+        var previous: Vector2i = drone["pos"]
+        battle.unit_playback.motion(-index - 2, battle.board_center(previous), battle.board_center(cell),
+            direction(previous, cell), &"drone", 0.095)
+        drone["pos"] = cell
+        if overwatch:
+            for watcher: int in drone_watchers(cell):
+                if not drone_live(index):
+                    return false
+                if battle.spend_shot(watcher):
+                    unit(watcher)["ap"] -= battle.OVERWATCH_SHOT_AP
+                    battle.play_unit_action(watcher, battle.board_center(cell), false, Color.TRANSPARENT, str(unit(watcher)["basic_attack"]))
+                    battle.battle_stats[watcher]["reactions"] += 1
+                    battle.battle_stats[watcher]["overwatch_shots"] = int(battle.battle_stats[watcher].get("overwatch_shots", 0)) + 1
+                    if battle.ranged_cover_block_reason(pos(watcher), cell, 0, index) == battle.FULL_COVER_BLOCK:
+                        battle.report_full_cover_block(watcher)
+                    else:
+                        damage_drone(index, drone_shot_damage(watcher, cell))
+                        battle.add_log("%s fires Overwatch at the drone." % unit(watcher)["name"])
+    return drone_live(index)
+
+func drone_watchers(cell: Vector2i, ignored_drone: int = -1) -> Array[int]:
+    var watchers: Array[int] = []
+    for watcher in range(5, battle.units.size()):
+        if not battle.basic_is_melee(unit(watcher)) and battle.overwatch_budget_for_team(watcher, "player") > 0 \
+                and unit(watcher).get("overwatch_tiles", {}).has(cell) \
+                and battle.has_line_of_sight(pos(watcher), cell) and shot_through_smoke(watcher, pos(watcher), cell) \
+                and battle.ranged_cover_block_reason(pos(watcher), cell, 0, ignored_drone) != "Shield Run blocks this shot.":
+            watchers.append(watcher)
+    return watchers
+
+func drone_shot_damage(watcher: int, cell: Vector2i) -> int:
+    var source := pos(watcher)
+    if not battle.basic_is_melee(unit(watcher)) and battle.ranged_cover_block_reason(source, cell) == battle.FULL_COVER_BLOCK:
+        return 0
+    var base_damage: int = int(unit(watcher)["damage"]) + battle.formation_damage_bonus(watcher, source, cell)
+    var cover: int = 0 if battle.basic_is_melee(unit(watcher)) else battle.cover_level_at(cell, source)
+    var damage: int = base_damage - battle.blinded_damage_penalty(watcher)
+    return 0 if damage <= 0 else maxi(1, damage - cover)
 
 func review_strike(index: int, target: int, skill: String) -> void:
     hit(index, target, skill, int(unit(index)["damage"]), {"melee": true})
 
-func arc_order(index: int, targets: Array, skill: String, damage: int) -> void:
-    once(index, "Drone order")
-    var origin: Vector2i = drones[index]["pos"]
-    for target: int in targets:
-        var previous := pos(target)
-        hit(index, target, skill, damage, {"ranged": true, "source": origin, "drone": true})
-        if living(target):
-            effects(target)["drone_hit_side"] = battle.attacked_side(origin, previous)
-            effects(target)["drone_hit_owner"] = index
-        origin = previous
-        damage -= 1
-
 func set_root(target: int) -> void:
-    if not knows(target, "High Perch"):
-        effects(target)["root"] = true
+    effects(target)["root"] = true
 
 func enter_hyde(index: int) -> void:
     state(index)["form"] = "Hyde"
@@ -1996,7 +2434,7 @@ func revert_hyde(index: int) -> void:
         barrier(index, 2)
     refresh_base_attack(index)
 
-func end_mantle(owner: int, patient: int, return_armour: bool) -> void:
+func end_mantle(owner: int, patient: int, return_armour: bool, expired: bool = true) -> void:
     var mantles: Dictionary = state(owner).get("mantles", {})
     if not mantles.has(patient):
         return
@@ -2009,16 +2447,8 @@ func end_mantle(owner: int, patient: int, return_armour: bool) -> void:
     effects(patient).erase("mantle_owner")
     if return_armour and lending and living(owner):
         unit(owner)["armour"] = mini(int(unit(owner)["max_armour"]), int(unit(owner)["armour"]) + unused)
-    if knows(owner, "Shock Grapple") and living(owner):
+    if expired and knows(owner, "Returning Defence") and living(owner):
         barrier(owner, 1)
-
-func recall_patient(owner: int) -> int:
-    if not knows(owner, "Mantle Recall") or not once(owner, "Mantle Recall reaction", false):
-        return -1
-    var patient: int = state(owner).get("recall_patient", -1)
-    if not living(patient) or effects(patient).get("mantle_owner", -1) != owner or int(effects(patient).get("mantle", 0)) == 0:
-        return -1
-    return patient
 
 func note_flight(index: int) -> void:
     if knows(index, "Pinion Guard"):
@@ -2026,12 +2456,9 @@ func note_flight(index: int) -> void:
     if knows(index, "Silent Landing"):
         effects(index)["silent_landing_primed"] = true
 
-func afterglow_ready(index: int, target: int) -> bool:
-    return target >= 0 and knows(index, "Afterglow") and state(index).get("afterglow_target", -1) == target and once(index, "Afterglow", false)
-
-func barricade_at(tile: Vector2i, face: String) -> bool:
+func barricade_at(tile: Vector2i, face: String, ignored_drone: int = -1) -> bool:
     for owner: int in drones:
-        if not drone_live(owner):
+        if owner == ignored_drone or not drone_live(owner):
             continue
         for key in ["barricade", "barricade_second"]:
             var line: Dictionary = drones[owner].get(key, {})
@@ -2057,16 +2484,24 @@ func melee(index: int, target: int, skill: String, bonus: int = 0, armour_break:
     hit(index, target, skill, 2 + bonus,
         {"melee": true, "break": armour_break, "reaction": reaction})
 
-func hit(index: int, target: int, skill: String, damage: int, context: Dictionary) -> void:
+func hit(index: int, target: int, skill: String, damage: int, context: Dictionary) -> bool:
     if not living(target):
-        return
+        return false
     var from: Vector2i = context.get("source", pos(index))
     context["source"] = from
-    if REVIEW_HEAT.has(skill) and state(index).get("hot_breech", false):
-        damage += 1
-    var cover: int = battle.cover_level_at(pos(target), from) if context.get("ranged", false) else 0
+    var cover := 0
     if context.get("ranged", false):
-        context["obstruction"] = intervening_cover(index, from, pos(target))
+        var target_tile: Vector2i = context.get("target_tile", pos(target))
+        var cover_block: String = battle.ranged_cover_block_reason(from, target_tile)
+        if not cover_block.is_empty():
+            if cover_block == battle.FULL_COVER_BLOCK:
+                battle.play_unit_action(index, battle.board_center(target_tile), false, Color.TRANSPARENT, skill)
+                battle.report_full_cover_block(index)
+            else:
+                battle.status_message = cover_block
+            return false
+        cover = battle.cover_level_at(target_tile, from)
+        context["obstruction"] = intervening_cover(index, from, target_tile)
     var attack: Dictionary = impact(index, target, damage, cover, context)
     if organic(target) and knows(index, "Empathic Echo"):
         effects(target)["empathic_owner"] = index
@@ -2075,13 +2510,17 @@ func hit(index: int, target: int, skill: String, damage: int, context: Dictionar
     if context.get("visual_queued", false):
         attack["visual_queued"] = true
     battle.resolve_attack(index, target, attack, skill, 0, false, false)
+    return true
 
 func blast(index: int, cells: Array, damage: int, skill: String, structure: int,
-        light_only: bool = false, friendly_fire: bool = true) -> void:
+        light_only: bool = false, friendly_fire: bool = true, exclude: Array = []) -> void:
+    var excluded := in_tiles(exclude)
     for target in in_tiles(cells, "" if friendly_fire else "enemy"):
+        if target in excluded:
+            continue
         hit(index, target, skill, damage, {"area": true})
     for owner in drones:
-        if drone_live(owner) and cells.has(drones[owner]["pos"]):
+        if drone_live(owner) and cells.has(drones[owner]["pos"]) and drones[owner]["pos"] not in exclude:
             damage_drone(owner, damage)
     if structure > 0:
         battle.damage_cover_in_tiles(cells, structure, index, skill, light_only)
@@ -2090,11 +2529,13 @@ func blast(index: int, cells: Array, damage: int, skill: String, structure: int,
                 battle.hit_barrel(cell, damage, index, skill)
 
 func relocate(index: int, tile: Vector2i, vault: bool, reactions: bool = true,
-        interrupt_on_overwatch: bool = false, safe_melee: bool = false) -> bool:
+        interrupt_on_overwatch: bool = false, safe_melee: bool = false, landing_hazards_only: bool = false) -> bool:
     if not living(index):
         return false
     if tile == pos(index):
         return true
+    if reactions and battle.voluntary_movement_locked(index):
+        return false
     if effects(index).get("brace", false) and reactions:
         return false
     var path: Array[Vector2i] = [tile]
@@ -2113,7 +2554,8 @@ func relocate(index: int, tile: Vector2i, vault: bool, reactions: bool = true,
                 return false
         battle.apply_unit_position(index, cell, &"leap" if vault else &"walk")
         moved(index, steps_between(previous, cell))
-        battle.apply_hazard_entry(index)
+        if not landing_hazards_only or cell == tile:
+            battle.apply_hazard_entry(index)
         if not living(index):
             return false
         if reactions and battle.trigger_reactions_to_step(index, previous) and interrupt_on_overwatch:
@@ -2122,14 +2564,16 @@ func relocate(index: int, tile: Vector2i, vault: bool, reactions: bool = true,
             return false
     return true
 
-func force_move(index: int, target: int, vector: Vector2i, length: int,
-        avoid_hazards: bool = false, crush_cover: bool = false, leverage: bool = false) -> int:
-    var can_leverage: bool = living(target) and leverage and knows(index, "Leverage") and int(unit(target).get("weight", 2)) == 3 \
+func can_leverage(index: int, target: int) -> bool:
+    return knows(index, "Leverage") and int(unit(target).get("weight", 2)) == 3 \
         and not unit(target).get("mission_target", false) and unit(target).get("kind") != "boss"
-    if not living(target) or vector == Vector2i.ZERO or (anchored(target) and not can_leverage) or resists_displacement(target):
+
+func force_move(index: int, target: int, vector: Vector2i, length: int,
+        avoid_hazards: bool = false, crush_cover: bool = false, leverage: bool = false, collision_damage: int = 0) -> int:
+    if not living(target) or vector == Vector2i.ZERO or (anchored(target) and not (leverage and can_leverage(index, target))) or resists_displacement(target):
         return 0
     var moved_steps: int = 0
-    for _step in range(length):
+    for _step in range(displacement_distance(target, length)):
         var from: Vector2i = pos(target)
         var tile: Vector2i = from + vector
         var edge: String = cover_between(from, tile)
@@ -2139,6 +2583,12 @@ func force_move(index: int, target: int, vector: Vector2i, length: int,
             break
         if not battle.can_take_move_step(unit(target), from, tile) or \
                 (avoid_hazards and battle.footprint_has_hazard(unit(target), tile)):
+            if collision_damage > 0:
+                var blockers := in_tiles([tile])
+                blockers.erase(target)
+                if not blockers.is_empty():
+                    hit(index, target, "Hurl Aside collision", collision_damage, {"area": true})
+                    hit(index, blockers[0], "Hurl Aside collision", collision_damage, {"area": true})
             break
         battle.apply_unit_position(target, tile, &"displace")
         battle.battle_stats[target]["tiles"] += 1
@@ -2167,8 +2617,6 @@ func add_move(index: int, amount: int) -> void:
     refresh_stats(index)
 
 func slow(index: int, amount: int) -> void:
-    if knows(index, "High Perch"):
-        return
     var fx: Dictionary = effects(index)
     fx["slow"] = maxi(amount, int(fx.get("slow", 0)))
 
@@ -2182,7 +2630,8 @@ func recalibrate(index: int) -> void:
 func heal(index: int, target: int, amount: int, skill: String) -> void:
     if knows(index, "Clinical Eye") and int(unit(target)["hp"]) * 2 < int(battle.recoverable_hp(unit(target))) and once(index, "Clinical Eye"):
         amount += 1
-    battle.apply_healing(index, target, amount, skill, false)
+    if battle.apply_healing(index, target, amount, skill, false):
+        battle.queue_burst(battle.unit_board_center(target), 21.0, Color("#88efad"), &"heal")
 
 func cleanse(index: int) -> void:
     if effects(index).erase("poison"):
@@ -2228,13 +2677,28 @@ func clear_transfer(index: int, target: int) -> void:
     effects(target).erase("transfer")
 
 func cancel_reaction(index: int) -> void:
-    unit(index)["reaction_available"] = false
-    unit(index)["reaction_type"] = ""
+    battle.clear_overwatch(index)
 
-func suppress(index: int, target: int) -> void:
+func has_available_reaction(index: int) -> bool:
+    if reaction_disabled(index):
+        return false
+    var operative := unit(index)
+    if operative["reaction_available"] and battle.overwatch_shots(index) > 0:
+        return true
+    var used: int = operative.get("departure_reaction_hits", 0) if operative.get("departure_reaction_turn", -1) == battle.turn_number else 0
+    return battle.basic_is_melee(operative) and used < 1 + int(knows(index, "Threatening Presence"))
+
+func suppress(index: int, target: int) -> bool:
+    var removed := has_available_reaction(target)
     cancel_reaction(target)
-    effects(target)["reaction_off"] = true
+    var fx := effects(target)
+    fx["reaction_off"] = true
+    if removed:
+        if not fx.has("reaction_cancelled_by"):
+            fx["reaction_cancelled_by"] = {}
+        fx["reaction_cancelled_by"][index] = battle.turn_number
     disrupt(index, target)
+    return removed
 
 func disrupt(index: int, target: int) -> void:
     var fx: Dictionary = effects(target)
@@ -2281,13 +2745,16 @@ func treat_in_zone(zone: Dictionary, index: int) -> void:
             effects(index).erase("poison")
 
 func safe_passage(reactor: int, mover: int, previous: Vector2i) -> bool:
+    var controller := safe_passage_source(reactor, mover, previous, pos(mover))
+    return controller >= 0 and once(controller, "Safe Passage")
+
+func safe_passage_source(reactor: int, mover: int, previous: Vector2i, landing: Vector2i) -> int:
     if mover >= 5 or reactor < 5:
-        return false
+        return -1
     var controller: int = int(effects(reactor).get("disrupted_by", -1))
-    if not living(controller) or not knows(controller, "Safe Passage"):
-        return false
-    return (distance(pos(reactor), previous) == 1 or distance(pos(reactor), pos(mover)) == 1) \
-        and once(controller, "Safe Passage")
+    if not living(controller) or not knows(controller, "Safe Passage") or not once(controller, "Safe Passage", false):
+        return -1
+    return controller if distance(pos(reactor), previous) == 1 or distance(pos(reactor), landing) == 1 else -1
 
 func shot_through_smoke(index: int, from: Vector2i, to: Vector2i) -> bool:
     if knows(index, "Focused Retina") or smoke_tiles.is_empty():
@@ -2316,6 +2783,9 @@ func intervening_cover(index: int, from: Vector2i, to: Vector2i) -> int:
         previous = tile
     return mini(1, maxi(0, low_edges - int(knows(index, "X-Ray Angle"))))
 
+func displacement_distance(target: int, length: int) -> int:
+    return length - int(length > 0 and effects(target).erase("passing_shove"))
+
 func resists_displacement(target: int) -> bool:
     var fx: Dictionary = effects(target)
     if fx.get("brace", false) or fx.erase("shove_guard"):
@@ -2325,21 +2795,56 @@ func resists_displacement(target: int) -> bool:
         return true
     return false
 
+func position_changed(index: int, previous: Vector2i) -> void:
+    if previous == pos(index):
+        return
+    if effects(index).erase("anchored"):
+        for zone in zones.duplicate():
+            if zone["skill"] == "Flak Curtain" and zone["owner"] == index:
+                zones.erase(zone)
+    if not living(index):
+        return
+    if unit(index)["team"] == "player":
+        for zone in zones:
+            if zone["skill"] == "Quarantine Field" and pos(index) in zone["tiles"]:
+                treat_in_zone(zone, index)
+        return
+    var before: Rect2i = battle.unit_footprint(unit(index), previous)
+    var after: Rect2i = battle.unit_footprint(unit(index), pos(index))
+    for zone in zones.duplicate():
+        if zone["skill"] == "Musk Trail" and zone["tiles"].any(func(tile: Vector2i) -> bool: return after.has_point(tile) and not before.has_point(tile)):
+            affect_zone(zone, index)
+        if zone["skill"] != "Flak Curtain" or not living(zone["owner"]):
+            continue
+        if zone["tiles"].any(func(tile: Vector2i) -> bool: return before.has_point(tile)):
+            continue
+        for tile: Vector2i in zone["tiles"]:
+            if after.has_point(tile):
+                zones.erase(zone)
+                var was_resolving: bool = battle.resolving_class_action
+                battle.resolving_class_action = true
+                blast(zone["owner"], cross_tiles(tile), zone["damage"], "Flak Curtain", 0)
+                battle.resolving_class_action = was_resolving
+                if not was_resolving:
+                    battle.assess_winner()
+                break
+        if not living(index):
+            return
+
 func moved(index: int, count: int) -> void:
     battle.battle_stats[index]["tiles"] += count
     if index < 5:
         state(index)["moved"] += count
-        for zone in zones:
-            if zone["skill"] == "Quarantine Field" and pos(index) in zone["tiles"]:
-                treat_in_zone(zone, index)
     else:
         for zone in zones.duplicate():
-            if zone["tiles"].has(pos(index)):
+            if zone["skill"] not in ["Flak Curtain", "Musk Trail"] and zone["tiles"].has(pos(index)):
                 affect_zone(zone, index)
 
-func finished_standard_move(index: int) -> void:
-    if not living(index):
+func finished_standard_move(index: int, steps: int) -> void:
+    if not living(index) or not unit(index).has("class_state"):
         return
+    var info := state(index)
+    info["standard_move"] = steps if int(info.get("standard_move", 0)) == 0 else -1
     if knows(index, "Tandem Drive") and drone_live(index) and once(index, "Tandem Move", false):
         effects(index)["Tandem Move"] = true
     if knows(index, "Bedside Cover") and state(index)["form"] == "Jekyll" and once(index, "Bedside Cover", false):
@@ -2347,7 +2852,7 @@ func finished_standard_move(index: int) -> void:
 
 func voluntary_step(index: int, from: Vector2i, to: Vector2i) -> bool:
     var fx: Dictionary = effects(index)
-    if fx.get("brace", false) or fx.get("root", false):
+    if fx.get("brace", false) or fx.get("root", false) or fx.get("anchored", false):
         return false
     if fx.get("panic", false) and squad_distance(to) < squad_distance(from):
         return false
@@ -2363,16 +2868,15 @@ func squad_distance(tile: Vector2i) -> int:
 func movement_budget(index: int, limit: int) -> int:
     var fx: Dictionary = effects(index)
     var venom_penalty := int(fx.has("poison") and knows(int(fx.get("poison", {}).get("owner", -1)), "Numbing Sting"))
-    if knows(index, "High Perch"):
-        return limit
     return 0 if fx.get("root", false) or fx.get("brace", false) else maxi(1, limit - int(fx.get("slow", 0)) - venom_penalty)
 
 func create_zone(index: int, skill: String, tile: Vector2i, cells: Array, phases: int = 1) -> void:
     var zone := {"owner": index, "skill": skill, "center": tile, "tiles": cells,
         "used": {}, "expires": battle.turn_number + phases}
     zones.append(zone)
-    for enemy in in_tiles(cells, "enemy"):
-        affect_zone(zone, enemy)
+    if skill != "Musk Trail":
+        for enemy in in_tiles(cells, "enemy"):
+            affect_zone(zone, enemy)
 
 func affect_zone(zone: Dictionary, enemy: int) -> void:
     if zone["used"].has(enemy) or not living(enemy):
@@ -2419,7 +2923,12 @@ func opportunity(mover: int, from: Vector2i, to: Vector2i) -> void:
                 return
         if not battle.basic_is_melee(unit(index)) or not melee_adjacent_at(index, mover, from) or melee_adjacent_at(index, mover, to):
             continue
-        if int(unit(index).get("departure_reaction_turn", -1)) == battle.turn_number:
+        var previous_hits: int = int(unit(index).get("departure_reaction_hits", 0)) \
+            if int(unit(index).get("departure_reaction_turn", -1)) == battle.turn_number else 0
+        if previous_hits >= 1 + int(enabled and knows(index, "Threatening Presence")):
+            continue
+        if enabled and effects(mover).erase("silent_landing_primed"):
+            battle.add_log("%s slips past %s's melee reaction." % [unit(mover)["name"], unit(index)["name"]])
             continue
         if enabled and effects(mover).get("slipping_foe", -1) == index:
             effects(mover).erase("slipping_foe")
@@ -2427,6 +2936,7 @@ func opportunity(mover: int, from: Vector2i, to: Vector2i) -> void:
                 battle.add_log("%s slips past %s's melee reaction." % [unit(mover)["name"], unit(index)["name"]])
                 continue
         unit(index)["departure_reaction_turn"] = battle.turn_number
+        unit(index)["departure_reaction_hits"] = previous_hits + 1
         var skill := "Threatening Presence" if knows(index, "Threatening Presence") else "Melee Reaction"
         reaction_hit(index, mover, skill)
 
@@ -2453,7 +2963,7 @@ func isolated(index: int) -> bool:
     return true
 
 func range_bonus(index: int, target: int) -> int:
-    var extra: int = int(effects(index).get("range_bonus", 0))
+    var extra: int = int(effects(index).get("range_bonus", 0)) + int(effects(index).get("passing_reach", 0))
     var observer: int = int(effects(target).get("borrow_sight", -1))
     return extra + int(observer >= 0 and observer != index and unit(index)["team"] == "player")
 
@@ -2471,28 +2981,37 @@ func impact(index: int, target: int, damage: int, cover: int, context: Dictionar
     var eat_target: Array[String] = []
     var source: Vector2i = context.get("source", pos(index) if index >= 0 else pos(target))
     var mantle_owner: int = defender_effects.get("mantle_owner", -1)
-    var mantle_cover: bool = ranged_hit and living(mantle_owner) and knows(mantle_owner, "Returning Mantle") and int(defender_effects.get("mantle", 0)) > 0 and battle.attacked_side(pos(mantle_owner), pos(target)) == battle.attacked_side(source, pos(target))
+    if ranged_hit and (knows(target, "Mental Fortress") or (living(mantle_owner) and knows(mantle_owner, "Returning Mantle"))):
+        cover = maxi(cover, 1)
     if hit_mods and ranged_hit and defender_effects.has("pinion_guard"):
         damage -= 1
         eat_target.append("pinion_guard")
-    if hit_mods and knows(target, "Heat Jacket") and int(state(target)["heat"]) >= 3:
+    var shock_mounts: bool = hit_mods and context.get("overwatch", false) and knows(target, "Shock Mounts") and once(target, "Shock Mounts", false)
+    if shock_mounts:
         damage -= 1
-    if hit_mods and context.get("review_basic", false) and knows(index, "Hot Breech") and int(state(index)["heat"]) == 2:
-        damage += 1
-    if hit_mods and context.get("review_basic", false) and knows(index, "Crossfire") and defender_effects.get("drone_hit_owner", -1) == index and defender_effects.get("drone_hit_side") != battle.attacked_side(source, pos(target)) and once(index, "Crossfire", false):
-        damage += 2
-        uses.append("Crossfire")
-    var quarry_bonus: int = 2 if index >= 0 and not context.get("hazard", false) and int(defender_effects.get("quarry_hits", 0)) > 0 and not context.get("bypass_barriers", false) else 0
+    var quarry_bonus: int = 2 if index >= 0 and index == int(defender_effects.get("quarry_owner", -1)) \
+        and unit(index)["team"] != unit(target)["team"] \
+        and int(defender_effects.get("quarry_hits", 0)) > 0 and not context.get("hazard", false) \
+        and not context.get("bypass_barriers", false) else 0
     var distorted: bool = hit_mods and attacker_effects.has("distorted_by")
     if distorted:
         damage = maxi(1, damage - 2)
-    if knows(index, "Rangefinder"):
-        cover = 0
-        context = context.duplicate()
-        context["obstruction"] = 0
-    if index >= 0 and unit(index).get("basic_attack") == "Sightline" and context.get("ranged", false):
-        var reach := distance(context.get("source", pos(index)), pos(target))
-        damage = maxi(1, damage + int(reach >= 5) - int(reach <= 1) + int(knows(index, "Steady Gaze")))
+    if hit_mods and ranged_hit and knows(index, "Focal Lens"):
+        var reach := distance(source, pos(target))
+        damage += int(reach >= 5)
+        damage += 2 * int(reach <= 4 and knows(index, "Short-Sighted"))
+        if context.get("review_basic", false) and knows(index, "Steady Gaze"):
+            damage += 2
+    if index >= 0 and not context.get("hazard", false) and unit(index)["team"] != unit(target)["team"]:
+        damage += int(attacker_effects.get("attack_boost", 0))
+        if attacker_effects.has("high_perch"):
+            damage += 2
+            eat.append("high_perch")
+    if hit_mods and context.get("review_basic", false):
+        damage += int(attacker_effects.get("reserve_dose", 0))
+        eat.append("reserve_dose")
+        if ranged_hit:
+            eat.append("passing_reach")
     if melee_hit and knows(index, "Rosette Claws"):
         armour_break += 2 * int(knows(index, "Predator's Instinct"))
         if once(index, "Rosette Claws", false):
@@ -2507,10 +3026,7 @@ func impact(index: int, target: int, damage: int, cover: int, context: Dictionar
     if melee_hit and attacker_effects.has("flight_bonus"):
         damage += int(attacker_effects["flight_bonus"])
         eat.append("flight_bonus")
-    if context.get("review_basic", false) and knows(index, "Braced Mount") and int(state(index)["moved"]) == 0 and once(index, "Braced Mount", false):
-        damage += 1
-        uses.append("Braced Mount")
-    if context.get("review_basic", false) and knows(index, "Read Intent") and unit(target)["reaction_available"] and once(index, "Read Intent", false):
+    if context.get("review_basic", false) and knows(index, "Read Intent") and has_available_reaction(target) and once(index, "Read Intent", false):
         damage += 1
         uses.append("Read Intent")
     if context.get("review_basic", false) and knows(index, "Set the Angle") and int(defender_effects.get("displaced_by", -1)) == index and once(index, "Set the Angle", false):
@@ -2532,7 +3048,9 @@ func impact(index: int, target: int, damage: int, cover: int, context: Dictionar
     if knows(target, "Ferrous Body"):
         armour_break = 0
     if hit_mods:
-        damage -= int(attacker_effects.get("attack_penalty", 0))
+        var penalty: int = attacker_effects.get("attack_penalty", 0)
+        if penalty > 0 and damage > 0:
+            damage = maxi(1, damage - penalty)
         if melee_hit:
             damage += int(attacker_effects.get("melee_bonus", 0)) + int(attacker_effects.get("shift_counter", false))
             eat.append("shift_counter")
@@ -2605,13 +3123,10 @@ func impact(index: int, target: int, damage: int, cover: int, context: Dictionar
         eat_target.clear()
         uses.clear()
         eat_target.append("dodge")
-    if plastic or (mantle_cover and not knows(index, "Rangefinder")):
+    if plastic:
         remaining = 0
         armour_break = 0
         quarry_bonus = 0
-    var recall: int = recall_patient(target) if hit_mods and not dodge and remaining > 0 else -1
-    if recall >= 0:
-        remaining -= mini(remaining, mini(2, int(effects(recall)["mantle"])))
     for key in ["feather_barrier", "mantle", "sanctuary", "hospital_armour", "barrier", "force_shell"]:
         if context.get("bypass_barriers", false):
             break
@@ -2622,8 +3137,11 @@ func impact(index: int, target: int, damage: int, cover: int, context: Dictionar
             absorbed[key] = amount
             remaining -= amount
     var armour: int = int(unit(target)["armour"])
-    var armour_hit: int = mini(maxi(0, armour - bypass), remaining)
-    var extra_break: int = mini(maxi(0, armour - armour_hit), armour_break)
+    var pre_shred: int = int(context.get("pre_break", 0)) if not dodge and not plastic and not knows(target, "Ferrous Body") else 0
+    var shredded: int = mini(armour, pre_shred)
+    var armour_hit: int = mini(maxi(0, armour - shredded - bypass), remaining)
+    var extra_break: int = shredded + mini(maxi(0, armour - shredded - armour_hit), armour_break)
+    armour_break += pre_shred
     var hp_hit: int = mini(int(unit(target)["hp"]), remaining - armour_hit + quarry_bonus)
     var burrow: bool = (index >= 0 and hp_hit >= int(unit(target)["hp"]) and knows(target, "Burrow Defense")
         and not state(target)["mission_uses"].has("Burrow Defense"))
@@ -2637,10 +3155,10 @@ func impact(index: int, target: int, damage: int, cover: int, context: Dictionar
         absorbed.clear()
     return {"armour_damage": armour_hit + extra_break, "hp_damage": hp_hit,
         "quarry_bonus": quarry_bonus, "distorted": distorted and not dodge, "burrow": burrow,
-        "review_basic": context.get("review_basic", false), "armour_before_hit": armour, "recall_patient": recall,
+        "review_basic": context.get("review_basic", false), "armour_before_hit": armour,
         "quarry_owner_at_hit": defender_effects.get("quarry_owner", -1),
         "hp_or_armour_damage": hp_hit + armour_hit, "ranged": ranged_hit,
-        "cover": cover, "armour_cap_loss": armour_break, "barriers": absorbed, "hit_mods": hit_mods,
+        "cover": cover, "shock_mounts": shock_mounts and not dodge, "armour_cap_loss": armour_break, "barriers": absorbed, "hit_mods": hit_mods,
         "melee": melee_hit, "reaction": context.get("reaction", false), "area": area_hit,
         "uses": uses, "eat": eat, "eat_target": eat_target, "dodge": dodge, "remaining": remaining}
 
@@ -2655,16 +3173,17 @@ func clear_quarry(target: int) -> void:
 
 func consume_hit(index: int, target: int, attack: Dictionary) -> void:
     var defender: Dictionary = effects(target)
-    var recalled: int = attack.get("recall_patient", -1)
-    if recalled >= 0:
-        once(target, "Mantle Recall reaction")
-        end_mantle(target, recalled, false)
-        battle.add_log("%s recalls a mantle to absorb this hit." % unit(target)["name"])
+    if attack.get("shock_mounts", false):
+        once(target, "Shock Mounts")
+        battle.record_ability_use(target, "Shock Mounts", true)
     if attack.get("burrow", false):
         defender["burrowed"] = true
         state(target)["mission_uses"]["Burrow Defense"] = true
-    if int(attack.get("quarry_bonus", 0)) > 0:
+    var mark_owner: int = defender.get("quarry_owner", -1)
+    if mark_owner >= 0 and index != mark_owner and attack.get("hit_mods", false) and not attack.get("dodge", false) \
+            and unit(index)["team"] == unit(mark_owner)["team"] and int(attack.get("hp_or_armour_damage", 0)) > 0:
         defender["quarry_ally_hit"] = index
+    if int(attack.get("quarry_bonus", 0)) > 0:
         defender["quarry_hits"] = int(defender.get("quarry_hits", 0)) - 1
         if int(defender["quarry_hits"]) <= 0:
             clear_quarry(target)
@@ -2701,16 +3220,12 @@ func spend_basic_attack_effects(index: int) -> int:
         fx["mind_lock_shot"] = true
     return penalty
 
-func on_damage(target: int, before: int, armour_break: int, hp_damage: int) -> void:
+func on_damage(target: int, armour_break: int, hp_damage: int) -> void:
     var defender: Dictionary = unit(target)
     if armour_break > 0:
         var broken: int = mini(armour_break, int(defender["max_armour"]))
         defender["armour_loss"] = int(defender.get("armour_loss", 0)) + broken
         defender["max_armour"] = maxi(0, int(defender["max_armour"]) - broken)
-    if (before > 0 and int(defender["armour"]) == 0 and living(target) and knows(target, "Moulting Skin")
-            and not state(target)["room_uses"].has("Moulting Skin")):
-        state(target)["room_uses"]["Moulting Skin"] = true
-        defender["armour"] = defender["max_armour"]
     if hp_damage > 0 and knows(target, "Bloodied Charge"):
         effects(target)["bloodied"] = true
 
@@ -2732,10 +3247,8 @@ func after_hit(index: int, target: int, attack: Dictionary) -> void:
         if living(target) and melee_hit:
             if knows(index, "Slipping Guard"):
                 effects(index)["slipping_foe"] = target
-            if effects(index).erase("silent_landing_primed"):
-                effects(index)["slipping_foe"] = target
-        if attack.get("review_basic", false) and int(attack["hp_damage"]) > 0 and knows(index, "Afterglow"):
-            state(index)["afterglow_target"] = target
+        if living(target) and attack.get("review_basic", false) and knows(index, "Fiery Gaze"):
+            battle.apply_status(target, "burning")
         if melee_hit and living(target) and attack.get("review_basic", false) and int(attack.get("hp_or_armour_damage", 0)) > 0 and knows(index, "Break Through") and state(index).get("hyde_entered", -1) == battle.turn_number and once(index, "Break Through"):
             var before := pos(target)
             if force_move(index, target, direction(pos(index), before), 1) > 0:
@@ -2753,16 +3266,12 @@ func after_hit(index: int, target: int, attack: Dictionary) -> void:
         if melee_hit and knows(index, "Blood Trail") and int(attack["hp_damage"]) > 0 and once(index, "Blood Trail"):
             heal(index, index, 1, "Blood Trail")
         if living(target) and attack.get("review_basic", false):
-            if knows(index, "Surface Thought") and organic(target) and once(index, "Surface Thought"):
-                if unit(target)["reaction_available"]:
-                    effects(target)["review_cancel"] = battle.turn_number
-                    if knows(index, "Quiet Mind"):
-                        barrier(index, 1)
-                    if knows(index, "Divided Attention"):
-                        slow(target, 1)
-                suppress(index, target)
-            if knows(index, "Impulse") and once(index, "Impulse"):
-                force_move(index, target, direction(pos(index), pos(target)), 2 if knows(index, "Follow Through") else 1, false, false, true)
+            if knows(index, "Surface Thought") and organic(target) and not reaction_disabled(target) and once(index, "Suppress Reaction", false):
+                effects(index)["Suppress Reaction"] = target
+            if knows(index, "Impulse") and once(index, "Impulse Push", false):
+                var eligible := not anchored(target) or can_leverage(index, target)
+                if eligible and battle.can_take_move_step(unit(target), pos(target), pos(target) + direction(pos(index), pos(target))):
+                    effects(index)["Impulse Push"] = target
             if knows(index, "Segmented Carapace") and organic(target):
                 poison(index, target)
         var info: Dictionary = state(index)
@@ -2787,7 +3296,8 @@ func after_hit(index: int, target: int, attack: Dictionary) -> void:
         var controller: int = effects(index).get("distorted_by", -1)
         effects(index).erase("distorted_by")
         if living(target) and unit(target)["team"] == "player" and knows(controller, "Residual Distortion"):
-            effects(target)["free_step"] = 1
+            var step: String = "residual_step_pending" if battle.side_to_play == "enemy" else "free_step"
+            effects(target)[step] = maxi(1, int(effects(target).get(step, 0)))
     if melee_hit and living(index) and living(target) and organic(index) and distance(pos(index), pos(target)) == 1 and knows(target, "Intrusive Thought") and once(target, "Intrusive Thought"):
         suppress(target, index)
     if melee_hit and living(index) and living(target) and distance(pos(index), pos(target)) == 1 and knows(target, "Barbed Retort") and not attack.get("reaction", false) and once(target, "Barbed Retort"):
@@ -2822,7 +3332,8 @@ func damage_drone(owner: int, damage: int) -> void:
         battle.add_log("%s's drone is destroyed." % unit(owner)["name"])
 
 func try_enemy_drone_attack(enemy: int) -> bool:
-    if effects(enemy).has("taunted_by") or not battle.has_attack_ammo(enemy):
+    var taunter: int = effects(enemy).get("taunted_by", -1)
+    if not battle.has_attack_ammo(enemy) or (living(taunter) and battle.can_attack(enemy, taunter)):
         return false
     var source := pos(enemy)
     var reach: int = int(unit(enemy)["range"])
@@ -2835,7 +3346,7 @@ func try_enemy_drone_attack(enemy: int) -> bool:
         var gap := distance(source, cell)
         if gap >= closest or not visible(source, cell, reach):
             continue
-        if not battle.basic_is_melee(unit(enemy)) and barricade_at(cell, battle.attacked_side(source, cell)):
+        if not battle.basic_is_melee(unit(enemy)) and not battle.ranged_cover_block_reason(source, cell).is_empty():
             continue
         target = owner
         closest = gap
@@ -2845,21 +3356,18 @@ func try_enemy_drone_attack(enemy: int) -> bool:
         if living(ally) and distance(source, pos(ally)) <= closest and battle.can_attack(enemy, ally):
             return false
     var drone_cell: Vector2i = drones[target]["pos"]
-    var cover: int = 0 if battle.basic_is_melee(unit(enemy)) else battle.cover_level_at(drone_cell, source)
-    var damage: int = maxi(0, int(unit(enemy)["damage"]) - cover - battle.blinded_damage_penalty(enemy))
+    var damage := drone_shot_damage(enemy, drone_cell)
     unit(enemy)["ap"] -= 1
     battle.spend_shot(enemy)
-    battle.play_unit_action(enemy, battle.board_center(drone_cell))
+    battle.play_unit_action(enemy, battle.board_center(drone_cell), false, Color.TRANSPARENT, str(unit(enemy)["basic_attack"]))
     damage_drone(target, damage)
-    if drone_live(target) and knows(target, "Retaliation Circuit") and visible(drone_cell, source, 4) and once(target, "Retaliation Circuit"):
-        hit(target, enemy, "Retaliation Circuit", 2, {"ranged": true, "source": drone_cell, "drone": true})
     return true
 
 func start_enemy_phase() -> void:
     for index in range(5):
         state(index)["spare_ap"] = int(unit(index)["ap"])
-        if knows(index, "Grounded Chassis") and int(state(index)["moved"]) == 0:
-            effects(index)["review_guard"] = true
+        for key in ["Suppress Reaction", "Impulse Push", "reserve_dose", "passing_reach"]:
+            effects(index).erase(key)
         if knows(index, "Settled Form") and once(index, "form change", false):
             effects(index)["review_guard"] = true
         if knows(index, "Power Routing"):
@@ -2867,22 +3375,41 @@ func start_enemy_phase() -> void:
             cool(index, 1)
     for entry in ordnance:
         for aim in entry["aims"]:
-            battle.queue_burst(battle.board_center(aim), 23.0, Color("#ffca8a"))
+            battle.queue_burst(battle.board_center(aim), 29.0, Color("#ffca8a"), &"blast")
         blast(entry["owner"], entry["tiles"], entry["damage"], entry["skill"], 1)
     ordnance.clear()
+    for zone in zones.duplicate():
+        if zone["skill"] == "Musk Trail":
+            for foe in in_tiles(zone["tiles"], "enemy"):
+                affect_zone(zone, foe)
     tick_poison("enemy")
+
+func finish_enemy_phase() -> void:
+    for index in range(5):
+        if not living(index) or not knows(index, "Moulting Skin") or state(index)["room_uses"].has("Moulting Skin"):
+            continue
+        var statuses: Dictionary = unit(index)["statuses"]
+        var burning := statuses.erase("burning")
+        var irradiated := statuses.erase("irradiated")
+        if burning or irradiated:
+            state(index)["room_uses"]["Moulting Skin"] = true
+            battle.record_ability_use(index, "Moulting Skin")
+
+func prime_high_perch(index: int) -> void:
+    if living(index) and knows(index, "High Perch") and battle.high_ground_tiles.has(pos(index)):
+        effects(index)["high_perch"] = true
 
 func start_player_phase() -> void:
     for index in range(5, battle.units.size()):
-        for key in ["root", "slow", "panic", "mind_lock", "mind_lock_shot", "reaction_off", "attack_penalty",
-                "disrupted_by", "first_move_short", "taunted_by", "quarry_hits", "quarry_owner", "review_cancel",
+        for key in ["root", "slow", "panic", "mind_lock", "mind_lock_shot", "aphasia", "reaction_off", "attack_penalty",
+                "disrupted_by", "first_move_short", "taunted_by", "quarry_hits", "quarry_owner", "reaction_cancelled_by",
                 "distorted_by", "seam_owner", "stunned", "quarry_ally_hit", "intercept_stopped", "phantom_target", "displaced_by",
-                "empathic_owner", "drone_hit_owner", "drone_hit_side"]:
+                "empathic_owner"]:
             effects(index).erase(key)
     for zone in zones.duplicate():
         if int(zone["expires"]) <= battle.turn_number:
             zones.erase(zone)
-        elif zone["skill"] in ["Field Hospital", "Quarantine Field"]:
+        elif zone["skill"] in ["Field Hospital", "Quarantine Field", "Musk Trail"]:
             continue
         else:
             zone["used"].clear()
@@ -2896,7 +3423,7 @@ func start_player_phase() -> void:
             unit(index)["statuses"].clear()
         if fx.erase("review_skip_armour"):
             unit(index)["armour"] = 0
-        if knows(index, "Boiler Plate"):
+        if knows(index, "Siege Mount"):
             cool(index, 1)
         var movement_penalty: int = int(fx.get("redline_penalty", 0))
         if fx.get("recalibrate", false):
@@ -2906,25 +3433,27 @@ func start_player_phase() -> void:
                 "recalibrate", "free_step", "safe_step", "transfer", "range_bonus", "apex_intercept",
                 "plastic_skin", "free_quarry", "root", "flight_bonus", "carried_hunt", "review_guard", "pinion_guard",
                 "Tandem Move", "Tailwind Flight", "Bedside Cover", "Hyde Follow-through", "Counterweight Slide",
-                "slipping_foe", "silent_landing_primed"]:
+                "slipping_foe", "silent_landing_primed", "attack_boost", "high_perch", "anchored", "breach_follow_up", "passing_shove"]:
             fx.erase(key)
+        if fx.erase("residual_step_pending"):
+            fx["free_step"] = 1
         if int(fx.get("sanctuary_expiry", 0)) <= battle.turn_number:
             fx.erase("sanctuary")
         if int(fx.get("hospital_expiry", 0)) <= battle.turn_number:
             fx.erase("hospital_armour")
         for patient: int in info.get("mantles", {}).keys():
             end_mantle(index, patient, true)
-        info["recall_patient"] = -1
-        info["afterglow_target"] = -1
+        prime_high_perch(index)
         info["form_mastery"] = knows(index, "Form Mastery") and int(info["used"].get("form change", -1)) != battle.turn_number - 1
         refresh_base_attack(index)
         fx["move_penalty"] = movement_penalty
         info["moved"] = 0
+        info["standard_move"] = 0
         info["withdraw"] = -1
         info["transfer"] = -1
         if drones.has(index):
             drones[index]["intercept"] = false
-            drones[index]["armour"] = 1 + int(knows(index, "Guardian Chassis"))
+            drones[index]["armour"] = drone_max_armour(index)
             drones[index].erase("barricade")
             drones[index].erase("barricade_second")
         if info["form"] == "Hyde" and int(info.get("hyde_until", 0)) <= battle.turn_number:

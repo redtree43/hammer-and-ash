@@ -54,26 +54,32 @@ static func base_attack(kit: String, build: Dictionary, form: String, damage: in
         "Scythe": attack = ["Claws" if origin == 0 else "Tail Sting", true, false]
         "Anvil": attack = ["Iron Fist" if origin == 0 else "Mantle Fist", true, false]
         "Needle": attack = ["Sightline", false, true] if origin == 0 else ["Talons", true, false]
-        "Iskra": attack = ["Arc Pistol" if origin == 0 else "Suit Cannon", false, true]
+        "Iskra":
+            attack = ["Arc Pistol" if origin == 0 else "Suit Cannon", false, true]
+            reach -= 2
+            damage -= int(origin == 0)
         "Glaz": attack = ["Synaptic Prick" if origin == 0 else "Force Bolt", false, false]
         "Alkhimik":
             if origin == 1:
                 attack = ["Rending Strike", true, false] if form == "Hyde" else ["Irritant Dart", false, false]
             else:
+                damage -= 2
+                if form == "Skunk":
+                    reach -= 4
                 match form:
                     "Jellyfish": attack = ["Sting", true, false]
                     "Skunk": attack = ["Spray", false, false]
                     _: attack = ["Bite", true, false]
     var skills: Dictionary = unlocked(kit, build)
-    reach += int(skills.has("Long Focus")) + int(skills.has("Peripheral Vision")) + int(skills.has("Long Lever"))
+    reach += 2 * int(skills.has("Long Focus")) + int(skills.has("Long Lever"))
     return {"name": attack[0], "melee": attack[1], "damage": damage,
         "range": 1 if attack[1] else reach, "charged": attack[2]}
 
 static func stat_modifiers(skills: Dictionary, form: String, apex: bool = false) -> Vector2i:
     var armour: int = 3 * (int(skills.has("Ferrous Body")) + int(skills.has("Living Mantle")))
-    for skill in ["Segmented Carapace", "Deflective Plates", "Rolled Plate", "Thick Mantle", "Paired Deployment"]:
+    for skill in ["Segmented Carapace", "Deflective Plates", "Rolled Plate", "Thick Mantle", "Mental Fortress", "Paired Deployment"]:
         armour += int(skills.has(skill))
-    armour += 2 * (int(skills.has("Work Hardening")) + int(skills.has("Boiler Plate")))
+    armour += 2 * (int(skills.has("Work Hardening")) + int(skills.has("Siege Mount")))
     var movement: int = int(skills.has("Rosette Claws")) + int(skills.has("Tempered Knuckles"))
     if skills.has("Darwinian Shift"):
         match form:

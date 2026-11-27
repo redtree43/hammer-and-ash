@@ -17,6 +17,6 @@ You are operating in the context of a wider project called Hammer & Ash: Uprisin
 ## Development and verification
 
 - Keep changes scoped. Follow the existing GDScript conventions in touched code and reuse shared rules for previews, action resolution and reporting. Introduce dependencies only when the task calls for them.
-- Import the active project in Godot and press F5. Use **M** and keys **1–6** for legacy fixtures or **7–9** and **0** for mixed enemy trials. Check affected fixtures through normal controls. See the [Build 10 controls](source/Hammer_Ash_Godot_2D_Build10/README_FIRST.txt).
-- Preserve fixture 1, the original three-room regression scenario, when extending objectives. Verify linked-room carry-over and the radio consequence through normal progression. **F6–F8** reset the squad for isolated room checks.
+- Import the active project in Godot and press F5. Deploy from the USSR map for mission and combat playtesting. Check the affected operations through normal controls. See the [Build 10 controls](source/Hammer_Ash_Godot_2D_Build10/README_FIRST.txt).
+- Preserve fixture 1, the original three-room regression scenario, when extending objectives. Open it from HQ with **M → 1 → Enter**. Verify linked-room carry-over and the radio consequence through normal progression. **F6–F8** reset the fixture squad for isolated room checks.
 - For behavior changes, identify the governing design section and verify the affected rules through normal play. Update the handoff with discrepancies, the Godot version, scenarios exercised and remaining checks.

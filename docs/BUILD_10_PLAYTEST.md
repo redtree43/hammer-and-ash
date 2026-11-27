@@ -4,6 +4,186 @@
 
 A temporary test driver ran the unchanged game scene in a rendered window. It sent the normal number keys, tile clicks, ability keys, Space, Enter and mission-menu controls through Godot's input API. It sampled game state for comparisons and accelerated the clock for movement and enemy phases. Tactical AI and armour stayed enabled. Neither room jumps nor direct state edits were used.
 
+## 27 November full campaign balance playtest
+
+Godot 4.7.2 on Windows ran a deterministic tactical input driver against the campaign scene. It used the USSR site and squad controls, action bar, board clicks, end turn, and **Enter** for room progression. The driver selected builds before deployment and accelerated presentation between inputs. Enemy formations, objectives, HP, cooldowns and combat AI resolved normally. Each operation started from a fresh bunker state. These results measure full operations with manual-level builds and one repeatable player policy.
+
+The main pass completed **52 of 52 operations**, visiting **all 28 sites** and **all 24 enemy archetypes**. It cleared **102 rooms** and used **50 linked-room transitions**. There was one down and zero permanent losses. Of the 102 rooms, 14 cleared in one round, 65 in two, 21 in three and two in four. The original chain fixture passed 23 regression checks, including the two radio outcomes. The branch matrix passed 1,112 checks. Two of the Ural relay passes were also repeated with rendered GL Compatibility.
+
+### Matched sweep comparisons
+
+Each pair swapped the lead origin with the same squadmates on the same three-room sweep at Levels 3 and 9. Damage and kills below refer to the selected operative. This driver favours visible attacks and evaluates support and positioning with simple heuristics. Prevention and setup do not receive comparable scoring in the damage ledger.
+
+| Class | Observation |
+| --- | --- |
+| Scythe | Jaguar reached enemies and finished them more readily. It scored nine direct kills to Scorpion's four across the two matched runs, while taking 25 direct HP damage to Scorpion's one. Scorpion stayed safer and contributed less pressure in short fights. |
+| Anvil | Both origins had identical matched sweep times and took no direct HP damage. The lead spent much of its AP on Taunt. The results support durability, with limited evidence for distinguishing Steel Skin's frontline control from Psionic Armour's ally protection. |
+| Needle | Eye Powers scored 13 kills and dealt 57 direct HP damage across the matched sweeps, remaining unwounded by direct enemy hits. Hawk Wings scored five kills and dealt 37 direct HP damage while taking 31 direct HP damage and the run set's one down. Eye Powers cleared each sweep faster. |
+| Iskra | Artillery's basic gun contributed more direct damage. The early sweep ended before the driver found an attractive heavy-fire setup. A deliberate Ural relay run used Anchor and Siege Salvo and secured three kills with the Artillery operative. Drone Command contributed through Scout Run, but its defensive value and loss risk need more sustained enemy pressure. |
+| Alkhimik | Darwinian dealt seven direct HP damage and healed ten HP in the matched sweeps. Jekyll / Hyde dealt 41 direct HP damage and healed four HP. The driver mostly fought as Jekyll, indicating his basic attack was already useful in short rooms. |
+| Glaz | Both origins cleared their matched sweeps on similar timelines. Telepathy suppressed reactions on organic targets. Telekinesis moved robots and organic targets, giving it the broader matchup. |
+
+Four additional Level 9 sweeps tested the Assault and Guardian chassis, a Hyde-focused build, and Telepathy on the robot-heavy Ore Terminal Sweep. All four cleared, adding 12 rooms and eight transitions. Assault and Guardian took five and six total rounds respectively. Both drones carried their HP through all rooms and neither was destroyed. Guardian used Shield Run in two rooms. The Hyde run used Break the Vial in only one room. In the robot-heavy Telepathy run, the lead dealt 11 direct HP damage across six rounds, and Distort Aim remained available against machines. These runs favoured the origin tools deliberately, so the results are separate from the matched sweep comparisons above.
+
+### Enemy pressure
+
+Man of Steel was the most repeatable threat within its tier, dealing 76 recorded direct HP damage over 20 appearances. Proletariat dealt 19 over four appearances and caused the only down. Red Star and Individualist also had notable peaks, with small samples. Hammer, Combine and Nevalyashka recorded no direct HP damage over eight, six and four appearances respectively. Clergy recorded no healing over eleven appearances. This exposes a problem with getting into effective positions before the squad clears the room. The ledger credits ongoing environmental damage separately and does not assign ally damage to supporting aura units.
+
+### Bugs corrected
+
+- Restored the broken indentation that prevented the Headquarters and combat scene from loading.
+- Guarded the player-only standard-move hook against enemy units that have no class state.
+- Restored objective and room-clear assessment after a class action finishes, so a killing ability can open the next room or the debrief immediately.
+
+This baseline used the old two-point reduction for physical full cover. The creator subsequently confirmed protected-side shot blocking. [Full-cover retest](#27-november-full-cover-campaign-retest)
+
+## 27 November full-cover campaign retest
+
+Godot 4.7.2 on Windows reran the same 56 operations, including the four targeted sweeps. The driver used the same sites, squads, builds and input policy as the baseline. All twelve origins led a three-room sweep at both Level 3 and Level 9. The replay exercised all 28 sites and 24 enemy archetypes.
+
+| Measure | Previous full-cover reduction | Protected-side shot blocking |
+| --- | ---: | ---: |
+| Operations cleared | 56/56 | 56/56 |
+| Rooms cleared / linked transitions | 114 / 58 | 114 / 58 |
+| Total rounds across rooms | 237 | 244 |
+| Enemy direct HP damage across squads | 490 | 531 |
+| Downs / permanent losses | 1 / 0 | 1 / 0 |
+
+Both runs cleared 112 of 114 rooms within three rounds. Ural Rescue took five rounds with Psionic Armour, up from four. The squad took more direct HP damage overall even though individual protected-side shots were unavailable. These totals reflect changed engagements and come from one repeatable player policy with fresh squads.
+
+- **Needle.** Across the two matched sweeps per origin, Eye Powers dropped from 57 to 50 direct HP damage and from 13 to 10 kills. It still beat Hawk Wings on clear time and stayed unwounded by direct fire. Hawk took 31 direct HP damage and the same down from Proletariat as before. Hawk remains the more exposed choice.
+- **Iskra and Glaz.** Artillery held its matched sweep times and rose from 33 to 37 direct HP damage. Standard Drone Command took one more round across its matched sweeps, while the separate Guardian sweep improved from six rounds to five. Both drone probes kept their drones through all three rooms. Telepathy took an extra round in each Far Eastern sweep and finished the separate Ural sweep at 3 HP. Telekinesis held its clear times while dealing less and taking less direct HP damage.
+- **Other origins.** Both Anvils cleared their Level 9 Southern sweeps one round faster. Their leads took no direct HP damage across the matched sweeps. Jaguar, Scorpion, Darwinian and Jekyll / Hyde held their matched sweep times. The Volga Rescue with Darwinian took an extra round.
+- **Enemies.** Man of Steel rose from 85 to 106 direct HP damage across 23 appearances. Marksman and Rifleman barely changed. Hammer and Nevalyashka still dealt no direct HP damage across nine and four appearances respectively, and Clergy recorded no heals across twelve.
+
+Godot's class matrix passed 1,128 checks across 384 builds. It covered blocked previews and execution, flank angles, half cover, melee, explicit cover pierce, Taunt fallback, and ordinary and drone Overwatch. The original three-room chain passed all 23 checks, including linked carry-over and both radio outcomes. The imported project launched through F5. Both rendered Ural relay repeats completed under GL Compatibility despite ANGLE shader initialization messages.
+
+## 27 November shot cost and level check
+
+The preceding 56-operation pass used the earlier cover implementation, which rejected shots into full cover. Under the updated rule, the player can commit a shot into full cover and see the zero-damage result before firing. A committed shot spends its usual AP and ammo or charge, including Overwatch. The target and the cover edge take no damage from an ordinary blocked shot.
+
+All five operatives in each of the 56 earlier operations were set to the same manual level. Level 3 accounted for 22 operations and 46 rooms, with one down to Proletariat. Level 9 accounted for 34 operations and 68 rooms, with no downs. Both levels fielded about 4.8 enemies per room. Squads entered operations fully healed.
+
+Four repeat matchups used the updated shot rule and identical selected squads and branch choices at each of Levels 1, 3 and 9. All 12 operations cleared, including all nine linked sweeps. The Level 1 and 3 Hawk Wings squads each took one down to Proletariat in Volga. The other three Level 1 squads had zero downs.
+
+| Formation | Level 1 rounds / downs | Level 3 rounds / downs | Level 9 rounds / downs |
+| --- | ---: | ---: | ---: |
+| Volga Sweep, Hawk Wings | 8 / 1 | 8 / 1 | 7 / 0 |
+| Ural Sweep, Drone Command | 7 / 0 | 7 / 0 | 6 / 0 |
+| Far Eastern Sweep, Telepathy | 6 / 0 | 7 / 0 | 6 / 0 |
+| Ural Rescue, Psionic Armour | 3 / 0 | 5 / 0 | 5 / 0 |
+
+Of 203 authored enemy slots across the 42 campaign rooms, 146 are Low-tier, 40 are Mid-tier and 17 are High-tier. Only two rooms field two or more High-tier foes. A five-operative squad starts with 15 AP, so screening enemies can disappear before their anchor, support or melee threats get into position. The next tuning comparison should keep enemy stats steady and test stronger checkpoint and final-room formations with a screen and a protected anchor or support unit. The four-site run used fresh squads and one scripted policy.
+
+## 27 November sweep formation comparison
+
+Godot 4.7.2 on Windows replayed the seven campaign sweeps with the previous and trial formations. Each site used the same named five operatives, origins, branch choices and loadout in both versions. All five started fully healed at the same manual level, with separate runs at Levels 1, 3, 5, 7 and 9. The driver selected the squad and operation through HQ and used the action bar, battlefield clicks, end turn and Enter to play through the linked rooms. This method tests each operation with one repeatable playstyle.
+
+The trial used the same five enemy posts in each affected room. Across the seven checkpoints, the number of High-tier slots rose from one to seven. Across the seven final yards, it rose from seven to fourteen. Enemy stat profiles, terrain and the approach lineups were identical in both builds.
+
+All **70 operations** cleared across the two builds, with **210 rooms** and **140 linked-room transitions**. Paired approach results matched exactly. No carry-over mismatch or Godot script error was recorded.
+
+| Squad level | Clears, previous → trial | Total rounds | Direct enemy HP damage | Operatives downed |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 7/7 → 7/7 | 46 → 55 | 117 → 170 | 3 → 6 |
+| 3 | 7/7 → 7/7 | 46 → 55 | 114 → 179 | 1 → 5 |
+| 5 | 7/7 → 7/7 | 44 → 52 | 107 → 183 | 0 → 3 |
+| 7 | 7/7 → 7/7 | 42 → 48 | 99 → 156 | 0 → 2 |
+| 9 | 7/7 → 7/7 | 43 → 47 | 108 → 146 | 0 → 2 |
+| **All** | **35/35 → 35/35** | **221 → 257** | **545 → 834** | **4 → 18** |
+
+Downs count unique operatives within an operation. The trial had one permanent loss, already counted among the 18. At Level 7 in Volga, Hawk Wings went down in the checkpoint, returned wounded for the yard and went down again. The earlier lineups had zero permanent losses.
+
+Each cell below shows total rounds followed by operatives downed for the complete linked sweep.
+
+| Sweep and lead origin | Level 1 | Level 3 | Level 5 | Level 7 | Level 9 |
+| --- | --- | --- | --- | --- | --- |
+| Northwestern, Jaguar | 6/1 → 6/1 | 5/0 → 7/2 | 5/0 → 7/1 | 5/0 → 6/1 | 5/0 → 6/1 |
+| Southern, Steel Skin | 6/0 → 7/0 | 6/0 → 7/0 | 6/0 → 7/0 | 6/0 → 6/0 | 6/0 → 6/0 |
+| Volga, Hawk Wings | 8/1 → 9/1 | 8/1 → 9/2 | 8/0 → 8/1 | 7/0 → 8/1 | 7/0 → 7/1 |
+| Ural, Drone Command | 7/0 → 9/1 | 7/0 → 9/0 | 5/0 → 7/0 | 5/0 → 6/0 | 6/0 → 6/0 |
+| North Caucasian, Jekyll / Hyde | 6/0 → 8/1 | 6/0 → 8/0 | 6/0 → 8/0 | 5/0 → 6/0 | 5/0 → 6/0 |
+| Far Eastern, Telepathy | 6/0 → 8/1 | 7/0 → 8/1 | 7/0 → 8/1 | 6/0 → 8/0 | 6/0 → 8/0 |
+| Siberian, Darwinian | 7/1 → 8/1 | 7/0 → 7/0 | 7/0 → 7/0 | 8/0 → 8/0 | 8/0 → 8/0 |
+
+The checkpoint added 14 rounds across the 35 paired runs, and the final yard added 22. Northwestern and Volga accounted for 12 of the 18 trial downs. Southern caused no downs, so it gives this squad an easier entry point. Matryoshka dealt the most direct HP damage in the trial, with 177 HP across 25 appearances. Clergy restored 39 HP in the trial after recording zero healing with the previous lineups, and Hammer dealt 16 direct HP damage after recording zero. These totals reflect different numbers of appearances and supporting formations. Repeat Northwestern and Volga with other squads and compare the choice to extract after the checkpoint before locking the formations.
+
+## 27 November Northwestern and Volga squad retest
+
+The stronger formations stayed in use. Godot 4.7.2 on Windows deployed each of two alternate five-operative squads through Headquarters at Levels 1, 3, 5, 7 and 9 on both sweeps. The driver repeated the earlier tactical input policy and played all three linked rooms, carrying HP, downs and consumables. Each operation began with a fresh squad at full HP.
+
+- **Fire support** used Artillery Suit, Eye Powers, Psionic Armour, Telekinesis and Jekyll / Hyde.
+- **Close control** used Jaguar, Steel Skin, Hawk Wings, Darwinian and Drone Command, with Guardian Chassis selected from Level 3 onward.
+- **Original comparison** uses the same stronger lineups from the first test. Its Northwestern squad was Jaguar, Steel Skin, Eye Powers, Telekinesis and Jekyll / Hyde. Its Volga squad was Hawk Wings, Steel Skin, Telekinesis, Jekyll / Hyde and Drone Command.
+
+All 20 new main runs cleared, covering 60 rooms and 40 linked transitions with no carry-over mismatch. The two Level 5 rendered spot checks reproduced the headless casualties and final HP. The table includes the 10 original comparison runs. Downs count unique operatives within each run, including operatives permanently lost.
+
+| Squad level | Northwestern clears | Northwestern downs / losses | Volga clears | Volga downs / losses |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 3/3 | 7 / 4 | 3/3 | 5 / 3 |
+| 3 | 3/3 | 6 / 2 | 3/3 | 5 / 2 |
+| 5 | 3/3 | 6 / 4 | 3/3 | 4 / 1 |
+| 7 | 3/3 | 5 / 2 | 3/3 | 2 / 2 |
+| 9 | 3/3 | 4 / 0 | 3/3 | 2 / 0 |
+
+**Northwestern, Freight Yard Sweep.** Recommend Level 9 as the general minimum for committing to all three rooms. The close-control squad suffered permanent losses at every tested level below 9. It still had three operatives down at Level 9, and the original squad had one. The fire-support squad took no downs at Levels 7 and 9, making Level 7 a reasonable minimum for that composition. Matryoshka was a repeat threat across both later rooms.
+
+**Volga, Weir Compound Sweep.** Recommend Level 9 for a general squad. At Level 7, both the original and close-control squads lost one operative permanently. At Level 9, each suffered one down and both recovered. The fire-support squad had no downs at any tested level. Level 3 is a reasonable minimum for that composition because at Level 1 three operatives finished on 3 HP, while at Level 3 everyone finished on at least 10 HP.
+
+These are briefing recommendations for fresh squads. Level 9 was the first tested level with no permanent losses across all three squad compositions at either site. Each composition used one scripted playstyle, with one main attempt per level.
+
+## 27 November remaining five sweep retests
+
+Godot 4.7.2 on Windows ran the other five sweeps with the same fire-support and close-control compositions used for the Northwestern and Volga retest. Each squad began fresh and fully healed at uniform Levels 1, 3, 5, 7 and 9. The driver used the same tactical input policy and played through the linked rooms via Headquarters. The comparison also uses the original squad at each site from the stronger-lineup trial, for three compositions at each site and level.
+
+Of 50 new runs, 49 cleared. The Level 1 close-control squad was wiped in Ural’s final yard. All squads reached the final yard, completing 100 linked-room transitions in the new runs with no carry-over mismatch. All 25 original comparison runs cleared.
+
+| Sweep | Level 1 | Level 3 | Level 5 | Level 7 | Level 9 | General minimum | With fire support |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Southern · Floodplain | 4 / 2 | 4 / 0 | 3 / 0 | 1 / 0 | 1 / 0 | 3 | 3 |
+| North Caucasian · Pass Road | 4 / 1 | 2 / 1 | 3 / 1 | 3 / 2 | 3 / 0 | 9 | 5 |
+| Ural · Ore Terminal | 7 / 4 | 3 / 0 | 4 / 2 | 1 / 1 | 1 / 0 | 9 | 3 |
+| Siberian · Timber Depot | 3 / 1 | 3 / 2 | 3 / 1 | 1 / 0 | 1 / 0 | 7 | 1 |
+| Far Eastern · Coastal Depot | 5 / 3 | 6 / 2 | 5 / 1 | 2 / 0 | 2 / 0 | 7 | 7 |
+
+The level columns show operatives downed and permanent losses across all three compositions, with permanent losses included in the down count. General recommendations use the first tested level from which all three compositions cleared without permanent losses at that level and at every higher tested level. Recommendations with fire support also account for wounds at the end of the sweep.
+
+- **Southern.** The three squads cleared without permanent losses from Level 3 onward. Four operatives went down at Level 3, and the fire-support squad finished that run with at least 7 HP on everyone.
+- **North Caucasian.** Close control took permanent losses through Level 7. The fire-support squad lost no one but finished with one operative at 1 HP at Level 3. Its lowest final HP at Level 5 was 8.
+- **Ural.** Level 3 was loss-free, but close control lost operatives at Levels 5 and 7. Fire support took no downs starting at Level 3.
+- **Siberian.** Fire support took no downs at any tested level and everyone finished the Level 1 run with at least 4 HP. Close control had permanent losses through Level 5.
+- **Far Eastern.** Close control lost operatives through Level 5. The fire-support squad had one down at Level 3 and finished Level 5 with one operative at 2 HP. At Levels 7 and 9 its lowest final HP was 9 and 8, respectively.
+
+The briefing values are advisory for fresh squads. Each composition had one run at each level under one tactical input policy.
+
+## 27 November patrol, relay and rescue retest
+
+Godot 4.7.2 on Windows played all 21 one-room campaign operations with the fire-support and close-control squads from the sweep retests. Five fully healed operatives at the same manual level entered each run. The test matrix covered Levels 1, 3, 5, 7 and 9, with one attempt per squad at each level. The driver deployed from Headquarters and used the action bar, board clicks and end turn. Relay clears required destroying the generator and rescue clears required releasing both prisoners, in addition to defeating all hostiles.
+
+All **210 runs** cleared. The scripts verified generator destruction for all 70 relay clears and both prisoner releases for all 70 rescue clears. Fire support had one down and zero permanent losses in 105 runs. Close control had 18 downs and two permanent losses in 105 runs. Both losses occurred in the Level 1 Clifftop Relay clear.
+
+| Squad level | Clears | Operatives downed | Permanent losses |
+| --- | ---: | ---: | ---: |
+| 1 | 42/42 | 6 | 2 |
+| 3 | 42/42 | 8 | 0 |
+| 5 | 42/42 | 2 | 0 |
+| 7 | 42/42 | 2 | 0 |
+| 9 | 42/42 | 1 | 0 |
+
+Patrols recorded zero downs, relays recorded 16, and rescues recorded three. The following cells show the general minimum and the fire-support minimum when lower.
+
+| District | Patrol | Relay | Rescue |
+| --- | ---: | ---: | ---: |
+| Northwestern | 1 | 3 / 1 | 1 |
+| Southern | 1 | 5 / 1 | 5 / 1 |
+| North Caucasian | 1 | 7 / 1 | 7 / 1 |
+| Volga | 3 / 1 | 9 / 5 | 1 |
+| Ural | 1 | 3 / 1 | 9 / 3 |
+| Siberian | 1 | 1 | 3 |
+| Far Eastern | 3 / 1 | 9 / 1 | 3 / 1 |
+
+The guidance uses the first tested level from which the applicable squads cleared with zero downs and every operative finished above a quarter of maximum HP at that level and at each higher tested level. Three general thresholds use Level 9 as cautious advice because at that level close control finished with one operative at 2 HP in Turbine Relay and one at 4 HP in Mine Office Rescue, and took a down in Clifftop Relay. Fire support reached the lower recommended level in all three. The recommendations reflect one scripted playstyle and one attempt per site, level and composition. Deployment remains open at any level.
+
 ## Original three-room chain
 
 | Run | Room 2 radio | Room 3 at entry | Outcome |
@@ -222,3 +402,20 @@ The editor opened the imported project. Windows window activation timed out twic
 The rendered input driver passed **84 checks**. It opened fixtures **1–6** with **M** and the number keys, deployed with **Enter**, exercised squad and action clicks, movement, wheel zoom, camera pivot and fit, and opened the ledger and Sabotage annex through **Development**. Fixture 1 used staged final attacks and normal board clicks and room transitions. Wounded HP and a spent Medkit carried forward, and the missed radio added three hounds in Room 3. The editor opened the imported project. Window activation timed out twice, so this pass used a direct Godot launch.
 
 The Level 9 bunker layout also fit in a **1280 × 720** window. The smallest captions were harder to read at that size. One launch hit an Intel OpenGL crash during shader initialization. A direct retry rendered all four HUD captures successfully. Full manual playthroughs and readability below 1280 × 720 remain open. [Presentation direction](design/VISION.md#confirmed-presentation-baseline)
+
+## Overwatch in the mixed enemy trials
+
+27 November 2026. Godot **4.7.2** on Windows. The input driver opened Cordon, Foundry, Choir and Vanguard with **M → 7–9 or 0 → Enter** and cleared all nine rooms under three opening and movement policies. Each room started with a fresh fixture squad. The driver chose player actions and used ordinary key and board inputs. Enemy turns used the tactical AI. Choir crossings were replayed from matched positions, with a rendered OpenGL Compatibility capture of the crossing preview.
+
+| Player approach | Enemy cones | Cones with two shots available | Cones that fired twice | Shots on player moves | Overwatch losses |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Choose moves without considering cones | 4 | 1 | 1 | 4 shots across 213 moves | 4 armour |
+| Penalise threatened routes | 4 | 1 | 0 | 0 shots across 211 moves | 0 |
+| End the opening turn without acting, then choose moves without considering cones | 16 | 4 | 0 | 3 shots across 164 moves | 4 armour, 1 HP |
+
+- **AI aim.** In the two runs that ignored cones, all 20 cones faced the nearest standing operative. In 18 cases a wall blocked the line to that operative, and 13 cones contained no tile with clear line of sight from the shooter. The slow opening exposed this in several rooms. In Vanguard Room 1, the Siberian twice aimed from (10, 14) at Alkhimik at (8, 14), directly through the wall. In Cordon Room 2 the Grenadier covered 14 tiles and had line of sight to zero of them.
+- **Repeat fire in a normal clear.** One Clergy cone in Choir Room 1 spent both shots on separate moves by Scythe and Anvil. Across the two runs that ignored cones, only five cones had the AP and ammo for two shots. None of the observed Overwatch damage downed an operative.
+- **Matched routes.** In Choir Room 1, Iskra's four-step, 1 AP route from (15, 10) to (17, 8) took two Clergy shots for 1 armour and 1 HP. The eight-step route through (13, 8) reached the same tile for 2 AP without taking a shot. In Room 2, Anvil's 1 AP route from (12, 12) to (13, 10) cost 1 armour. The 2 AP route through (15, 12) avoided it.
+- **Marksman stress case.** In Cordon Room 1, the driver staged Iskra at (12, 0) and set the Marksman's fully loaded cone from its authored position. Clicking (15, 2) drew two 4-damage shots. Full-health Iskra finished at 1 HP from 8 HP and 1 armour. Starting at 6 HP with the same armour, the second shot downed Iskra. The staged position tested the cost of crossing a high-damage cone and did not contribute to the natural AI shot counts.
+
+Repeat fire created manageable pressure in these fresh-room clears. A two-shot Marksman crossing can effectively spend an operative's health bar in one move. The rendered route preview showed the red cone and normal movement cost, so it gave no shot count for the selected path. The strongest follow-ups are to show expected shots on the hovered route and have enemy AI weigh visible approach tiles when it aims. Linked-room attrition and overlapping high-damage cones were outside this sample. [Overwatch rules](design/COMBAT.md#overwatch)

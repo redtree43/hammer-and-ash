@@ -50,16 +50,16 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Leap up to three tiles, crossing at most one occupied tile, then hit an adjacent enemy.",
+            "mechanic": "Leap up to four tiles, crossing at most one occupied tile, then hit an adjacent enemy.",
             "rule": ""
           },
           {
             "name": "Rake",
             "type": "A",
-            "ap": 2,
+            "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2. Deal basic melee damage to enemies on two distinct adjacent tiles.",
+            "mechanic": "Choose up to three distinct adjacent tiles. Deal basic melee damage once to each enemy on those tiles. Repeat the last tile to finish early.",
             "rule": ""
           }
         ],
@@ -70,7 +70,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Reaction · once per round · Make a basic melee hit when an adjacent foe walks away. Shoves, leaps and teleports skip this reaction.",
+            "mechanic": "You can make two walking-away melee reactions per round, one per eligible departure. Shoves, leaps and teleports bypass these reactions.",
             "rule": ""
           }
         ],
@@ -81,16 +81,16 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Hit an adjacent enemy. The next direct squadmate hit before your next turn deals +2 damage.",
+            "mechanic": "Hit an adjacent enemy. The next direct squadmate hit before your next turn deals +2 damage.",
             "rule": ""
           },
           {
             "name": "Crush Bite",
             "type": "A",
-            "ap": 2,
+            "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2. Strip up to 2 armour capacity from an adjacent enemy before resolving a basic melee hit.",
+            "mechanic": "Bite an adjacent enemy for basic melee damage and permanently shred up to 4 armour capacity.",
             "rule": ""
           }
         ],
@@ -228,7 +228,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Reaction · once per round · Make a basic melee hit when an adjacent foe walks away. Shoves, leaps and teleports skip this reaction.",
+            "mechanic": "You can make two walking-away melee reactions per round, one per eligible departure. Shoves, leaps and teleports bypass these reactions.",
             "rule": ""
           }
         ],
@@ -248,7 +248,7 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Spray a straight three-tile line. Give each organic unit Venom with zero impact damage. Solid walls stop the spray.",
+            "mechanic": "Aim a three-row cone, one, two and three tiles wide. Apply Venom to organic units in the cone. Walls block the spray.",
             "rule": ""
           }
         ],
@@ -259,7 +259,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per room, after an incoming hit depletes your current armour, resolve any HP spillover first. If still standing, immediately refill armour to its current maximum.",
+            "mechanic": "Once per room, at the end of the enemy turn, clear Burning and Irradiated from yourself if either is active.",
             "rule": ""
           },
           {
@@ -368,7 +368,7 @@
             "ap": 1,
             "limit": "",
             "tags": "",
-            "mechanic": "Pick up an adjacent enemy and throw it up to three tiles away.",
+            "mechanic": "Throw an adjacent eligible enemy up to three tiles. On collision with another enemy, both take 2 damage. A collision with destructible low or high cover destroys it and deals 2 damage to the thrown unit.",
             "rule": ""
           },
           {
@@ -399,7 +399,7 @@
             "ap": 1,
             "limit": "",
             "tags": "",
-            "mechanic": "Blind units in an area centred on Steel Skin.",
+            "mechanic": "Aim a three-row cone, one, two and three tiles wide. Blind enemies caught in it.",
             "rule": ""
           },
           {
@@ -439,7 +439,7 @@
             "ap": 2,
             "limit": "",
             "tags": "",
-            "mechanic": "Charge forward and disrupt cover. Enemies in the path can be knocked back two tiles and take a small amount of damage. Travel distance, cover effects and damage are open.",
+            "mechanic": "Charge up to four tiles. Deal 5 structural damage to destructible cover edges crossed. Hit each enemy in the path once for 1 damage and knock it back up to two tiles.",
             "rule": ""
           }
         ],
@@ -470,7 +470,7 @@
             "ap": 2,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2. Strike one adjacent enemy three times. Each hit deals Iron Fist's base damage (3 in this review).",
+            "mechanic": "Hit one adjacent enemy three times at Iron Fist's base damage. The first hit shreds 2 armour capacity. The final hit knocks a surviving enemy back up to two tiles.",
             "rule": ""
           }
         ]
@@ -495,7 +495,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Gain +3 armour capacity. The ranged lending action is the Level 3 choice in this draft.",
+            "mechanic": "Gain +3 armour capacity and unlock Lend Armour. Spend 1 AP to transfer up to 3 current armour to an ally within four tiles until your next turn. Unused armour returns.",
             "rule": ""
           }
         ],
@@ -506,7 +506,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Increase the ally-targeting range of Lend Armour or Shelter Reflex by one tile.",
+            "mechanic": "Increase the ally-targeting range of Lend Armour and Shelter Reflex by one tile.",
             "rule": ""
           },
           {
@@ -521,12 +521,12 @@
         ],
         [
           {
-            "name": "Lend Armour",
+            "name": "Defence is the Best Offense",
             "type": "A",
             "ap": 1,
-            "limit": "",
+            "limit": "CD2",
             "tags": "",
-            "mechanic": "Send your current armour to an ally up to five tiles away. Transfer up to 3 armour until your next turn. Unused armour returns.",
+            "mechanic": "Gain 2 temporary armour and deal +1 attack damage until your next turn.",
             "rule": ""
           },
           {
@@ -554,19 +554,19 @@
           {
             "name": "Encasing Armour",
             "type": "A",
-            "ap": 2,
+            "ap": 1,
             "limit": "",
             "tags": "",
-            "mechanic": "Wrap one enemy in your armour, deal 4 damage and immobilise it for the turn. Psionic Armour has no armour for the next enemy turn.",
+            "mechanic": "Deal 6 damage to a foe within four tiles and immobilise it for the turn. Anvil loses all current armour for the next enemy turn.",
             "rule": ""
           },
           {
             "name": "Pressure Front",
             "type": "A",
-            "ap": 2,
+            "ap": 1,
             "limit": "",
             "tags": "",
-            "mechanic": "Spend all current armour and deal 3 damage to other units within two tiles. Skip the next armour refresh. These are provisional playtest values.",
+            "mechanic": "Spend all current armour to deal that much damage to enemies within two tiles. Skip your next armour refresh.",
             "rule": ""
           }
         ],
@@ -577,16 +577,16 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "The ally protected by Lend Armour or Shelter Reflex also gains the benefits of full cover for the duration of that protection. Cover protects from the side facing Anvil.",
+            "mechanic": "While protected by Lend Armour or Shelter Reflex, the ally benefits from low cover from every direction.",
             "rule": ""
           },
           {
-            "name": "Shock Grapple",
+            "name": "Returning Defence",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "When Lend Armour returns or Shelter Reflex expires, strengthen Psionic Armour's protection. Gain 1 temporary armour until your next turn.",
+            "mechanic": "When Lend Armour or Shelter Reflex expires, gain 1 temporary armour on the following player turn.",
             "rule": ""
           }
         ],
@@ -597,18 +597,18 @@
             "ap": 2,
             "limit": "",
             "tags": "",
-            "mechanic": "Charge forward and disrupt cover. Enemies in the path can be knocked back two tiles and take a small amount of damage. Travel distance, cover effects and damage are open.",
+            "mechanic": "Charge up to four tiles. Deal 5 structural damage to destructible cover edges crossed. Hit each enemy in the path once for 1 damage and knock it back up to two tiles.",
             "rule": ""
           }
         ],
         [
           {
-            "name": "Mantle Recall",
+            "name": "Mental Fortress",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per round, recall a chosen ally’s mantle to absorb up to 2 damage from a direct hit against you. The ally loses that mantle. Select the recipient to arm the reaction.",
+            "mechanic": "Gain +1 armour capacity and benefit from low cover from every direction.",
             "rule": ""
           }
         ],
@@ -641,12 +641,12 @@
       "levels": [
         [
           {
-            "name": "Designate Quarry",
+            "name": "Designate Target",
             "type": "A",
             "ap": 1,
             "limit": "T1",
             "tags": "",
-            "mechanic": "1 AP · once per turn. Apply Vulnerable to one visible enemy within eight tiles until your next turn. Each of the next three attack hits from any attacker deals 2 additional direct HP damage. The third hit ends the designation. A new Needle designation refreshes the allowance to three and becomes the active mark. Each Needle can maintain one active mark.",
+            "mechanic": "Mark one visible enemy within eight tiles until your next turn. Your next three attack hits deal 2 additional direct HP damage each. A new Needle designation refreshes the allowance and becomes the active mark. Only the Needle who applied the active designation can spend its three hits. Each Needle can maintain one active mark.",
             "rule": ""
           },
           {
@@ -655,7 +655,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Direct Eye attacks gain +1 damage at five or more tiles. Adjacent targets take 1 less damage from your Eye attacks, minimum one.",
+            "mechanic": "Direct Eye attacks deal +1 damage at five or more tiles.",
             "rule": ""
           }
         ],
@@ -666,16 +666,16 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Sightline gains one reach.",
+            "mechanic": "Sightline gains two tiles of reach.",
             "rule": ""
           },
           {
-            "name": "Afterglow",
+            "name": "Short-Sighted",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "After Sightline damages enemy HP, its next use on the same foe this turn costs no charge, once per turn.",
+            "mechanic": "Direct attacks against targets within four tiles deal +2 damage.",
             "rule": ""
           }
         ],
@@ -695,7 +695,7 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Hit two distinct foes within six that are adjacent to each other for 2 damage each.",
+            "mechanic": "Hit two foes within six tiles for 4 damage each if they are adjacent to each other.",
             "rule": ""
           }
         ],
@@ -714,10 +714,10 @@
           {
             "name": "Sweep Beam",
             "type": "A",
-            "ap": 2,
+            "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2. Choose three consecutive visible tiles in a straight line within six. Each occupant takes 3 damage.",
+            "mechanic": "Deal 3 damage to units occupying three consecutive visible tiles in a straight line within six tiles.",
             "rule": ""
           },
           {
@@ -726,7 +726,7 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Deal 2 armour-piercing damage within five. If the foe survives, its next standard move loses one tile.",
+            "mechanic": "Deal 2 armour-piercing damage within five tiles and Blind the target for one turn.",
             "rule": ""
           }
         ],
@@ -737,16 +737,16 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Eye Powers attacks deal +1 damage per hit.",
+            "mechanic": "Basic Sightline attacks deal +2 damage.",
             "rule": ""
           },
           {
-            "name": "Peripheral Vision",
+            "name": "Fiery Gaze",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Sightline and ranged Eye Powers attacks gain one tile of reach.",
+            "mechanic": "Basic Sightline attacks apply Burning.",
             "rule": ""
           }
         ],
@@ -768,7 +768,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "You are immune to Blinded. Your attacks ignore half and full cover. Solid walls still block line of sight.",
+            "mechanic": "Sweep Beam destroys destructible cover on its affected tiles. Corneal Lance Blinds for three turns.",
             "rule": ""
           }
         ],
@@ -779,16 +779,16 @@
             "ap": 2,
             "limit": "R1",
             "tags": "",
-            "mechanic": "2 AP · once per room. Hit a visible foe within eight for 6 armour-piercing damage and apply Burning.",
+            "mechanic": "Hit one visible foe within eight tiles for 8 armour-piercing damage.",
             "rule": ""
           },
           {
-            "name": "Prismatic Burst",
+            "name": "The Void's Gaze",
             "type": "A",
             "ap": 2,
             "limit": "R1",
             "tags": "",
-            "mechanic": "2 AP · once per room. Hit one visible foe within seven for 4 damage and Freeze it for its next turn, preventing voluntary movement.",
+            "mechanic": "Hit one visible foe within seven tiles for 4 damage and Freeze it for its next turn, preventing voluntary movement.",
             "rule": ""
           }
         ]
@@ -799,12 +799,12 @@
       "levels": [
         [
           {
-            "name": "Designate Quarry",
+            "name": "Designate Target",
             "type": "A",
             "ap": 1,
             "limit": "T1",
             "tags": "",
-            "mechanic": "1 AP · once per turn. Apply Vulnerable to one visible enemy within eight tiles until your next turn. Each of the next three attack hits from any attacker deals 2 additional direct HP damage. The third hit ends the designation. A new Needle designation refreshes the allowance to three and becomes the active mark. Each Needle can maintain one active mark.",
+            "mechanic": "Mark one visible enemy within eight tiles until your next turn. Your next three attack hits deal 2 additional direct HP damage each. A new Needle designation refreshes the allowance and becomes the active mark. Only the Needle who applied the active designation can spend its three hits. Each Needle can maintain one active mark.",
             "rule": ""
           },
           {
@@ -819,7 +819,7 @@
         ],
         [
           {
-            "name": "Long Primaries",
+            "name": "Spread Your Wings",
             "type": "P",
             "ap": null,
             "limit": "",
@@ -833,7 +833,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "After Fly, ignore the first walking-away melee reaction from the foe you next hit this turn.",
+            "mechanic": "After landing from flight, ignore the first walking-away melee reaction against you before your next turn.",
             "rule": ""
           }
         ],
@@ -853,7 +853,7 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Make a basic melee hit, then fly up to two tiles to a legal landing.",
+            "mechanic": "Make a basic melee hit, then fly up to three tiles to a legal landing.",
             "rule": ""
           }
         ],
@@ -872,19 +872,19 @@
           {
             "name": "Raking Pass",
             "type": "A",
-            "ap": 2,
+            "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2. Fly up to four tiles over one chosen foe. Deal 4 damage to it and land beyond it.",
+            "mechanic": "Choose a legal landing up to three tiles away. Deal 4 damage to each enemy you fly over on the way.",
             "rule": ""
           },
           {
-            "name": "Hook and Drop",
+            "name": "Strike and Drop",
             "type": "A",
             "ap": 2,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2. Hit an adjacent foe for 3 damage, then move an eligible one-tile foe onto an empty tile adjacent to you.",
+            "mechanic": "Hit an adjacent enemy for 3 damage, then fly up to three tiles with an eligible survivor. Choose a legal tile adjacent to your landing to drop them.",
             "rule": ""
           }
         ],
@@ -926,7 +926,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "You are immune to effects that Slow or immobilise you, including Freeze. Walking and flight still require legal paths and landings.",
+            "mechanic": "If you start your turn at high elevation, your first attack that round deals +2 damage.",
             "rule": ""
           }
         ],
@@ -959,12 +959,12 @@
       "levels": [
         [
           {
-            "name": "Induction Tap",
+            "name": "Breach Kit",
             "type": "A",
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Pulse one visible foe within three for 1 damage. A robot also loses two current armour before the hit.",
+            "mechanic": "Deal 3 structural damage to a visible destructible cover edge within three tiles. Select both tiles bordering the edge.",
             "rule": ""
           },
           {
@@ -973,7 +973,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Deploy with one drone on an adjacent legal tile. Your light power armour grants +1 armour capacity. The drone has 4 HP, 1 armour capacity, and a 2-damage Arc Bolt at reach four. See Drone orders above.",
+            "mechanic": "Gain +1 armour capacity. Deploy one drone with 4 HP and 1 armour. Spend operator AP on one order per turn from anywhere in the room. Scout Run costs 1 AP and moves up to two tiles, then optionally fires Arc Bolt for 2 damage within four tiles. Drone HP and destruction carry across rooms.",
             "rule": ""
           }
         ],
@@ -984,7 +984,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Unlock Chain Arc as a 2 AP drone order, CD2. Hit a visible foe within four tiles for 3 damage, then choose up to two more foes for 2 and 1 damage. Each jump can bend around a corner if the next foe is within two tiles of, and visible from, the previous target. A unit can only be hit once per arc.",
+            "mechanic": "Unlock Pincer Run (1 AP, CD2). Move the drone up to three tiles, then shoot a visible enemy within four for 3 damage. A hit from a different cover-facing side than the operator cancels the target's active Overwatch.",
             "rule": ""
           },
           {
@@ -993,49 +993,49 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Gain +1 drone armour capacity and unlock Rolling Barricade as a drone order, CD2. Move the drone up to three legal tiles and choose a cardinal facing. It projects three contiguous full-cover edges perpendicular to that facing, centred on its forward edge. Preview the line before committing. The line provides cover without blocking movement and lasts until your next turn or until the drone moves or is destroyed.",
+            "mechanic": "Gain +1 drone armour capacity and unlock Shield Run (1 AP, CD2). Move up to three tiles and choose a direction. Project three full-cover edges until your next turn, drone movement or destruction.",
             "rule": ""
           }
         ],
         [
-          {
-            "name": "Magnetic Tow",
-            "type": "A",
-            "ap": 1,
-            "limit": "CD2",
-            "tags": "",
-            "mechanic": "1 AP · CD2. Pull a visible standard-or-lighter enemy within three tiles of the drone one legal tile toward it. Measure visibility from the drone. This leaves the drone's activation available, so you can pull an enemy into an arc or out from behind cover before giving the order.",
-            "rule": ""
-          },
           {
             "name": "Field Service",
             "type": "A",
             "ap": 1,
             "limit": "R1",
             "tags": "",
-            "mechanic": "1 AP · once per room. Service the adjacent drone to restore 2 HP and reset its chassis signature cooldown. This leaves its activation available and requires a surviving drone.",
+            "mechanic": "Restore 2 HP to the adjacent drone and reset its chassis order cooldown. The drone keeps its order for the turn.",
             "rule": ""
-          }
-        ],
-        [
+          },
           {
-            "name": "Grounded Chassis",
-            "type": "P",
-            "ap": null,
-            "limit": "",
-            "tags": "",
-            "mechanic": "If you end your turn without moving, reduce damage from the first incoming direct hit by 1 before your next turn. Moving ends the protection.",
-            "rule": ""
-          }
-        ],
-        [
-          {
-            "name": "Rescue Winch",
+            "name": "Recovery Winch",
             "type": "A",
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Swap the drone with a visible, willing one-tile squadmate within three tiles of the drone. Both destinations must be legal. Resolve landing hazards. This uses the drone's activation and gives the rescued ally two temporary armour until your next turn.",
+            "mechanic": "Swap the drone with a visible, willing single-tile ally within three tiles of it. The ally gains 2 temporary armour until your next turn. Uses the drone's order.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Shock Mounts",
+            "type": "P",
+            "ap": null,
+            "limit": "",
+            "tags": "",
+            "mechanic": "Once per round, reduce the first Overwatch hit against the operator by 1 damage.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Hardpoint Upgrade",
+            "type": "P",
+            "ap": null,
+            "limit": "",
+            "tags": "",
+            "mechanic": "Pincer Run can arc to one more visible enemy within two tiles of the first for 2 damage. Shield Run can also grant 2 temporary armour until your next turn to one adjacent ally you select.",
             "rule": ""
           },
           {
@@ -1044,49 +1044,49 @@
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Place a visible mine on an empty tile within two tiles and line of sight of either the operator or the drone. The first enemy to step onto it before your next turn takes 2 damage and becomes Shocked. Only one mine can be active. The operator can place it even after the drone is destroyed.",
+            "mechanic": "Place one visible mine on an empty tile within two tiles of the operator or drone. The first enemy to enter before your next turn takes 2 damage and becomes Shocked. You can use this after drone loss.",
             "rule": ""
           }
         ],
         [
           {
-            "name": "Crossfire",
+            "name": "Hardened Frame",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per turn, your first Arc Pistol hit that comes from a different cover-facing side than the drone's earlier hit on the same target this turn deals +2 damage. For a Chain Arc jump, use the tile of the previous target as the source.",
+            "mechanic": "The drone gains 2 maximum HP.",
             "rule": ""
           },
-          {
-            "name": "Retaliation Circuit",
-            "type": "P",
-            "ap": null,
-            "limit": "",
-            "tags": "",
-            "mechanic": "Once per round, after surviving a direct hit from an enemy it can legally target with Arc Bolt, the drone returns fire. This reaction uses neither operator AP nor the drone's activation.",
-            "rule": ""
-          }
-        ],
-        [
-          {
-            "name": "Field Rewire",
-            "type": "A",
-            "ap": 1,
-            "limit": "R1",
-            "tags": "",
-            "mechanic": "1 AP · once per room. Restore up to two current armour to yourself or a visible allied machine within three, including your drone. This does not repair HP or rebuild a destroyed drone.",
-            "rule": ""
-          }
-        ],
-        [
           {
             "name": "Tandem Drive",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per turn, after the operator takes a standard move, the drone may move up to two legal tiles without spending its activation. The drone can take this move anywhere in the room.",
+            "mechanic": "After the operator takes a standard move, move the drone up to two tiles without spending its order, once per turn. Moving ends any active Shield Run cover.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Emergency Cells",
+            "type": "A",
+            "ap": 1,
+            "limit": "R1",
+            "tags": "",
+            "mechanic": "Restore up to two basic weapon charges and gain 2 temporary armour until your next turn.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Remote Breach",
+            "type": "P",
+            "ap": null,
+            "limit": "",
+            "tags": "",
+            "mechanic": "Breach Kit can also originate from the surviving drone's tile. Uses the same AP and cooldown. The drone keeps its order.",
             "rule": ""
           }
         ],
@@ -1097,7 +1097,7 @@
             "ap": 2,
             "limit": "M1",
             "tags": "",
-            "mechanic": "2 AP · once per operation. If the drone was destroyed, rebuild it with its learned upgrades on a legal adjacent tile at half maximum HP, rounded up. It can activate on your next turn.",
+            "mechanic": "Rebuild a destroyed drone on a legal adjacent tile at half maximum HP, rounded up. It keeps its upgrades and can take orders next turn.",
             "rule": ""
           },
           {
@@ -1106,7 +1106,7 @@
             "ap": 2,
             "limit": "R1",
             "tags": "",
-            "mechanic": "2 AP · once per room. Spend the drone's unspent activation to use its chassis signature even if on cooldown, then set its normal CD2. Assault may move up to three legal tiles first and arc through up to four foes for 4, 3, 2 and 1 damage. Guardian uses Rolling Barricade and can project a second line on a different side of the drone. Up to two standing squadmates adjacent to the drone also gain two temporary armour until your next turn.",
+            "mechanic": "Use your drone's order and bypass its chassis cooldown, then set CD2. Assault moves up to four tiles and chains through up to four foes for 4, 3, 2 and 1 damage. Guardian moves up to three tiles, projects two cover lines on different sides and can give two adjacent allies 2 temporary armour each.",
             "rule": ""
           }
         ]
@@ -1117,41 +1117,41 @@
       "levels": [
         [
           {
-            "name": "Induction Tap",
+            "name": "Breach Kit",
             "type": "A",
             "ap": 1,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "1 AP · CD2. Pulse one visible foe within three for 1 damage. A robot also loses two current armour before the hit.",
+            "mechanic": "Deal 3 structural damage to a visible destructible cover edge within three tiles. Select both tiles bordering the edge.",
             "rule": ""
           },
           {
-            "name": "Boiler Plate",
+            "name": "Siege Mount",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "+2 armour capacity. Heat starts at zero, maximum four. Cannon adds one heat. At four, heat-generating actions lock until cooled. Vent for 1 AP to remove two. Lose one heat at each own turn start.",
+            "mechanic": "Gain +2 armour capacity. Anchor for 0 AP before moving and hold position for the turn. Heavy fire requires Anchor. Breach Shell (2 AP, +2 Heat, CD2) strikes a cover edge four to eight tiles away for 5 structural damage and deals 2 damage to units on either side. Maximum Heat is 4. Cool by 1 at turn start or Vent 2 for 1 AP. The basic cannon uses charges and generates no Heat.",
             "rule": ""
           }
         ],
         [
           {
-            "name": "Baffled Exhaust",
+            "name": "Quick-Lock",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Vent removes three heat.",
+            "mechanic": "Once per room, Anchor after a single standard move, provided you have made no other voluntary movement this turn.",
             "rule": ""
           },
           {
-            "name": "Braced Mount",
+            "name": "Cooling Fins",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Your first cannon hit each turn deals +1 if you have not moved.",
+            "mechanic": "Vent removes 3 Heat.",
             "rule": ""
           }
         ],
@@ -1162,89 +1162,89 @@
             "ap": 2,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2 · +2 heat. Centre a blast that deals 3 damage four to seven tiles away. Hits centre and four cardinal neighbours.",
+            "mechanic": "While anchored, hit a visible tile four to seven tiles away and its four cardinal neighbours for 3 damage each. Cover does not stop the blast. Allies can be hit. Adds 2 Heat.",
             "rule": ""
           },
-          {
-            "name": "Breaker Slug",
-            "type": "A",
-            "ap": 1,
-            "limit": "CD2",
-            "tags": "",
-            "mechanic": "1 AP · CD2 · +1 heat. Hit a foe within six for 3 damage. Against a robot, remove two current armour before impact.",
-            "rule": ""
-          }
-        ],
-        [
-          {
-            "name": "Grounded Chassis",
-            "type": "P",
-            "ap": null,
-            "limit": "",
-            "tags": "",
-            "mechanic": "If you end your turn without moving, reduce damage from the first incoming direct hit by 1 before your next turn. Moving ends the protection.",
-            "rule": ""
-          }
-        ],
-        [
           {
             "name": "Walking Barrage",
             "type": "A",
             "ap": 2,
             "limit": "CD2",
             "tags": "",
-            "mechanic": "2 AP · CD2 · +2 heat. Hit three consecutive visible tiles in a straight line within six for 3 damage each.",
-            "rule": ""
-          },
-          {
-            "name": "Arc Canister",
-            "type": "A",
-            "ap": 2,
-            "limit": "CD2",
-            "tags": "",
-            "mechanic": "2 AP · CD2 · +2 heat. Deal 2 damage to all units within one tile of a centre three to six tiles away. Robots hit lose one AP on their next refresh, once per target per round.",
+            "mechanic": "While anchored, hit three consecutive visible tiles in a straight line within eight tiles for 4 damage per occupant, including allies. Adds 2 Heat.",
             "rule": ""
           }
         ],
         [
           {
-            "name": "Heat Jacket",
+            "name": "Shock Mounts",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "While at three or four heat, reduce incoming direct attack hits by 1 damage.",
+            "mechanic": "Once per round, reduce the first Overwatch hit against the operator by 1 damage.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Flak Curtain",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "",
+            "mechanic": "While anchored, mark a three-tile-wide lane up to six tiles away. Walls block the lane. The first enemy to enter before your next turn triggers a 3-damage cross blast at the entry tile. Allies can be hit. Adds 2 Heat.",
             "rule": ""
           },
+          {
+            "name": "Incendiary Shell",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "",
+            "mechanic": "While anchored, deal 2 damage along three consecutive visible tiles in a straight line within six tiles and leave fire hazards on all three tiles, including occupied tiles. Survivors on those tiles become Burning. Adds 2 Heat.",
+            "rule": ""
+          }
+        ],
+        [
           {
             "name": "Feed Mechanism",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per turn, venting also restores one spent cannon charge.",
+            "mechanic": "Venting restores one spent Suit Cannon charge.",
             "rule": ""
-          }
-        ],
-        [
-          {
-            "name": "Field Rewire",
-            "type": "A",
-            "ap": 1,
-            "limit": "R1",
-            "tags": "",
-            "mechanic": "1 AP · once per room. Restore up to two current armour to yourself or a visible allied machine within three, including your drone. This does not repair HP or rebuild a destroyed drone.",
-            "rule": ""
-          }
-        ],
-        [
+          },
           {
             "name": "Hot Breech",
             "type": "P",
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "At exactly two heat before firing, your next heat-generating attack deals +1 damage per target. Check once per action.",
+            "mechanic": "Once per turn, a heavy attack fired at 2 or more Heat deals +1 damage per target. Check Heat before firing.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Emergency Cells",
+            "type": "A",
+            "ap": 1,
+            "limit": "R1",
+            "tags": "",
+            "mechanic": "Restore up to two basic weapon charges and gain 2 temporary armour until your next turn.",
+            "rule": ""
+          }
+        ],
+        [
+          {
+            "name": "Breach Follow-Up",
+            "type": "P",
+            "ap": null,
+            "limit": "",
+            "tags": "",
+            "mechanic": "When a heavy shot destroys a cover edge, your next basic cannon attack that turn against a unit bordering that edge costs no charge. It still costs 1 AP.",
             "rule": ""
           }
         ],
@@ -1255,16 +1255,16 @@
             "ap": 2,
             "limit": "R1",
             "tags": "",
-            "mechanic": "2 AP · once per room · +3 heat. Hit a centre four to eight tiles away and its four cardinal neighbours for 5 damage. Damage destructible cover there for 2 after hits.",
+            "mechanic": "While anchored, target a visible tile four to eight tiles away. Destroy destructible cover along its cross, then deal 6 damage at the centre and 4 on its four cardinal neighbours. Allies can be hit. Adds 3 Heat.",
             "rule": ""
           },
           {
-            "name": "Blowdown",
+            "name": "Rolling Thunder",
             "type": "A",
-            "ap": 1,
+            "ap": 2,
             "limit": "R1",
             "tags": "",
-            "mechanic": "1 AP · once per room. Discharge all heat, minimum two. Other units within two tiles take damage equal to heat removed. Surviving robots are pushed one tile if eligible.",
+            "mechanic": "Move up to three legal steps, then hit occupants of a straight four-tile line for 4 damage each, including allies. The suit holds its position after firing. Normal movement reactions apply. Adds 2 Heat.",
             "rule": ""
           }
         ]
@@ -1609,7 +1609,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per turn when Synaptic Prick hits an organic foe, you may cancel its reactions until its next turn.",
+            "mechanic": "Once per turn after Synaptic Prick hits an organic foe, use the free Suppress Reaction action to cancel that foe's reactions until its next turn.",
             "rule": ""
           }
         ],
@@ -1660,7 +1660,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "A squad member who survives the hit weakened by Distort Aim may immediately take one legal step. Resolve movement hazards and eligible reactions.",
+            "mechanic": "A squad member who survives the hit weakened by Distort Aim gains one free follow-up step. If hit during the enemy phase, the step becomes available at the start of the next player turn. It resolves hazards and eligible reactions.",
             "rule": ""
           }
         ],
@@ -1711,7 +1711,7 @@
             "ap": 1,
             "limit": "R1",
             "tags": "",
-            "mechanic": "1 AP · once per room. Move yourself or a willing adjacent squadmate up to three legal steps. This move skips walking reactions and still resolves hazards along the path.",
+            "mechanic": "1 AP · once per room. Move yourself or a willing adjacent squadmate up to three legal steps. This move skips melee departure reactions. Overwatch and movement hazards still apply.",
             "rule": ""
           }
         ],
@@ -1767,7 +1767,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "Once per turn after a Force Bolt hit, you may push the target one tile directly away if weight and destination permit. Base push affects standard or lighter units.",
+            "mechanic": "Once per turn after a Force Bolt hit, use the free Impulse Push action to move the target one tile directly away. Base push affects standard or lighter units with a legal destination.",
             "rule": ""
           }
         ],
@@ -1818,7 +1818,7 @@
             "ap": null,
             "limit": "",
             "tags": "",
-            "mechanic": "A squad member who survives the hit weakened by Distort Aim may immediately take one legal step. Resolve movement hazards and eligible reactions.",
+            "mechanic": "A squad member who survives the hit weakened by Distort Aim gains one free follow-up step. If hit during the enemy phase, the step becomes available at the start of the next player turn. It resolves hazards and eligible reactions.",
             "rule": ""
           }
         ],
@@ -1869,7 +1869,7 @@
             "ap": 1,
             "limit": "R1",
             "tags": "",
-            "mechanic": "1 AP · once per room. Move yourself or a willing adjacent squadmate up to three legal steps. This move skips walking reactions and still resolves hazards along the path.",
+            "mechanic": "1 AP · once per room. Move yourself or a willing adjacent squadmate up to three legal steps. This move skips melee departure reactions. Overwatch and movement hazards still apply.",
             "rule": ""
           }
         ],
