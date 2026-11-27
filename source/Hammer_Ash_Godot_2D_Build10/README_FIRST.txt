@@ -1,68 +1,63 @@
-HAMMER & ASH: UPRISING — BUILD 10 / MODULAR MISSION OBJECTIVES
-Godot 4.7-compatible project / no external art assets required.
+HAMMER & ASH: UPRISING — BUILD 10 REGIONAL CAMPAIGN PLAYTEST
+Godot 4.7 / GL Compatibility / no external art assets required.
 
-INSTALL
-1. Extract the ZIP in its own new folder.
-2. In Godot Project Manager, Import project.godot from that folder.
-3. Open the project and press F5.
-4. The TEST MISSION SELECTOR appears on launch. Click a card or press 1–5.
+START A CAMPAIGN OPERATION
+1. Import this folder's project.godot in Godot Project Manager and press F5.
+2. In the Resistance Bunker, use USSR to choose one of seven open districts.
+   Moscow is locked. Each open district has four missions.
+3. Select a mission from its map pin or district list. Open Deploy, select
+   five ready operatives, then use Gear & build to edit each loadout.
+   For testing, choose Earned or a Dev level from 1–9, choose an origin,
+   and click the unlocked ability choices. Reset to Personnel restores
+   that operative's usual build. Deploy again to lock in the squad.
+   Build edits apply to this operation. Manual levels pause campaign XP.
 
-BUILD 10 MISSION SELECTOR (M to reopen anytime)
-1 ORIGINAL CHAIN: three rooms, persistent injuries, timed radio TX secondary
-   and conditional hounds in Room 3. Regression test of Build 09.3.
-2 ASSASSINATION: three linked rooms. Final room has Officer Orlov (9 HP,
-   1 armour) and four escorts. From the enemy phase after player turn 3,
-   Orlov tries to reach the marked east EXIT. Kill him before he escapes;
-   if he escapes, you can still clear guards but the mission FAILS.
-3 SABOTAGE: one KGB facility. Destroy 6-HP power generator [G] AND
-   disable/destroy 6-HP prototype pod [P]. The adjacent terminal [T]
-   disables the prototype for 1 AP. Attack machines with basic guns or
-   adjacent melee. If unfinished at end of player round 3, the prototype
-   activates into a 13-HP, 3-armour, 3-AP robot [G]. Kill it and destroy
-   the generator to finish the mission, but quick-sabotage bonus is lost.
-4 RESCUE: one KGB detention facility. Free both prisoners marked [1] and
-   [2] with a 1-AP adjacent interaction and eliminate guards. Freed
-   prisoners are secured automatically after the room; no escort action.
-5 DEFENCE: one map, 20-HP safehouse [HQ], hold for 8 FULL enemy rounds.
-   Waves spawn on the START of player rounds 1, 3, 5, and 7. The next
-   wave's east entry lane is highlighted one round early. Enemy AI can
-   damage the safehouse directly. Remaining enemies do NOT prevent success
-   if the safehouse and some player operatives survive through round 8.
+REGIONAL OPERATIONS
+- Patrol: clear the hostile patrol.
+- Relay: destroy the generator with basic attacks and clear its defenders.
+- Rescue: free both prisoners by interacting from an adjacent tile (1 AP)
+  and clear the guards.
+- Sweep: clear three linked rooms. Press Enter after clearing an
+  intermediate room to advance or E to extract. HP, spent consumables and
+  down counts carry forward. AP, current armour, charges and cooldowns reset.
+- Relay stations and final sweep yards mark high ground with gold chevrons.
+  Needle's High Perch activates when her turn begins on one of those tiles.
+  Elevation-based range, line of sight and movement rules are still in review.
+- F9 returns to HQ from the mission report. Campaign state is kept for
+  the running session.
 
-TEST CONTROLS
-[M] Mission selector; select 1–5 in selector.
-[R] Restart selected mission from its beginning.
-[F6]/[F7]/[F8] Developer jump to room 1/2/3 of the active THREE-ROOM
-  mission. When playing a single-room test these shortcuts load rooms of
-  the original chain for regression. Jumps give a fresh squad.
-[1]–[5] Select units while fighting; [Tab] next operative.
-[Space] End turn; [Q] class ability; [B] Sentinel Breach;
-[O] Overwatch; [F] green base-attack lines; [H] threat;
-[L] damage ledger; [P] squad activity after mission; [V] final report.
-[Enter] Continue to next room after clearing a linked room.
+COMBAT CONTROLS
+- Click a squad selector on the left or an operative on the battlefield.
+  The 1–5 keys select directly, and Tab selects the next ready operative.
+- Use the yellow icons at the lower left or click tiles to move, attack or
+  interact. Hover an icon or arm an ability to see its cost and details below.
+  Click a reachable enemy with a melee operative to approach and strike
+  for 1 AP total. Hover a target for its stats and the action preview.
+- X reloads or recharges. J selects melee. K selects the Medkit.
+  G uses Emergency Reload if prepared. O aims Overwatch, then click to set
+  the cone. Space ends the turn. Esc cancels armed targeting, dismisses
+  overlays, or goes back through the HQ briefing and loadout screens.
+- F toggles base attack lines. H toggles enemy threat. L opens the damage
+  ledger. P opens room activity after a mission, and V opens the final report.
+  Development also includes the combat log, enemy tier mix and facing arrows.
+- Mouse wheel zooms. WASD or middle drag pans. Q and E rotate the board
+  90 degrees during combat. Home fits the room at its current orientation.
+- Each operative wears a Supersuit and can pack one consumable. The loadout
+  is locked on deployment. Enemy firearms and eligible player ranged
+  weapons use three rounds or charges and refill at room entry.
+- Light and high cover have 2 and 5 structural HP. Ordinary gunfire does
+  not damage cover. Explosions and eligible special attacks can break it.
+  Full cover blocks direct ranged hits from its protected side. A committed
+  shot still spends AP and ammo or charge. Impervious cover is indestructible.
+  Walls block line of sight and prevent firing.
 
-COMMON RULES RETAINED FROM BUILD 09.3
-- All five player operatives; all special abilities still cost 1 AP.
-- Shared-edge cover: light 2 structure HP, reinforced 5, impervious
-  indestructible, walls obstruct line of sight.
-- Regular gunfire does not destroy cover; explosives and permitted class
-  attacks do. Fuel and waste barrels are directly targetable.
-- Environmental hazards, knockback, 3-round hazard durations, persistent
-  status effects, health carry-over, armour/AP/cooldown reset between rooms.
-- Damage ledger and individual room activity reports.
+ORIGINAL CHAIN REGRESSION
+- From HQ use M, 1, then Enter to open the original three-room fixture.
+  R restarts the fixture. F6–F8 jump to a room with a fresh squad.
+  B aims Anvil Breach. F9 returns to HQ from the regression selector.
+- Use Enter between cleared rooms to exercise squad carry-over.
+  The Room 2 radio adds three hounds to Room 3 if it sends its alert.
 
-MODULAR ARCHITECTURE
-Mission selection is separate from reusable objective configurations:
-  mission_objectives: target conditions (kill/destroy/free/protect)
-  mission_objects: interactive or destructible objects and their health
-  mission_events: phase + round triggers mapped to reusable actions
-  mission_flags: persistent consequences and objective state
-The scenarios are intentionally small test configurations, not final
-campaign levels or final enemy/ability balance. Recruitable allies,
-nonlethal capture, campaign consequences, advanced escorting and alternate
-extract timing are later objective variations.
-
-VALIDATION
-The GDScript source, map placements and archive underwent static checks.
-Godot runtime was not available in this environment. F5 playtesting in
-Godot is still necessary to confirm runtime behaviour.
+VERIFICATION
+See ../../docs/IMPLEMENTATION_NOTES.md for current checks and playtest gaps.
+VALIDATION_10.txt records the original packaging pass.

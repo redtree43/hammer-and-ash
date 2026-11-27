@@ -3,6 +3,26 @@ extends RefCounted
 ## s/m/h are the shadow, midtone and highlight for each uniform or body.
 
 const SPRITES: Dictionary = {
+    "combine": [
+        ".............", "......####...", "....##vvvh#..", "...#mmvvmh#..",
+        "..#hmmmmmms#.", ".#hhmmmsssss#", "#a#a#a#a#a#a#", "#hmhmhmhmhmh#",
+        ".##mmmmmms##.", "..#s##ss##s#.", "..###.##.###.", "............."],
+    "tumbler": [
+        ".....###.....", "....#hhh#....", "....#ava#....", ".....#m#.....",
+        "...##hhh##...", "..#hhamahm#..", ".#hhmmaammm#.", "#hhmmmmmmmms#",
+        "#sssshhhssss#", ".#sssssssss#.", "..##sssss##..", "....#####...."],
+    "drone": [
+        ".............", ".............", "..##.....##..", ".#hh#...#hh#.",
+        "###mm###mm###", "..#hhvvvhh#..", "...#mmsmm#...", "....##a##....",
+        ".....#a#.....", "......#......", ".............", "............."],
+    "doll": [
+        ".....###.....", "....#hhh#....", "...#hvvvh#...", "...#haahm#...",
+        "....#mmm#....", "...#hhmhm#...", "..#hmaamhm#..", ".#hmmaammmm#.",
+        ".#hhmmammmm#.", ".#shhmmmsss#.", "..#sssssss#..", "...#######..."],
+    "steel": [
+        "....#####....", "...#hvvmh#...", "..###mm####..", ".#hhsshmmhm#.",
+        "#hm#mmamh#hm#", "#ms#hhhhh#ss#", "#ss##mmm##sm#", ".##.#sss#.##.",
+        "...#mm#mm#...", "..#hmm#mmh#..", "..#sss#sss#..", "..####.####.."],
     "Scythe": [
         "....###......",
         "...#hhm#.....",
@@ -244,6 +264,11 @@ const SPRITES: Dictionary = {
 }
 
 const MATERIAL_COLORS: Dictionary = {
+    "combine": ["#383d39", "#827946", "#d8ad64"],
+    "tumbler": ["#69313e", "#d16e59", "#f4d296"],
+    "drone": ["#34424e", "#738894", "#a4d7da"],
+    "steel": ["#343d4b", "#748492", "#bfd2d2"],
+    "doll": ["#692e40", "#ab5556", "#e0bd91"],
     "Scythe": ["#213945", "#5e8189", "#b8d3be"],
     "Wolverine": ["#393135", "#855936", "#e9b56d"],
     "Arachnid": ["#392337", "#8e3c58", "#e17c8b"],
@@ -273,7 +298,7 @@ const DETAILS: Dictionary = {
 static func create_textures() -> Dictionary[String, Texture2D]:
     var textures: Dictionary[String, Texture2D] = {}
     for role in SPRITES:
-        textures[role] = create_texture(role, 2)
+        textures[role] = create_texture(role, 5 if role == "robot" else 2)
     return textures
 
 static func create_texture(role: String, scale: int) -> ImageTexture:
@@ -297,6 +322,8 @@ static func role_for(unit: Dictionary) -> String:
         if unit.has("scythe_origin"):
             return scythe_role(str(unit["scythe_origin"]))
         return str(unit.get("kit_name", unit["name"]))
+    if unit.has("sprite"):
+        return unit["sprite"]
     if bool(unit.get("prototype_robot", false)):
         return "robot"
     if bool(unit.get("mission_target", false)):

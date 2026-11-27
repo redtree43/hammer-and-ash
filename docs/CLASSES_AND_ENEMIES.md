@@ -1,35 +1,58 @@
 # Classes and Enemies
 
+> Earlier V3 class handoff with review drafts and Build 10 fixture behavior. See the [playable bunker trees and controls](IMPLEMENTATION_NOTES.md#class-review-implementation-preview). The current specification is [Classes and enemies](design/CLASSES_AND_ENEMIES.md).
+
 ## Confirmed class identities
 
-The [22 November Class Design Update](../references/design/CLASS_DESIGN_UPDATE_2026-11-22.md) defines six classes by the tactical problems they solve. Each class has a common role and shared abilities, with distinct powers and meaningful weaknesses across its archetypes. Exclusive powers keep their advantages where hybrid builds are allowed. Skill trees grant abilities and passives without consuming equipment slots. Complementary squads should have an advantage while retaining viable responses to unfavourable matchups.
+The earlier V3 bunker trees gave each class shared skills and two exclusive origins. This baseline used manual level and node selection. [V3 controls](IMPLEMENTATION_NOTES.md#v3-player-classes) · [Tree data](../source/Hammer_Ash_Godot_2D_Build10/data/player_classes_v3.json).
 
-| Class | Former name | Confirmed tactical role | Provisional power archetypes |
+| Class | Former name | V3 tactical role | V3 origins |
 | --- | --- | --- | --- |
-| **Scythe** | Razor | Close-quarters damage dealer | Wolverine, Arachnid, Blink |
-| **Anvil** | Sentinel | Defence and squad protection | Steel Skin, Shieldbearer, Plastic Skin |
-| **Glaz** | Observer | Enemy disruption and battlefield control | Gravity manipulation, neural disruption, sensory manipulation |
-| **Needle** | Marksman | Precision target elimination | Sniper, aerial or Hawk-style assassin, armour-piercing specialist |
-| **Iskra** | Engineer | Technology and environmental manipulation | Magnetism, robot deployment, fortification and terrain manipulation |
-| **Alkhimik** | Biochemist | Healing, biological enhancement and chemical warfare | Healing, mutagenic enhancement, toxins and chemical warfare |
+| **Scythe** | Razor | Close-quarters striker | Wolverine / Scorpion |
+| **Anvil** | Sentinel | Frontline bruiser | Steel Skin / Psionic Armour |
+| **Glaz** | Observer | Battlefield distorter | Telepathy / Telekinesis |
+| **Needle** | Marksman | Priority-target eliminator | Eye Powers / Hawk Wings |
+| **Iskra** | Engineer | Power-armour specialist | Drone Command / Artillery Suit |
+| **Alkhimik** | Biochemist | Adaptive generalist and field medic | Darwinian / Healing |
 
-Glaz adopts the Distorter concept, manipulating enemy position, movement and actions in place of Observer's reconnaissance focus. Needle can eliminate priority targets with rifles, aerial strikes or other powers.
+## Base attacks
 
-## Provisional progression
+| Class | Melee | Ranged |
+| --- | --- | --- |
+| Scythe | Wolverine, Scorpion | |
+| Anvil | Steel Skin, Psionic Armour | |
+| Needle | Hawk Wings | Eye Powers |
+| Glaz | | Telepathy, Telekinesis |
+| Iskra | | Drone Command, Artillery Suit (powered armour) |
+| Alkhimik | Darwinian Frog, Darwinian Jellyfish | Darwinian Skunk, Healing |
+
+Darwinian Shift and Rapid Metamorph change the base attack immediately. The prototype uses 2 damage for melee and preserves each class's existing ranged damage and reach as playtest values.
+
+## Scorpion and Anvil design revisions
+
+The 26 November class-tree review supersedes the earlier proposals below. [Current class design](design/CLASSES_AND_ENEMIES.md#scorpion-and-anvil-revisions) · [Current review trees](design/ORIGIN_TREES_REVIEW.html#tree0)
+
+These drafts record the proposals after the V3 playtest. The review diagrams contain candidate values and interactions.
+
+**Scythe / Scorpion.** Keep Charge and Tail Sting. Segmented Carapace grants 1 armour, four-tile movement and venomous attacks. At Level 2, Deflective Plates grants 1 more armour or Stronger Poison extends Venom by one turn. Claw Grab starts with an adjacent base hit and holds both units in place. Level 5 offers Carapace Slam or Venom Jet, which applies Venom along the three tiles directly ahead with zero impact damage. Level 6 offers Moulting Skin, a once-per-room armour refill on the next turn after depletion, or Barbed Retort, a base-attack response to the first incoming melee attack each round. At Level 8, Numbing Sting adds a one-tile movement penalty to poison attacks. Level 9 offers Living Carapace, which reduces HP spillover on an armour-breaking hit, or Burrowing Strike, a short underground move and strike. Confirm hold duration, armour-cap restoration, travel rules and final tuning before implementation. [Open Questions](OPEN_QUESTIONS.md#classes-equipment-and-enemies).
+
+**Anvil.** Shared skills focus on the armoured frontline bruiser. The review tree shows Breakthrough, Impact Stance and Linebreaker. Steel Skin keeps the Ferrous Body armour bonus and adds immunity to permanent armour shred. Its way to protect an ally is to intercept the hit personally, represented by Interpose in the review tree. Psionic Armour handles taunts and lending armour and can spend its own armour on ranged area attacks. Mind Challenge is the reviewed taunt. Final node costs, timings and reaction ordering remain open. [Open Questions](OPEN_QUESTIONS.md#classes-equipment-and-enemies).
+
+The creator requested the Scorpion changes and Anvil direction in [Redesign Class Tech Trees](https://chatgpt.com/c/6b04f315-a3dc-83e8-800c-aae1c9c4599a). Alternative class names discussed in [Create Tech Trees](https://chatgpt.com/c/6b03fa34-493c-83ee-8ae6-c219b4025b26) remain candidates.
+
+## Earlier class designs
 
 ### Scythe
 
-[Scythe Class Design v0.1](../references/design/SCYTHE_CLASS_DESIGN.md) is the detailed working tree and the reference model for the five remaining class trees. Scythe chooses one origin at Level 1. Wolverine emphasises armour destruction and regeneration, Arachnid emphasises mobility and web control, and Blink specialises in teleportation and burst damage. Limited Phase Surge is shared by Wolverine and Arachnid. Blink retains the broader teleport toolkit.
-
-**Charge costs 1 AP**, superseding the earlier 2 AP cost. The Level 1–9 gates, other ability costs, values, cooldowns and balance remain provisional. The draft gives Scythe the Threatening Presence opportunity attack. Detailed trees for Anvil, Glaz, Needle, Iskra and Alkhimik remain open.
+[Scythe Class Design v0.1](../references/design/SCYTHE_CLASS_DESIGN.md) describes the previous Wolverine, Arachnid and Blink tree used as a reference for V3 and the original Scythe test fixture.
 
 ### Historical class references
 
-The [Class Design Framework](../references/design/Hammer_Ash_Class_Design_Framework.docx) and [Provisional Class Compendium](../references/design/Hammer_Ash_Provisional_Class_Compendium.docx) preserve the earlier eight-rank Genetic and Technology structure. The repository also preserves the earlier three-tree model in `Player_Unit_Archetypes.docx`. The 22 November update governs current class design.
+The [Class Design Framework](../references/design/Hammer_Ash_Class_Design_Framework.docx) and [Provisional Class Compendium](../references/design/Hammer_Ash_Provisional_Class_Compendium.docx) preserve the earlier eight-rank Genetic and Technology structure. [Player Unit Archetypes](../references/design/Player_Unit_Archetypes.docx) and the [22 November Class Design Update](../references/design/CLASS_DESIGN_UPDATE_2026-11-22.md) capture earlier class directions.
 
-## Build 10 combat kits
+## Build 10 regression kits
 
-Build 10 uses the current names for its five playable operatives and retains the prototype kits below. Glaz has no playable slot in this build.
+The mission-selector fixtures use the original five kits below. Glaz joins the playable roster in bunker operations.
 
 | Operative | Actual prototype actions |
 | --- | --- |
@@ -45,7 +68,7 @@ These special actions cost 1 AP in the current test balance. Area Shred, Fortify
 
 Fixture 6 gives Scythe **Charge** in place of Area Shred. For 1 AP once per turn, choose one enemy and move up to two walkable tiles to a legal adjacent landing. Arachnid extends Charge to three tiles. The innate strike deals 2 damage before armour. An Overwatch shot stops the move at the triggered tile and cancels the strike. The AP and once-per-turn use are spent.
 
-Wolverine is the default test origin. **Claws** are an innate 2-damage melee option that blocks the equipped melee slot. Each claw strike lowers the target's maximum armour by 1, to a floor of zero, after resolving ordinary damage. The reduced maximum survives armour refreshes. Charge uses its own strike.
+Wolverine is the default test origin. **Claws** are an innate 2-damage melee option. Each claw strike lowers the target's maximum armour by 1, to a floor of zero, after resolving ordinary damage. The reduced maximum survives armour refreshes. Charge uses its own strike.
 
 **Arachnid's Spider Agility** increases ordinary movement to five tiles and Charge movement to three. **Blink's Short Blink** costs 1 AP and can be used once per turn, independently of Charge. Press **Z** and choose a visible, unoccupied walkable tile up to four tiles away. Hazards and eligible Overwatch resolve on landing.
 

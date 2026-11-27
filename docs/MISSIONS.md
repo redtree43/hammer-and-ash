@@ -1,12 +1,14 @@
 # Missions
 
+> Earlier mission handoff with worked examples and fixture rules. The active build deploys through the [regional campaign operations](design/MISSIONS.md#regional-playtest-operations).
+
 ## Confirmed mission structure
 
 - Standard operations have at most four played stages, usually an entrance, up to two intermediate rooms, and a final room. Special operations can vary. Authored branches progress forward. Completed rooms cannot be revisited.
 - Most rooms clear when all hostiles are defeated. Authored objectives can use a different gate. An optional failure or an escaped primary target can affect the mission outcome while the squad still clears the room. Specify any terminal exceptions in advance.
 - Voluntary extraction occurs between rooms. Retain explicitly secured rewards, resources, and intelligence. Completed physical consequences such as sabotage can persist after withdrawal. Track casualties and objective outcomes separately.
 - Route intelligence varies with preparation, acquired intelligence, and earlier decisions. Cross-room consequences may change enemies, readiness, hazards, resources, information, or outcomes. The intended difficulty trend rises overall with room-to-room variation.
-- HP, used consumables, downs, wound ceilings and deaths persist. A still-downed first-down operative stands with half HP between rooms. Healing requires an item or ability. Armour starts the next room at the current maximum, cooldowns reset, and magazines reload automatically. Equipment stays locked for the mission.
+- HP, used consumables, downs, wound ceilings and deaths persist. A still-downed first-down operative stands with half HP between rooms. Healing requires an item or ability. Armour starts the next room at the current maximum, cooldowns reset, and bunker ranged charges and fixture magazines refill. Equipment stays locked for the mission.
 - Assassination missions place the named target in the final room. Targets can escape. The approved prototype defence test uses escalating waves on one map.
 
 ## Objective model
@@ -44,15 +46,23 @@ The guide proposes a lead PMO plus an optional additional PMO, usually zero to t
 
 ## Build 10 test fixtures
 
+The original chain remains playable from HQ via **M → 1 → Enter**. Entries 2–0 below describe retired tests and their historical controls. Campaign deployments now use the [regional operations](design/MISSIONS.md#regional-playtest-operations).
+
 | Selector | Implemented test |
 | --- | --- |
 | 1. Original chain | Three linear rooms. Kennel/hounds, KGB cordon, elite response. Defeat hostiles to clear. In Room 2 destroy the 2 HP radio before the end of player Round 3. An intact radio at room clear or a missed deadline queues three extra hounds for Room 3. A timely disable preserves the baseline lineup. A pending first down resolves at half HP on transition. The healing cap and second-down loss carry across rooms. |
-| 2. Assassination | Three linear rooms. Officer Orlov, 9 HP and 1 armour, appears in Room 3 with four escorts. The enemy phase of Round 3 activates his move toward the east exit. Escape fails the assassination. Guards can still be defeated. |
-| 3. Sabotage | One map. Destroy a 6 HP generator and neutralise a 6 HP prototype pod. An adjacent terminal disables the pod for 1 AP. If the pod remains active at the end of player Round 3, a robot emerges and killing it substitutes for disabling the pod. Clear the guards and meet the objectives. The README mentions a quick-sabotage bonus, with no separate strategic reward established in source. |
+| 2. Assassination | Three linear rooms. Officer Orlov, 9 HP and 1 armour, appears in Room 3 with four escorts. If alive, he can flee through the east exit from enemy phase 3. A full clear requires eliminating Orlov and all four escorts with at least one operative standing. The report distinguishes Orlov's escape from a squad wipe. |
+| 3. Sabotage | One map. Destroy a 6 HP generator and neutralise a 6 HP prototype pod. An adjacent terminal disables the pod for 1 AP. If the pod remains active at the end of player Round 3, the 2×2 IRON GIANT emerges at the nearest clear spawn and killing it substitutes for disabling the pod. Clear the guards and meet the objectives. Bunker success grants 6 Supplies and 2 Intel at current trial values. |
 | 4. Rescue | One map. Release two prisoners with 1 AP adjacent interactions and defeat the guards, in either order. The prototype secures released prisoners on completion and has no escort movement. |
 | 5. Defence | One map. Protect a 20 HP safehouse through eight full enemy rounds. Waves enter at the start of player Rounds 1, 3, 5 and 7. The entry-lane warning appears one round ahead. Success allows surviving attackers at Round 8. |
-| 6. Scythe | One test room with an armoured guard, an Overwatch sentry and a hound. Choose Wolverine, Arachnid, Blink or Standard on Scythe's loadout tab. **Q** aims Charge, **J** aims Claws when Wolverine is selected, and **Z** aims Short Blink when Blink is selected. The sentry starts with Overwatch reserved. |
+| 6. Scythe | One test room with an armoured guard, an Overwatch sentry and a hound. Choose Wolverine, Arachnid, Blink or Standard on Scythe's loadout tab. Use the **Charge** action button. **J** aims Claws when Wolverine is selected, and **Z** aims Short Blink when Blink is selected. The sentry starts with Overwatch reserved. |
+| 7. Cordon patrol | Two rooms mixing KGB troops with Collectivist Drones and Hammer. |
+| 8. Foundry shift | Two rooms built around robot escorts and anchors, with KGB support and Red Star. |
+| 9. The choir | Two rooms built around abominations, with KGB Riflemen and Sickle. |
+| 0. Vanguard trials | Three rooms featuring Proletariat and Siberian, New Soviet Man and New Soviet Woman, and Vanguard. |
 
-The current prototype presents Assassination, Sabotage, Rescue and Defence in the bunker under USSR → Region 1. The fixtures above document their combat rules and the legacy chain and Scythe test range. Assassination retains its three rooms and bunker deployments support between-room extraction there. Authored branching and regional effects remain future work. See [Development Status](DEVELOPMENT_STATUS.md) for verified behaviors.
+The mixed trials show room XP for comparison. Campaign XP is awarded through bunker operations. [Enemy tiers and XP verification](IMPLEMENTATION_NOTES.md#enemy-tier-and-xp-trial-verification)
+
+The earlier bunker trial put Assassination, Sabotage, Rescue and Defence in Central. The Sabotage fixture also had a 28×20 annex selected with **F4**. Its verification is preserved in the [Sabotage visual playtest](BUILD_10_PLAYTEST.md#sabotage-visual-pass).
 
 Primary sources are the [Mission Objectives Master Guide](../references/design/Hammer_and_Ash_Mission_Objectives_Master_Guide.docx), 21 November master and combat documents, mission conversation excerpts, and Build 10 README, changelog, and source.

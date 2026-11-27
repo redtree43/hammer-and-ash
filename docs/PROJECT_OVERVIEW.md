@@ -1,6 +1,8 @@
 # Project Overview
 
-**Hammer & Ash: Uprising** · Development handoff · 22 November 2026
+> Earlier vision handoff. The current specification is [Vision and presentation](design/VISION.md).
+
+**Hammer & Ash: Uprising** · Development handoff · 24 November 2026
 
 ## Vision and setting
 
@@ -30,10 +32,11 @@ The player commands an outlaw revolutionary agency from a resistance headquarter
 | Status | Direction |
 | --- | --- |
 | Confirmed | Godot 4.x and GDScript. Fixed-view, square-grid 2D combat and final pixel-art direction. Elevation is represented as a logical property with readable 2D cues. |
-| Current prototype | Colour-coded markers and simple drawn terrain. Build 10 is a combat and mission-objective test suite. See [Development Status](DEVELOPMENT_STATUS.md). |
-| Provisional | Premium PC release, final camera treatment, sprite scale, animation, interface, and content volume. |
+| Current prototype | The Resistance Bunker connects four operations to a shared roster. Combat uses a fixed angled board and pixel-art avatars. Sabotage tests animated action playback, destructible cover and the Iron Giant's pod reveal at two map sizes. See [Development Status](DEVELOPMENT_STATUS.md). |
+| Latest visual direction | Combat uses an angled 2D view with quarter-turn camera pivots, projected square tiles, upright sprites, raised walls and occlusion cues. Sabotage retains its action and activation effects. Its facility and annex offer two sizes for testing board readability and bounded camera controls. |
+| Provisional | Premium PC release, final asset and animation scope, interface, and content volume. |
 | Superseded | Pixelated or rotatable 3D pipeline. The 20 November visual amendment takes precedence over the older vision. |
 
 Design sources are the 21 November Master Game Design, 20 November 2D Visual Direction Amendment, and earlier Game Vision in [original design references](../references/design/). Earlier visions retain setting context where compatible with the latest design.
 
-The [23 November campaign master](campaign/H_A_Campaign_Design_Master_v05.md) governs campaign direction and scope.
+The [23 November campaign master](campaign/H_A_Campaign_Design_Master_v05.md) records the original campaign transfer. See the [current campaign specification](design/CAMPAIGN.md).

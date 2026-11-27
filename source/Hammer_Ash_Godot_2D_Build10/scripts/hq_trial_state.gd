@@ -1,6 +1,8 @@
 extends RefCounted
 
 const Loadouts = preload("res://scripts/starter_loadouts.gd")
+const PlayerClasses = preload("res://scripts/player_classes.gd")
+const Operations = preload("res://scripts/campaign_operations.gd")
 
 const SQUAD_SIZE: int = 5
 const RECRUIT_COST: int = 6
@@ -12,6 +14,9 @@ const STARTING_SUPPLIES: int = 20
 const STARTING_INTEL: int = 7
 const STARTING_MEDKITS: int = 2
 const OPERATION_DAYS: int = 1
+# Cumulative XP thresholds for the Level 1–3 trial.
+const LEVEL_XP := [0, 18, 45]
+const OBJECTIVE_XP := 4
 const PROJECTS: Dictionary = {
     "emergency_reload": {"label": "Emergency Reload", "branch": "Stratagems", "cost": 4, "days": 2, "unlock": "reload"},
     "facility_recon": {"label": "Facility Recon", "branch": "Intelligence Ops", "cost": 5, "days": 2, "unlock": "recon"},
@@ -20,14 +25,8 @@ const RECIPES: Dictionary = {
     "basic_medkit": {"label": "Medkit", "cost": 2, "quantity": 1},
     "batch_medkit": {"label": "Medkit batch", "cost": 3, "quantity": 2},
 }
-const OPERATIONS: Dictionary = {
-    "assassination": {"label": "Assassination", "brief": "Reach and eliminate the fleeing officer.", "recon": "Orlov starts his escape in the final room on Round 3. Cover the east exit."},
-    "sabotage": {"label": "Sabotage", "brief": "Destroy the generator and neutralise the prototype.", "recon": "The prototype activates at the end of player Round 3 if the pod is still active. A nearby terminal can disable it."},
-    "rescue": {"label": "Rescue", "brief": "Free the two prisoners and clear the guards.", "recon": "Five guards cover two cells. Release both prisoners and clear the guards to secure the rescue."},
-    "defence": {"label": "Defence", "brief": "Protect the safehouse from enemy waves.", "recon": "Enemy waves arrive on Rounds 1, 3, 5 and 7. Protect the safehouse through Round 8."},
-}
 const REWARDS: Dictionary = {
-    "sabotage_complete": {"label": "Secured a Service Rifle, 6 Supplies and 2 Intel.", "gear": "Service Rifle", "supplies": 6, "intel": 2},
+    "relay_complete": {"label": "Secured 6 Supplies and 2 Intel.", "supplies": 6, "intel": 2},
     "rescue_complete": {"label": "Secured a recruit and 4 Supplies.", "recruit": "Needle", "supplies": 4},
 }
 
@@ -37,7 +36,6 @@ var intel: int = STARTING_INTEL
 var day: int = 1
 var medkits: int = STARTING_MEDKITS
 var roster: Dictionary = {}
-var armoury: Dictionary = {}
 var research: Dictionary = {}
 var recruitment: Dictionary = {}
 var researched: Dictionary = {}
@@ -60,9 +58,27 @@ func seed(playable_classes: Array[String]) -> void:
 func add_operative(kit: String) -> void:
     if not classes.has(kit):
         return
-    var melee: int = Loadouts.EMPTY_MELEE if Loadouts.blocks_melee(classes.find(kit), 0) else 0
-    roster[next_operative] = {"kit": kit, "ready_day": day, "loadout": [0, melee, 0, 1]}
+    roster[next_operative] = {"kit": kit, "ready_day": day, "consumable": Loadouts.NO_CONSUMABLE,
+        "class_build": PlayerClasses.default_build(), "xp": 0}
     next_operative += 1
+
+func earned_level(id: int) -> int:
+    var xp: int = roster[id].get("xp", 0)
+    var level := 1
+    for threshold in LEVEL_XP.slice(1):
+        if xp >= threshold:
+            level += 1
+    return level
+
+func set_playtest_level(id: int, level: int, profile: Dictionary = {}) -> void:
+    if profile.is_empty():
+        profile = roster[id]
+    if level == 0:
+        profile.erase("playtest_level")
+        profile["class_build"]["level"] = earned_level(id)
+    else:
+        profile["playtest_level"] = level
+        profile["class_build"]["level"] = level
 
 func operative_name(id: int) -> String:
     return "%s %02d" % [roster[id]["kit"], id]
@@ -116,7 +132,7 @@ func produce(id: String) -> bool:
     return true
 
 func buy_recon(operation: String) -> bool:
-    if not mission.is_empty() or not OPERATIONS.has(operation) or not prepared_recon.is_empty():
+    if not mission.is_empty() or not Operations.has_operation(operation) or not prepared_recon.is_empty():
         return false
     if not unlocks.has("recon") or intel < RECON_COST:
         return false
@@ -125,41 +141,40 @@ func buy_recon(operation: String) -> bool:
     return true
 
 func can_deploy(operation: String, squad: Array[int], gear: Dictionary) -> bool:
-    if not mission.is_empty() or not OPERATIONS.has(operation) or squad.size() != SQUAD_SIZE:
+    if not mission.is_empty() or squad.size() != SQUAD_SIZE:
+        return false
+    if not Operations.has_operation(operation):
         return false
     var seen: Dictionary = {}
-    var rifles: int = 0
     var kits: int = 0
     for id in squad:
         if not available(id) or seen.has(id) or not gear.has(id):
             return false
         seen[id] = true
-        var choices: Array = gear[id]
-        var kit_index: int = classes.find(roster[id]["kit"])
-        if choices.size() != Loadouts.SLOTS.size():
+        var consumable: Variant = gear[id]
+        if not consumable is int or consumable < 0 or consumable >= Loadouts.CONSUMABLES.size():
             return false
-        for slot in range(choices.size()):
-            if choices[slot] < 0 or choices[slot] >= Loadouts.ITEMS[slot].size():
-                return false
-        if not Loadouts.can_equip(kit_index, choices, 1, choices[1]):
-            return false
-        if choices[0] == 1:
-            rifles += 1
-        if choices[3] == 0:
+        if consumable == 0:
             kits += 1
-    return rifles <= armoury.size() and kits <= medkits
+    return kits <= medkits
 
-func deploy(operation: String, squad: Array[int], gear: Dictionary, prepare_reload: bool = false) -> bool:
+func deploy(operation: String, squad: Array[int], gear: Dictionary, prepare_reload: bool = false,
+        draft_profiles: Dictionary = {}) -> bool:
     if not can_deploy(operation, squad, gear) or (prepare_reload and not unlocks.has("reload")):
         return false
     if prepared_recon == operation:
         prepared_recon = ""
     var packed: Array[int] = []
+    var builds: Dictionary = {}
+    var playtest := false
     for id in squad:
-        if gear[id][3] == 0:
+        var profile: Dictionary = draft_profiles.get(id, roster[id])
+        playtest = playtest or profile.has("playtest_level")
+        builds[id] = profile["class_build"].duplicate(true)
+        if gear[id] == 0:
             packed.append(id)
-    mission = {"id": next_operation, "squad": squad.duplicate(), "gear": gear.duplicate(true),
-        "packed": packed, "emergency_reload": prepare_reload}
+    mission = {"id": next_operation, "operation": operation, "squad": squad.duplicate(), "gear": gear.duplicate(true),
+        "packed": packed, "emergency_reload": prepare_reload, "class_builds": builds, "playtest": playtest}
     next_operation += 1
     debrief.clear()
     return true
@@ -186,24 +201,37 @@ func credit_reward(id: String, secured: bool) -> bool:
     var reward: Dictionary = REWARDS[id]
     supplies += int(reward.get("supplies", 0))
     intel += int(reward.get("intel", 0))
-    if reward.has("gear"):
-        armoury[transaction] = reward["gear"]
     if reward.has("recruit"):
         add_operative(reward["recruit"])
     debrief.append(reward["label"])
     return true
 
-func finish(outcome: String, battle_units: Array[Dictionary]) -> void:
+func finish(outcome: String, battle_units: Array[Dictionary], kill_xp: int = 0, objective_xp: int = 0) -> void:
     if mission.is_empty():
         return
     var squad: Array = mission["squad"]
+    var award: int = kill_xp + objective_xp
+    if mission.get("playtest", false):
+        debrief.append("XP paused for this deployment with a manual level.")
+        award = 0
+    elif award > 0:
+        debrief.append("+%d XP per surviving operative (%d enemy, %d objective)." % [award, kill_xp, objective_xp])
     for idx in range(squad.size()):
         var id: int = squad[idx]
         var unit: Dictionary = battle_units[idx]
         if bool(unit["permanently_dead"]):
             debrief.append("%s was killed." % operative_name(id))
             roster.erase(id)
-        elif int(unit["downs"]) > 0:
+            continue
+        if award > 0:
+            var previous_level := earned_level(id)
+            roster[id]["xp"] = int(roster[id].get("xp", 0)) + award
+            var level := earned_level(id)
+            if not roster[id].has("playtest_level"):
+                roster[id]["class_build"]["level"] = level
+            if level > previous_level:
+                debrief.append("%s reached Level %d." % [operative_name(id), level])
+        if int(unit["downs"]) > 0:
             roster[id]["ready_day"] = day + OPERATION_DAYS + RECOVERY_DAYS
             debrief.append("%s is recovering until day %d." % [operative_name(id), int(roster[id]["ready_day"])])
     debrief.push_front(outcome)

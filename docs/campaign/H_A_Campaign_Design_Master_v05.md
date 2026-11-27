@@ -1,10 +1,14 @@
 # HAMMER & ASH: UPRISING — CAMPAIGN DESIGN MASTER v0.5
 
+> Historical campaign transfer and provenance. The current specification is [Campaign and headquarters](../design/CAMPAIGN.md).
+
 **Master campaign design v0.5 · 23 November 2026**\
 **Status:** WORK IN PROGRESS — for directional review, not final production balance\
-**This v0.5 master supersedes v0.4 for campaign design and must be read together with `H_A_Campaign_Decision_Register_v05.md`. It consolidates all decisions in this campaign-design chat; it does not replace separate tactical-combat/class/mission-objective specifications.**
+**This v0.5 transfer consolidated the campaign workshop alongside `H_A_Campaign_Decision_Register_v05.md`.**
 
 > **Status legend:** **CONFIRMED** = player-selected direction; **TRIAL** = suggested initial implementation to test, not approved balance; **OPEN** = undecided / requires a separate decision.
+
+**24 November update.** Build 10 uses an issued Supersuit as the single persistent equipment piece, plus one consumable slot. Separate player weapon and armour items are superseded. The USSR screen shows eight federal districts, with four trial operations in Central. Confirm which districts count toward liberation and how Moscow fits before implementing the thresholds below. Workshop recipe research remains part of the campaign design. Its place in the current two-board bunker layout is open. [Current bunker](../IMPLEMENTATION_NOTES.md) · [Open decisions](../OPEN_QUESTIONS.md#missions-and-campaign).
 
 ## 0. Design vision
 
@@ -31,8 +35,8 @@
 | Commitment | After selection, remain in that regional campaign until **liberation or permanent loss** | CONFIRMED |
 | Time | Calendar-based progression; missions, research, recruitment and recovery interact with the calendar | CONFIRMED |
 | Mission choices | Limited mission opportunities; some expire or compete with each other | CONFIRMED |
-| Victory | Liberate **four regions**, then successfully attack the **Politburo in Moscow** | CONFIRMED |
-| Defeat | **Five regions locked**, terminal Soviet countdown, or destruction of resistance | CONFIRMED principle; exact last condition OPEN |
+| Victory | Liberate **four regions**, then successfully attack the **Politburo in Moscow** | CONFIRMED in v0.5. Eligible regions under the current map are OPEN. |
+| Defeat | **Five regions locked**, terminal Soviet countdown, or destruction of resistance | CONFIRMED principle. Lockout count under the current map and the exact resistance-destruction condition are OPEN. |
 | Liberated regions | Permanently secure; no obligatory reconquest loop | CONFIRMED |
 | Moscow | Final operation; detailed structure not yet selected | OPEN (Stage 5) |
 
@@ -85,12 +89,14 @@ Research programmes change **what the enemy can field**. Adaptation changes **wh
 
 ### Confirmed principles
 
-- **Non-consumable equipment** (weapons, armour and persistent specialist gear) comes from **missions, captured equipment, major rewards, events or contacts**. It is **NOT manufactured in the Workshop**.
+- **Supersuit** is the operative's single persistent equipment piece. Build 10 issues a basic suit. Suit variants, progression and acquisition are open. Missions, captured equipment, major rewards, events and contacts were the approved acquisition channels for the earlier permanent gear model.
 - **Workshop manufacture is exclusively for consumables**: medical supplies, grenades, antidotes, single-use gadgets and similar mission-use items.
-- Existing or discovered non-consumable gear is held in a **shared armoury** and can be reassigned before deployment (**agreed design direction**).
+- The earlier shared armoury assumed interchangeable permanent gear. Confirm whether suit variants or upgrades would use a shared inventory.
 - **Basic functional kit** should be available to new recruits so attrition does not strand the roster with unusable operatives (**TRIAL safety rule**; source/quality to refine).
 
-### Trial acquisition categories (not drop-rate decisions)
+### Earlier trial acquisition categories
+
+These examples preserve the acquisition model used before the Supersuit decision. Future permanent player rewards need to fit the suit model.
 
 | Channel | What it provides |
 |---|---|
@@ -160,7 +166,7 @@ Research programmes change **what the enemy can field**. Adaptation changes **wh
 **Mission: Raid a Soviet chemical laboratory**
 
 - Primary outcome: damage/disable a Soviet programme and affect regional liberation/pressure.
-- Optional secured objective A: recover a **single** specialist chemical weapon (persistent armoury item; not a crafting recipe).
+- Optional secured objective A: recover a cache of finished antidote consumables for the Workshop inventory.
 - Optional secured objective B: steal an antidote formula (unlock **Workshop Research → Antidote Consumable Recipe**; still requires research and later Supply production).
 - Optional secured objective C: rescue a scientist (event recruit / specialist contact).
 - On extraction, **only objectives explicitly secured** carry forward; if region is later lost, these earned rewards remain. The reward list is illustrative, not a promised mission design.
@@ -169,7 +175,7 @@ Research programmes change **what the enemy can field**. Adaptation changes **wh
 
 1. **Regional defeat is not synonymous with campaign defeat.** Preserve secured rewards and present one limited recovery opportunity; costs and exact effects are TBD.
 2. **Regional victory should not explode power.** Stronger options, limited Intel, finite consumables, scarce gear and continuing Soviet escalation must coexist.
-3. **Equipment ≠ Research.** Permanent weapons / armour are found or awarded; Workshop research unlocks *consumable recipes*, not weapon manufacturing.
+3. **Equipment and Research.** Workshop research unlocks consumable recipes. Permanent rewards need to fit the Supersuit model once its progression is defined.
 4. **Display consequences.** Preview operation rewards, programme progress, research unlock prerequisites, recruit completion, Intel costs, and any regional-lock warning.
 5. **Don't duplicate tactics code.** The prototype should reuse existing tactical abilities, inventory and mission-event hooks where possible. Add campaign systems incrementally and behind toggles if useful.
 6. **Difficulty:** Aiming for **15–30 hours** requires restrained content scope. Longer high-difficulty runs should result from gameplay, not mandatory administrative grind.
@@ -198,9 +204,9 @@ Research programmes change **what the enemy can field**. Adaptation changes **wh
 - Recruitment pipeline, initial and target roster, train/recover durations, injury treatment costs, training capacity and recruit class restrictions.
 - An explicit anti-death-spiral policy that does not grant free rewards for poor decisions.
 
-## 13. Next implementation milestone — TRIAL ONLY
+## 13. Original headquarters trial milestone
 
-Before authoring the first full regional campaign, implement a small **headquarters progression sandbox** linked to the existing tactical prototype where feasible:
+The original milestone called for a **headquarters progression sandbox** before the first full regional campaign. Build 10 now provides a playable version. The permanent gear inventory and three-branch screen described below were assumptions at the time. See the [current playtest](../IMPLEMENTATION_NOTES.md) for what's implemented.
 
 - Shared roster → choose five every deployment; recruits from a class-selectable timed base job or a simulated mission reward.
 - Shared persistent equipment inventory → gear comes only from rewards/salvage; no crafting of weapons or armour.
@@ -220,8 +226,8 @@ Before authoring the first full regional campaign, implement a small **headquart
 
 All campaign-workshop Decisions **1–21 and 28–34** have been reviewed and entered in the companion numbered register. **Decisions 22–27 were presented but the player has not selected them; all remain OPEN.** The updated HQ / roster / presentation decisions are captured separately as unnumbered decisions. See `H_A_Campaign_Decision_Register_v05.md` for the full coverage matrix and status, not just summarized prose.
 
-**Authority for Codex:** (1) confirmed player-selected decisions in this master and decision register, (2) existing tactical/class/mission documents for their respective domains, (3) explicitly marked prototype assumptions in `H_A_Codex_Trial_Implementation_Brief_v05.md`. If conflicts exist, **stop and report** them rather than guessing. Trial mechanics are deliberately not approved permanent design.
+The transfer distinguished creator decisions from prototype assumptions in the HQ trial brief. The current [design index](../design/README.md) provides the governing rules and review process.
 
 **Old artwork warning:** An older base wireframe displayed "armour plating — CRAFTABLE" before equipment rules were settled. It is **obsolete** and excluded from the transfer package. Only consumables may be manufactured in the Workshop.
 
-**Current stop condition:** Trial a small headquarters/equipment/recruitment/research progression slice only. Do not implement all eight regional campaigns, Soviet stage behaviours or the Moscow finale without further design approval. Preserve existing tactical systems.
+**Current milestone:** Build 10 has a playable headquarters trial. Its balance, Workshop research placement, Supersuit progression and regional eligibility remain open. The full regional campaigns, Soviet escalation behaviours and Moscow finale await design decisions.

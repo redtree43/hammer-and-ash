@@ -1,0 +1,1166 @@
+{
+  "Scythe": {
+    "idx": 0,
+    "color": "#EC9665",
+    "role": "CLOSE-QUARTERS STRIKER",
+    "purpose": "Break positions through mobile melee pressure.",
+    "origins": [
+      {
+        "name": "WOLVERINE",
+        "identity": "ARMOUR SHREDDING / SUSTAIN",
+        "risk": "Kiting and sustained ranged fire",
+        "a1": {
+          "name": "Feral Claws",
+          "type": "P",
+          "ap": null,
+          "limit": "Always",
+          "tags": "ARM BREAK · MELEE",
+          "mechanic": "Baseline melee hits permanently destroy 1 enemy armour point.",
+          "rule": "Bonus affects armour pool, not free HP damage."
+        },
+        "a2": {
+          "name": "Regrowth",
+          "type": "P",
+          "ap": null,
+          "limit": "Each phase",
+          "tags": "HEAL +1 HP",
+          "mechanic": "At the start of your phase, restore 1 HP.",
+          "rule": "Cannot heal above the 50% post-downing ceiling."
+        },
+        "a4": [
+          {
+            "name": "Plate Ripper",
+            "type": "P",
+            "ap": null,
+            "limit": "Always",
+            "tags": "ARM BREAK +1",
+            "mechanic": "Claw strikes destroy 1 additional armour point.",
+            "rule": "Select this OR Fast Knit at level 4."
+          },
+          {
+            "name": "Fast Knit",
+            "type": "P",
+            "ap": null,
+            "limit": "Each phase",
+            "tags": "HEAL +1 HP",
+            "mechanic": "If you ended last turn with 1+ unused AP, Regrowth restores +1 HP.",
+            "rule": "Healing still obeys injury and downing limits."
+          }
+        ],
+        "a6": {
+          "name": "Savage Counter",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "DMG · REACTION",
+          "mechanic": "Heavy melee hit; until next phase, counter the first adjacent melee attacker.",
+          "rule": "Counterattack once; no counter if incapacitated."
+        },
+        "a8": {
+          "name": "Rabid Frenzy",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "BURST · ARM BREAK",
+          "mechanic": "Strike the same adjacent enemy twice; each hit applies claw armour destruction.",
+          "rule": "High single-target burst; full 3 AP commitment."
+        }
+      },
+      {
+        "name": "SCORPION",
+        "identity": "CHITIN ARMOUR / VENOM / REACH",
+        "risk": "Poison-resistant robots, heavy armour and ranged kiting",
+        "a1": {
+          "name": "Chitinous Stinger",
+          "type": "P",
+          "ap": null,
+          "limit": "Always",
+          "tags": "ARM CAP +1 · DoT 1",
+          "mechanic": "Gain +1 intact personal armour; first melee hit each round applies poison (1 HP over 2 phases).",
+          "rule": "Poison is chemical; robots resist it. Switching armour cap cannot repair breakage."
+        },
+        "a2": {
+          "name": "Hook Sting",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD1",
+          "tags": "CC · ROOT 1 · DoT",
+          "mechanic": "Short-range sting: apply poison and root one movable target for 1 phase.",
+          "rule": "Target can still attack; large bosses resist immobilisation."
+        },
+        "a4": [
+          {
+            "name": "Barbed Impaler",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "CC · PULL 1",
+            "mechanic": "Drag a light foe 1 tile toward you, then make a melee strike.",
+            "rule": "Legal path required; heavy anchored targets resist pull."
+          },
+          {
+            "name": "Chitin Dodge",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "DEF · 1 MISS",
+            "mechanic": "Next targeted single-target attack against you misses.",
+            "rule": "Area damage and environmental hazards still hit."
+          }
+        ],
+        "a6": {
+          "name": "Carapace Rush",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD2",
+          "tags": "MOVE 2 · DEF +1",
+          "mechanic": "Advance up to 2 clear tiles; gain 1 temporary barrier until next phase.",
+          "rule": "Barriers do not repair destroyed armour or bypass enemy overwatch."
+        },
+        "a8": {
+          "name": "Deathsting",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "BURST · DoT · CC",
+          "mechanic": "Lunge and sting twice; if target is already poisoned, second hit deals +1 damage and MOVE -2 next phase.",
+          "rule": "Single-target finisher; weak into chemical-resistant enemies."
+        }
+      }
+    ],
+    "shared": {
+      "1": {
+        "name": "Charge",
+        "type": "A",
+        "ap": 1,
+        "limit": "Each turn",
+        "tags": "MOVE 2 · MELEE",
+        "mechanic": "Advance up to 2 tiles directly toward a foe and make one melee hit.",
+        "rule": "Requires a traversable approach; no free teleport."
+      },
+      "3": {
+        "name": "Threatening Presence",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "REACTION · MELEE",
+        "mechanic": "Make one melee opportunity attack when an adjacent foe walks away.",
+        "rule": "No trigger from shoves, leaps or teleports."
+      },
+      "5": [
+        {
+          "name": "Pursuit",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "MOVE 2 tiles",
+          "mechanic": "After a close-range kill, step up to 2 clear tiles.",
+          "rule": "No extra action or attack granted."
+        },
+        {
+          "name": "Execution Drill",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "DMG +1",
+          "mechanic": "Deal +1 damage to a target with no allied enemies adjacent to it.",
+          "rule": "Requires isolating the target; not a blanket damage buff."
+        }
+      ],
+      "7": {
+        "name": "Opening Blow",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "ALLY DMG +1",
+        "mechanic": "Your first close-range hit primes the next allied close-range hit for +1 damage.",
+        "rule": "Does not generate a free allied attack."
+      },
+      "9": {
+        "name": "Overdrive",
+        "type": "A",
+        "ap": 1,
+        "limit": "R1",
+        "tags": "MOVE +2 · DMG +1",
+        "mechanic": "For this turn, gain +2 movement and +1 close-range hit damage.",
+        "rule": "Short burst only; once per room."
+      }
+    },
+    "assessment": [
+      "WOLVERINE: persistent armour shred and regeneration; loses to ranged kiting",
+      "SCORPION: chitin durability plus venom/control; poison-resistant foes counter it",
+      "TEST: armour regeneration + venom over 3–4 linked rooms; avoid idle-turn farming."
+    ],
+    "revision": "Arachnid removed. Scorpion adds intact carapace armour and venom control; no teleport abilities."
+  },
+  "Anvil": {
+    "idx": 1,
+    "color": "#D88B68",
+    "role": "FRONTLINE BRUISER",
+    "purpose": "Absorb punishment and decisively win contested melee.",
+    "origins": [
+      {
+        "name": "STEEL SKIN",
+        "identity": "ARMOUR / ATTRITION / IMPACT",
+        "risk": "Electrical damage, armour bypass and kiting",
+        "a1": {
+          "name": "Ferrous Body",
+          "type": "P",
+          "ap": null,
+          "limit": "Always",
+          "tags": "ARM CAP +2 · MOVE -1",
+          "mechanic": "In metal form gain +2 maximum intact personal armour; lose 1 move tile.",
+          "rule": "Destroyed armour capacity stays broken until mission end."
+        },
+        "a2": {
+          "name": "Hammerfist",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD1",
+          "tags": "DMG +1 · ARM BREAK",
+          "mechanic": "Heavy melee blow deals +1 damage and destroys 1 armour point.",
+          "rule": "Also damages one low-cover tile adjacent to target."
+        },
+        "a4": [
+          {
+            "name": "Iron Lock",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "DEF · COUNTER",
+            "mechanic": "Brace until next phase: cannot be pushed by ordinary foes; counter first melee approach.",
+            "rule": "Cannot voluntarily move while braced."
+          },
+          {
+            "name": "Wallbreaker",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "COVER · DMG",
+            "mechanic": "Break one low-cover tile, then strike one enemy immediately behind it.",
+            "rule": "No attack if no legal target behind cover."
+          }
+        ],
+        "a6": {
+          "name": "Quake Slam",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "AoE · CC",
+          "mechanic": "Hit enemies on adjacent tiles and crack low cover; light enemies stagger.",
+          "rule": "Large bosses take damage but cannot be displaced."
+        },
+        "a8": {
+          "name": "Iron Cataclysm",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "AoE · ARM BREAK",
+          "mechanic": "Devastating adjacent-area smash with permanent armour destruction.",
+          "rule": "Suffer electrical vulnerability through your next phase."
+        }
+      },
+      {
+        "name": "PSIONIC ARMOUR",
+        "identity": "ACTIVE SHIELDS / COUNTERFORCE",
+        "risk": "Shield depletion and attacks from several angles",
+        "a1": {
+          "name": "Force Shell",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD2",
+          "tags": "DEF · SHIELD +2",
+          "mechanic": "Gain a temporary 2-point psionic barrier until your next phase.",
+          "rule": "Separate from armour: does not auto-regenerate."
+        },
+        "a2": {
+          "name": "Force Ram",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD1",
+          "tags": "DMG +1 · CC",
+          "mechanic": "Hit an adjacent enemy for +1 damage and shove it 1 tile.",
+          "rule": "Spend 1 active shield point to shove 1 extra tile."
+        },
+        "a4": [
+          {
+            "name": "Aegis Relay",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "DEF · ALLY SHIELD",
+            "mechanic": "Transfer your remaining active Force Shell to an ally within 3 tiles.",
+            "rule": "Your own shield ends; ally gains no repaired armour."
+          },
+          {
+            "name": "Psychic Burst",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "AoE · CC",
+            "mechanic": "Consume Force Shell to damage and shove nearby movable enemies.",
+            "rule": "Without shield, the burst is weaker."
+          }
+        ],
+        "a6": {
+          "name": "Projected Strike",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD1",
+          "tags": "RANGE 3 · DMG",
+          "mechanic": "Attack one target along a clear straight line using projected force.",
+          "rule": "Consume 1 shield for +1 extra damage."
+        },
+        "a8": {
+          "name": "Shell Collapse",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "CONE · BURST",
+          "mechanic": "Detonate your active barrier in a short cone; damage scales with remaining shield.",
+          "rule": "Shield vanishes; limited damage if cast unshielded."
+        }
+      }
+    ],
+    "shared": {
+      "1": {
+        "name": "Breakthrough",
+        "type": "A",
+        "ap": 2,
+        "limit": "Each turn",
+        "tags": "MOVE 2 · MELEE",
+        "mechanic": "Advance up to 2 tiles toward a foe and deliver a heavy melee hit.",
+        "rule": "Cannot cross blocked tiles or strike through solid cover."
+      },
+      "3": {
+        "name": "Hard to Shift",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "DEF · DMG +1",
+        "mechanic": "Ignore one forced displacement; your next melee attack gains +1 damage.",
+        "rule": "Does not resist normal incoming damage."
+      },
+      "5": [
+        {
+          "name": "Bloodied Charge",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / round",
+          "tags": "ARM BREAK +1",
+          "mechanic": "After taking HP damage, next melee hit destroys 1 extra armour point.",
+          "rule": "Must suffer real HP damage, not just shield loss."
+        },
+        {
+          "name": "Unyielding Route",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "MOVE 1 · DEF",
+          "mechanic": "After a melee kill, step 1 tile and resist your next shove.",
+          "rule": "Helps position rather than increasing raw damage."
+        }
+      ],
+      "7": {
+        "name": "Pressure Breaker",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / turn",
+        "tags": "COVER · ALLY",
+        "mechanic": "Your first melee hit on a covered foe exposes its cover side to the next allied strike.",
+        "rule": "Does not permanently destroy the cover tile."
+      },
+      "9": {
+        "name": "Siege Momentum",
+        "type": "A",
+        "ap": 1,
+        "limit": "R1",
+        "tags": "MOVE 2 · COVER",
+        "mechanic": "Step up to 2 tiles; your next melee attack ignores one cover side.",
+        "rule": "One turn only; no additional attack created."
+      }
+    },
+    "assessment": [
+      "STEEL: sustained brawling + armour destruction",
+      "PSIONIC: shield budgeting + force projection",
+      "TEST: verify intact armour cap does not restore mission-broken armour."
+    ],
+    "revision": "Size Shifting removed. Mechanical Juggernaut removed from Iskra separately."
+  },
+  "Glaz": {
+    "idx": 2,
+    "color": "#B58DF2",
+    "role": "BATTLEFIELD DISTORTER",
+    "purpose": "Make enemies waste actions and misjudge the battlefield.",
+    "origins": [
+      {
+        "name": "TELEPATHY",
+        "identity": "FEAR / TARGETING / MENTAL INTERFERENCE",
+        "risk": "Robots, fearless bosses and blocked sightlines",
+        "a1": {
+          "name": "Intrusive Thought",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD1",
+          "tags": "CC · DMG -1",
+          "mechanic": "A visible organic foe deals 1 less damage on its next attack this phase.",
+          "rule": "Robots are immune; major bosses may reduce penalty."
+        },
+        "a2": {
+          "name": "Panic Spike",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "CC · MOVE RESTRICT",
+          "mechanic": "An organic foe cannot advance toward the squad and loses reactions for 1 phase.",
+          "rule": "It may still attack or retreat; bosses resist fear."
+        },
+        "a4": [
+          {
+            "name": "Borrow Sight",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD1",
+            "tags": "INFO · MARK",
+            "mechanic": "Read one organic mind: reveal target state and give next allied attack +1 range.",
+            "rule": "No automatic hit or damage bonus."
+          },
+          {
+            "name": "Compel Step",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "CC · FORCE MOVE 2",
+            "mechanic": "Force a susceptible organic foe to walk up to 2 tiles along a legal path.",
+            "rule": "Cannot force suicidal movement; bosses can resist."
+          }
+        ],
+        "a6": {
+          "name": "Mind Lock",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "CC · ABILITY OFF",
+          "mechanic": "Prevent one organic enemy using non-basic abilities or reactions for 1 phase.",
+          "rule": "Basic movement and one standard attack stay available."
+        },
+        "a8": {
+          "name": "Mass Panic",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "AoE · CC · MOVE -2",
+          "mechanic": "In a small area, organic enemies lose reactions and 2 movement next phase.",
+          "rule": "Fearless bosses have reduced effect; no skipped turns."
+        }
+      },
+      {
+        "name": "TELEKINESIS",
+        "identity": "PUSH / PULL / COLLISION DAMAGE",
+        "risk": "Heavy anchors, boss resistance and open maps with little cover",
+        "a1": {
+          "name": "Force Hand",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD1",
+          "tags": "CC · PUSH/PULL 1",
+          "mechanic": "Push or pull a visible movable enemy 1 tile.",
+          "rule": "If forced out of cover, next allied hit ignores that cover; no raw damage."
+        },
+        "a2": {
+          "name": "Kinetic Drag",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "CC · PULL 2",
+          "mechanic": "Drag one enemy up to 2 tiles along a legal route.",
+          "rule": "Cannot drag through solid walls, allies or impassable hazards."
+        },
+        "a4": [
+          {
+            "name": "Kinetic Slam",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "KINETIC 1 · COLLISION",
+            "mechanic": "Throw a movable foe against nearby light cover: deal 1 damage, +1 on collision.",
+            "rule": "Cracks fragile cover; large or anchored targets resist the displacement."
+          },
+          {
+            "name": "Lift Ally",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "ALLY MOVE 2",
+            "mechanic": "Reposition one ally up to 2 tiles across engagement or low cover.",
+            "rule": "Destination must be legal; grants no extra AP."
+          }
+        ],
+        "a6": {
+          "name": "Vector Pull",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "CC · GROUP MOVE",
+          "mechanic": "Pull up to 2 light enemies 1 tile each toward a visible chosen tile.",
+          "rule": "Cannot move bosses or force enemies into impassable cells."
+        },
+        "a8": {
+          "name": "Gravity Well",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "AoE · CC · IMPACT",
+          "mechanic": "For 1 phase, entering enemies pull 1 tile toward centre and lose 2 move.",
+          "rule": "One collision may deal 1 kinetic damage; heavy bosses resist pull."
+        }
+      }
+    ],
+    "shared": {
+      "1": {
+        "name": "Disrupt Focus",
+        "type": "A",
+        "ap": 1,
+        "limit": "CD1",
+        "tags": "CC · REACTION OFF",
+        "mechanic": "Remove one enemy's overwatch and melee reactions until its next phase.",
+        "rule": "Enemy retains normal movement and attacks."
+      },
+      "3": {
+        "name": "Create Opening",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "ALLY · COVER",
+        "mechanic": "Next allied hit on one foe you disrupted ignores directional cover.",
+        "rule": "Attacker still needs a legal firing line or melee position."
+      },
+      "5": [
+        {
+          "name": "Deny Response",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "CC · OVERWATCH",
+          "mechanic": "A foe affected by your control cannot enter overwatch this phase.",
+          "rule": "Enemy immunity to the control effect also blocks this."
+        },
+        {
+          "name": "Expose Weakness",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "ALLY ARM BREAK +1",
+          "mechanic": "First allied hit on a foe you disrupted destroys 1 extra armour point.",
+          "rule": "Disruption must still be active."
+        }
+      ],
+      "7": {
+        "name": "Safe Passage",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "ALLY · REACTION",
+        "mechanic": "One ally may cross a threatened tile beside a disrupted enemy without its reaction.",
+        "rule": "Other enemies can still use overwatch normally."
+      },
+      "9": {
+        "name": "Master Interference",
+        "type": "A",
+        "ap": 2,
+        "limit": "R1",
+        "tags": "ZONE · CC",
+        "mechanic": "Create a small zone for 1 phase: first hostile move is shortened and reactions fail.",
+        "rule": "Bosses lose reactions only; cannot skip full turns."
+      }
+    },
+    "assessment": [
+      "TELEPATHY: strongest against organic officers/support; much weaker vs robots",
+      "TELEKINESIS: positional control and light collision damage; anchored foes resist",
+      "TEST: obstacles, boss displacement and collisions must never cause soft-locks."
+    ],
+    "revision": "Illusions and Time Distortion removed. Telekinesis now includes physical impact and cover damage."
+  },
+  "Needle": {
+    "idx": 3,
+    "color": "#8ED1E7",
+    "role": "PRIORITY-TARGET ELIMINATOR",
+    "purpose": "Remove an officer, elite or boss weak point efficiently.",
+    "origins": [
+      {
+        "name": "EYE POWERS",
+        "identity": "SIGHTLINES / ARMOUR BYPASS / WIDE BEAM",
+        "risk": "Obstruction, exposure and setup turns",
+        "a1": {
+          "name": "Focused Retina",
+          "type": "P",
+          "ap": null,
+          "limit": "Always",
+          "tags": "SIGHT · COVER",
+          "mechanic": "See through light smoke; reduce partial-cover penalty for targeted shots.",
+          "rule": "Opaque walls still block line of sight."
+        },
+        "a2": {
+          "name": "Retinal Lance",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD1",
+          "tags": "THERMAL · BYPASS 1",
+          "mechanic": "Precise beam against a visible marked enemy; ignore 1 intact armour this hit.",
+          "rule": "Does not destroy enemy armour; requires a clear straight firing line."
+        },
+        "a4": [
+          {
+            "name": "X-Ray Angle",
+            "type": "P",
+            "ap": null,
+            "limit": "Always",
+            "tags": "COVER · PRECISION",
+            "mechanic": "Shoot past one low-cover obstruction without its cover penalty.",
+            "rule": "No firing through solid walls or heavy obstructions."
+          },
+          {
+            "name": "Fan Beam",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "AoE · THERMAL · FF",
+            "mechanic": "Short-range, wide 3-tile cone deals 1 thermal damage to every unit hit.",
+            "rule": "Hits allies too; poor versus heavy armour; defensive anti-rush option."
+          }
+        ],
+        "a6": {
+          "name": "Prism Shot",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "PIERCE · 2 TARGETS",
+          "mechanic": "Hit your marked target and an aligned foe directly behind it.",
+          "rule": "Secondary hit deals half damage; both require a clear beam path."
+        },
+        "a8": {
+          "name": "Core Melter",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "BURST · BYPASS 2",
+          "mechanic": "Deal +3 direct damage to your mark along a clear firing line; ignore 2 armour.",
+          "rule": "Does not permanently break armour; no broad area damage."
+        }
+      },
+      {
+        "name": "HAWK WINGS",
+        "identity": "DIVE / TARGET ELIMINATION / EXTRACTION",
+        "risk": "Anti-air, tight interiors and landing exposure",
+        "a1": {
+          "name": "Wing Hop",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD1",
+          "tags": "MOVE 3 · VAULT",
+          "mechanic": "Vault up to 3 tiles over low cover to a free landing cell.",
+          "rule": "No sustained flight; may still provoke ranged overwatch."
+        },
+        "a2": {
+          "name": "Talon Descent",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "DIVE 2–4 · DMG +2",
+          "mechanic": "Dive from a clear approach onto your mark; land adjacent and deal +2 melee damage.",
+          "rule": "Needs free landing tile; use remaining 1 AP for Wing Hop if ready."
+        },
+        "a4": [
+          {
+            "name": "Wing Buffet",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "CC · PUSH 1",
+            "mechanic": "Push a nearby light enemy 1 tile to open an escape lane.",
+            "rule": "Heavy or anchored targets resist the shove."
+          },
+          {
+            "name": "Feather Guard",
+            "type": "P",
+            "ap": null,
+            "limit": "1 / round",
+            "tags": "DEF · BARRIER 1",
+            "mechanic": "After landing from a dive, gain 1 temporary shield until your next phase.",
+            "rule": "Protects from one hit point, not area hazards or repeated heavy fire."
+          }
+        ],
+        "a6": {
+          "name": "Tethered Ascent",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD2",
+          "tags": "MOVE 3 · EXIT",
+          "mechanic": "After a close-range attack, withdraw up to 3 tiles without that target's melee reaction.",
+          "rule": "Must land on a legal tile; other enemies' overwatch still applies."
+        },
+        "a8": {
+          "name": "Raptor Descent",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "DIVE · DMG +3 · EXIT 2",
+          "mechanic": "Dive onto your mark for +3 melee damage, then withdraw up to 2 clear tiles.",
+          "rule": "Withdrawal is part of the 3-AP attack; no extra AP or invulnerability."
+        }
+      }
+    ],
+    "shared": {
+      "1": {
+        "name": "Contract Mark",
+        "type": "A",
+        "ap": 1,
+        "limit": "1 target",
+        "tags": "MARK · PERSISTENT",
+        "mechanic": "Mark a visible priority enemy; one cover side treated as exposed on first hit.",
+        "rule": "Mark lasts until target dies or replaced; resets at room end. No repeated fee."
+      },
+      "3": {
+        "name": "Exploit Window",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "ALLY · ARM PIERCE",
+        "mechanic": "Your first hit on the mark lets the next allied hit ignore 1 armour point.",
+        "rule": "Works only on the same marked target."
+      },
+      "5": [
+        {
+          "name": "Cold Precision",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "ARM PIERCE +1",
+          "mechanic": "If you have not moved, your next hit on mark ignores 1 extra armour.",
+          "rule": "Rewards line-of-sight setup."
+        },
+        {
+          "name": "Moving Execution",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / turn",
+          "tags": "DMG +1",
+          "mechanic": "After moving at least 2 tiles, your next hit on mark gains +1 damage.",
+          "rule": "Rewards positional risk rather than stationary aiming."
+        }
+      ],
+      "7": {
+        "name": "Target Isolation",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "DMG +1",
+        "mechanic": "Gain +1 damage against mark with no enemy allies in adjacent tiles.",
+        "rule": "Bodyguards can deny the bonus."
+      },
+      "9": {
+        "name": "Perfect Opportunity",
+        "type": "A",
+        "ap": 1,
+        "limit": "R1",
+        "tags": "BURST · BYPASS 1",
+        "mechanic": "Prime your next marked attack this turn for +1 damage and bypass 1 intact armour.",
+        "rule": "No free attack; marked-hit passive bonus damage capped at +2."
+      }
+    },
+    "assessment": [
+      "EYES: high single-target range and bypass; cone beam can hit allies",
+      "HAWK: setup → dive → 1-AP escape; vulnerable to landing and overwatch",
+      "TEST: mark stacking, 3-AP dive timing and counterfire against boss targets."
+    ],
+    "revision": "Eye beams bypass, not permanently shred armour. Hawk gains planned extraction; wide cone risks friendly fire."
+  },
+  "Iskra": {
+    "idx": 4,
+    "color": "#EAB76C",
+    "role": "REMOTE SUPPORT AND HEAVY FIRE",
+    "purpose": "Overcome enemy formations through suit engineering.",
+    "origins": [
+      {
+        "name": "DRONE COMMAND",
+        "identity": "ONE DRONE / RECON / REACTIONS",
+        "risk": "EMP, destroyed drones and competing AP costs",
+        "a1": {
+          "name": "Controller Rig",
+          "type": "P",
+          "ap": null,
+          "limit": "1 drone max",
+          "tags": "DEPLOY · SUPPORT",
+          "mechanic": "Start each room with 1 small adjacent drone; it uses Iskra AP to act.",
+          "rule": "No independent turns; drone is an ability, not equipment."
+        },
+        "a2": {
+          "name": "Remote Pulse",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD1",
+          "tags": "DRONE · CC",
+          "mechanic": "Move your drone up to 3 tiles; cancel one adjacent foe's overwatch.",
+          "rule": "Requires a living drone; blocks are still impassable."
+        },
+        "a4": [
+          {
+            "name": "Interceptor Bot",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "DRONE · DEF",
+            "mechanic": "Command drone to intercept the next targeted shot at an adjacent ally.",
+            "rule": "Drone takes the hit; AoE cannot be intercepted."
+          },
+          {
+            "name": "Saboteur Bot",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "DRONE · ROBOT CC",
+            "mechanic": "Drone disrupts one adjacent robot's reaction and movement for 1 phase.",
+            "rule": "Organic targets instead lose overwatch only."
+          }
+        ],
+        "a6": {
+          "name": "Remote Override",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "CC · ELECTRICAL",
+          "mechanic": "One robotic enemy loses reactions and 2 move tiles on its next phase.",
+          "rule": "Does not seize a whole enemy turn; basic enemies less vulnerable."
+        },
+        "a8": {
+          "name": "Crossfire Protocol",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "BURST · DRONE",
+          "mechanic": "Pilot and surviving drone attack the same target from two angles.",
+          "rule": "No bonus attack if drone is destroyed or out of line."
+        }
+      },
+      {
+        "name": "ARTILLERY SUIT",
+        "identity": "BLAST / AREA DENIAL / TERRAIN",
+        "risk": "Friendly fire, proximity and suit heat",
+        "a1": {
+          "name": "Micro-Rocket",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD1",
+          "tags": "AoE · HEAT +1",
+          "mechanic": "Small blast damages one tile and adjacent targets, including allies.",
+          "rule": "Cannot target a tile next to yourself; damages light cover."
+        },
+        "a2": {
+          "name": "Rocket Salvo",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "AoE · HEAT +1",
+          "mechanic": "Explosive 3×3 blast against formations and destructible cover.",
+          "rule": "Allies in area are hit; ammunition integrated into suit."
+        },
+        "a4": [
+          {
+            "name": "Cluster Burst",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "AoE · HEAT +1",
+            "mechanic": "Wider blast deals reduced damage over several tiles.",
+            "rule": "Less effective versus heavily armoured single targets."
+          },
+          {
+            "name": "Arc Net",
+            "type": "A",
+            "ap": 2,
+            "limit": "CD2",
+            "tags": "ZONE · ELEC · HEAT +1",
+            "mechanic": "Lay a 3-tile electrical hazard for 2 phases.",
+            "rule": "Water spreads risk; allies also suffer contact damage."
+          }
+        ],
+        "a6": {
+          "name": "Delayed Mortar",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "AoE · DELAY · HEAT +1",
+          "mechanic": "Mark a blast tile; ordnance lands at the next enemy-phase start.",
+          "rule": "Visible warning gives mobile enemies time to evade."
+        },
+        "a8": {
+          "name": "Iron Rain",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "AoE · HEAT +2",
+          "mechanic": "Mark three small zones; bombardment resolves at next enemy phase.",
+          "rule": "Friendly fire, telegraphed impact, overheating risk."
+        }
+      }
+    ],
+    "shared": {
+      "1": {
+        "name": "Power Routing",
+        "type": "A",
+        "ap": 1,
+        "limit": "Any phase",
+        "tags": "HEAT +1 · MOD",
+        "mechanic": "Choose Mobility (+2 move this turn) or Overcharge (+1 blast damage or drone reach).",
+        "rule": "Heat caps at 3; powered actions lock at Heat 3 until Vent. Basic actions remain."
+      },
+      "3": {
+        "name": "Emergency Vent",
+        "type": "A",
+        "ap": 1,
+        "limit": "Any phase",
+        "tags": "HEAT -2",
+        "mechanic": "Spend 1 AP to remove 2 Heat and clear minor suit disruption.",
+        "rule": "Basic attacks and movement always remain available."
+      },
+      "5": [
+        {
+          "name": "Redline",
+          "type": "P",
+          "ap": null,
+          "limit": "Heat ≥2",
+          "tags": "DRONE +1 / DMG +1",
+          "mechanic": "At Heat 2+, drone commands gain +1 reach OR artillery deals +1 damage; move -1 next phase.",
+          "rule": "High damage but harder to reposition."
+        },
+        {
+          "name": "Cooling Circuit",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / round",
+          "tags": "HEAT -1",
+          "mechanic": "After moving 2+ tiles, lower Heat by 1 before your next suit action.",
+          "rule": "Mobility trades off against stationary firing."
+        }
+      ],
+      "7": {
+        "name": "Rapid Recalibration",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "HEAT -1",
+        "mechanic": "After breaking cover, drone disruption or intercepting a shot, remove 1 Heat next phase.",
+        "rule": "Requires a successful environmental or defensive play."
+      },
+      "9": {
+        "name": "Emergency Overdrive",
+        "type": "A",
+        "ap": 1,
+        "limit": "R1",
+        "tags": "OVERDRIVE · HEAT",
+        "mechanic": "Ignore Heat-3 ability lock for the rest of this turn.",
+        "rule": "Must Vent next turn before advanced suit actions."
+      }
+    },
+    "assessment": [
+      "DRONE: flexible disruption, capped at one AP-bound device",
+      "ARTILLERY: AoE + hazards; punishing collateral risk",
+      "TEST: Heat 0–3, EMP and drone AI cannot cause soft-locks."
+    ],
+    "revision": "Juggernaut suit removed. Both remaining origins stay powered-armour based."
+  },
+  "Alkhimik": {
+    "idx": 5,
+    "color": "#B3D77B",
+    "role": "ADAPTIVE GENERALIST / FIELD MEDIC",
+    "purpose": "Fill tactical gaps or protect the squad without erasing attrition.",
+    "origins": [
+      {
+        "name": "DARWINIAN",
+        "identity": "KOMODO / SNAIL / SKUNK FORMS",
+        "risk": "AP spent changing; none match full specialists",
+        "a1": {
+          "name": "Darwinian Shift",
+          "type": "A",
+          "ap": 1,
+          "limit": "1 / turn",
+          "tags": "FORM · EXCLUSIVE",
+          "mechanic": "Frog: MOVE +1; Jellyfish: ARM CAP +1 and MOVE -1; Skunk: bio range +1.",
+          "rule": "One form at once; no armour restored by swapping. First form chosen at deployment."
+        },
+        "a2": {
+          "name": "Adaptive Technique",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD1",
+          "tags": "FORM-BASED ACTION",
+          "mechanic": "Frog: 1-tile lunge + melee; Jellyfish: 1 barrier for self and adjacent ally; Skunk: range-3 musk cancels organic reactions.",
+          "rule": "Skunk affects organic foes only; Jellyfish barrier is temporary; no free AP."
+        },
+        "a4": [
+          {
+            "name": "Stable Adaptation",
+            "type": "P",
+            "ap": null,
+            "limit": "Always",
+            "tags": "FORM BONUS +1",
+            "mechanic": "Frog: first lunge +1 DMG; Jellyfish: Gel Guard gives self +1 barrier; Skunk: spray +1 range.",
+            "rule": "Benefits current form only; not specialist-level damage or defence."
+          },
+          {
+            "name": "Rapid Metamorph",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD1",
+            "tags": "FORM · MOVE 2",
+            "mechanic": "Change form and step up to 2 clear tiles without adjacent melee reactions.",
+            "rule": "Counts as your one form change this turn; normal ranged overwatch applies."
+          }
+        ],
+        "a6": {
+          "name": "Gene Transfer",
+          "type": "A",
+          "ap": 2,
+          "limit": "CD2",
+          "tags": "ALLY BUFF · 1 PHASE",
+          "mechanic": "Give one ally a lesser adaptation: Frog +1 MOVE; Jellyfish +1 barrier; Skunk +1 attack range.",
+          "rule": "One ally at a time; cannot share form attacks or repair armour."
+        },
+        "a8": {
+          "name": "Apex Reconfiguration",
+          "type": "A",
+          "ap": 3,
+          "limit": "R1",
+          "tags": "FORM POWER · 2 PHASES",
+          "mechanic": "Frog MOVE +2 and first hit DMG +1; Jellyfish BARRIER 2 plus one intercept; Skunk: 3-tile musk zone.",
+          "rule": "Locks current form for 2 phases; interception protects one adjacent ally. No healing."
+        }
+      },
+      {
+        "name": "HEALING",
+        "identity": "MISSION-LIMITED HEAL / PREVENTION",
+        "risk": "4 treatment charges for all linked rooms; zero revives",
+        "a1": {
+          "name": "Cell Mender",
+          "type": "A",
+          "ap": 2,
+          "limit": "1 charge",
+          "tags": "HEAL 2 HP · RANGE 4",
+          "mechanic": "Heal one ally for 2 HP; consume 1 of 4 treatment charges in entire mission.",
+          "rule": "Charges do not reset between rooms; cannot exceed downed 50% HP cap."
+        },
+        "a2": {
+          "name": "Protective Clot",
+          "type": "A",
+          "ap": 1,
+          "limit": "CD2",
+          "tags": "DEF · BARRIER 1",
+          "mechanic": "Give one ally a 1-point temporary barrier until its next phase.",
+          "rule": "Costs no treatment charges; prevents damage, does not restore HP."
+        },
+        "a4": [
+          {
+            "name": "Communal Clot",
+            "type": "A",
+            "ap": 2,
+            "limit": "2 charges",
+            "tags": "AoE · HEAL 1",
+            "mechanic": "Heal up to 3 allies in a small zone by 1 HP each; costs 2 treatments.",
+            "rule": "Unspent charges required; no revival or status reset."
+          },
+          {
+            "name": "Scar Weave",
+            "type": "A",
+            "ap": 1,
+            "limit": "CD2",
+            "tags": "DEF · CLEANSE",
+            "mechanic": "Give one ally a 1-point temporary barrier and remove one minor biological debuff.",
+            "rule": "No HP restored; cannot remove permanent injuries or downing ceiling."
+          }
+        ],
+        "a6": {
+          "name": "Crisis Mending",
+          "type": "A",
+          "ap": 2,
+          "limit": "2 charges",
+          "tags": "HEAL 3 HP",
+          "mechanic": "Restore 3 HP to a wounded ally below half its normal HP.",
+          "rule": "Counts against 4 mission charges and never revives an incapacitated ally."
+        },
+        "a8": {
+          "name": "Regenerative Wave",
+          "type": "A",
+          "ap": 3,
+          "limit": "M1 + 2 charges",
+          "tags": "AoE · HEAL + SHIELD",
+          "mechanic": "Heal up to 3 allies within 3 tiles for 1 HP each; give each 1 temporary shield.",
+          "rule": "Once per mission, costs 2 treatment charges; downing and injury limits remain."
+        }
+      }
+    ],
+    "shared": {
+      "1": {
+        "name": "Adaptive Catalyst",
+        "type": "A",
+        "ap": 1,
+        "limit": "CD1",
+        "tags": "ALLY · MOVE/DEF",
+        "mechanic": "Prime self or one ally within 3 tiles: choose +1 movement this turn or 1 temporary barrier.",
+        "rule": "No healing; barrier expires next phase; cannot repair armour."
+      },
+      "3": {
+        "name": "Metabolic Reserve",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "MOVE +1",
+        "mechanic": "After your first biological skill each round, gain +1 movement this turn.",
+        "rule": "Movement is not a free attack or extra AP."
+      },
+      "5": [
+        {
+          "name": "Controlled Change",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / round",
+          "tags": "MOVE 1",
+          "mechanic": "After applying a biological skill, step 1 legal tile without adjacent melee reaction.",
+          "rule": "Does not avoid ranged overwatch or gain AP."
+        },
+        {
+          "name": "Potent Formula",
+          "type": "P",
+          "ap": null,
+          "limit": "1 / round",
+          "tags": "DEF · BARRIER +1",
+          "mechanic": "First supportive biological skill each round grants 1 extra temporary shield.",
+          "rule": "Does not increase HP healing or replenish treatment charges."
+        }
+      ],
+      "7": {
+        "name": "Condition Control",
+        "type": "P",
+        "ap": null,
+        "limit": "1 / round",
+        "tags": "CLEANSE · ALLY",
+        "mechanic": "First supportive biological skill on yourself or ally each round removes one minor debuff.",
+        "rule": "No permanent injury treatment, armour repair or early recovery."
+      },
+      "9": {
+        "name": "Catalytic Cascade",
+        "type": "A",
+        "ap": 2,
+        "limit": "R1",
+        "tags": "COPY · NO HEAL",
+        "mechanic": "Prime next non-healing buff or transfer to also reach a second ally at half strength.",
+        "rule": "Never duplicates HP healing, capstones, or treatment charges."
+      }
+    },
+    "assessment": [
+      "DARWINIAN: Frog attacks, Jellyfish protects, Skunk disrupts; all below specialists",
+      "HEALING: 4 total charges across rooms; shields/cleanse remain repeatable",
+      "TEST: no healing farm between rooms; post-down cap and permadeath preserved."
+    ],
+    "revision": "Frog/Jellyfish/Skunk are styles for switchable forms. Healing uses 4 mission-wide charges; no free HP heals."
+  }
+}

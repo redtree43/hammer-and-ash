@@ -1,0 +1,2 @@
+# Preserve PDF exports byte-for-byte and treat them as binary in diffs.
+*.pdf binary
